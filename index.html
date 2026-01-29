@@ -23,6 +23,7 @@
             transition: background 0.3s ease; -webkit-tap-highlight-color: transparent;
         }
 
+        /* iOS Blur Header */
         nav {
             position: fixed; top: 0; left: 0; right: 0; height: 50px;
             background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -30,8 +31,10 @@
             border-bottom: 0.5px solid var(--border); z-index: 1000;
         }
         .logo { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
 
+        /* Sticky Bottom Input Bar */
         .ios-footer {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--tab-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -54,7 +57,17 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; flex-shrink: 0;
         }
+        .image-select-btn { color: var(--nexus); cursor: pointer; margin-bottom: 4px; }
 
+        /* Preview Image Container */
+        #preview-container { 
+            display: none; position: absolute; bottom: 75px; left: 15px; 
+            background: var(--card); padding: 6px; border-radius: 14px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 1001;
+        }
+        #preview-img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; }
+
+        /* Post Cards */
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
         .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
@@ -62,21 +75,29 @@
         .verified-badge { width: 17px; height: 17px; margin-left: 4px; }
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); }
 
-        .profile-header-card { text-align: center; padding: 30px 20px; }
-        .profile-main-img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid var(--nexus); margin-bottom: 10px; }
-        .follow-stats { display: flex; justify-content: center; gap: 25px; margin: 15px 0; font-size: 14px; }
-        .follow-stats b { display: block; font-size: 18px; color: var(--text); }
-        
-        .btn-follow { 
-            background: var(--nexus); color: white; border: none; padding: 8px 25px; 
-            border-radius: 18px; font-weight: 600; cursor: pointer; margin-top: 10px;
+        /* Admin Menu Blur Overlay */
+        .admin-menu {
+            position: absolute; top: 35px; right: 0;
+            background: rgba(var(--card), 0.85); backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            border: 0.5px solid var(--border); border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden;
+            animation: fadeIn 0.2s ease;
         }
-        .btn-follow.following { background: var(--ios-input); color: var(--text); border: 1px solid var(--border); }
+        .admin-menu button {
+            width: 100%; padding: 12px 16px; text-align: left; background: none; border: none;
+            color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer;
+        }
+        .admin-menu button:hover { background: rgba(24, 119, 242, 0.15); }
 
-        input[type="text"], textarea {
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border);
-            background: var(--ios-input); color: var(--text); margin-top: 5px; box-sizing: border-box;
-            font-family: inherit; font-size: 15px;
+        /* Settings Card Animation */
+        .settings-card { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        input[type="text"] {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border);
+            background: var(--ios-input); color: var(--text); box-sizing: border-box; font-size: 16px; margin-top: 6px;
         }
 
         .hidden { display: none !important; }
@@ -101,60 +122,51 @@
     <div id="feed"></div>
 </main>
 
-<div id="profile-screen" class="container hidden">
-    <div class="card profile-header-card" style="position: relative;">
-        <button onclick="closeProfile()" style="position: absolute; left: 15px; top: 15px; background: none; border: none; color: var(--nexus); font-weight: 600; cursor: pointer;"><i data-lucide="chevron-left"></i></button>
-        <img id="prof-header-img" src="" class="profile-main-img">
-        <h2 id="prof-displayname" style="margin: 0; font-size: 22px;"></h2>
-        <div id="prof-username" style="color: var(--sub); margin-bottom: 8px;"></div>
-        <div id="prof-bio" style="font-size: 14px; max-width: 80%; margin: 0 auto 10px;"></div>
-        
-        <div class="follow-stats">
-            <div><b id="count-followers">0</b> Follower</div>
-            <div><b id="count-following">0</b> Folge ich</div>
-        </div>
-
-        <button id="btn-follow-action" class="btn-follow hidden">Folgen</button>
-    </div>
-    <div id="profile-feed"></div>
-</div>
-
 <div id="input-bar" class="ios-footer hidden">
-    <div id="preview-container" style="display:none; position:absolute; bottom:75px; left:15px; background:var(--card); padding:5px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
-        <img id="preview-img" src="" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
-        <button onclick="clearPreview()" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;">×</button>
+    <div id="preview-container">
+        <img id="preview-img" src="">
+        <button onclick="clearPreview()" style="position:absolute; top:-10px; right:-10px; background:#ff3b30; color:white; border:none; border-radius:50%; width:24px; height:24px; font-weight:bold; cursor:pointer;">×</button>
     </div>
     <div class="ios-post-box">
-        <label style="color:var(--nexus); cursor:pointer;">
-            <i data-lucide="plus-circle"></i>
+        <label class="image-select-btn">
+            <i data-lucide="plus-circle" style="width:30px; height:30px;"></i>
             <input type="file" id="image-input" accept="image/*" class="hidden" onchange="showPreview(event)">
         </label>
         <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
-        <button id="btn-share" class="send-btn"><i data-lucide="arrow-up"></i></button>
+        <button id="btn-share" class="send-btn">
+            <i data-lucide="arrow-up" style="width:20px; height:20px; stroke-width:3px;"></i>
+        </button>
     </div>
 </div>
 
 <div id="settings-screen" class="container hidden">
-    <div class="card" style="margin-top:20px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-            <h2 style="margin:0;">Einstellungen</h2>
-            <button onclick="toggleSettings()" style="background:none; border:none; color:var(--nexus); font-weight:600;">Fertig</button>
+    <div class="card settings-card" style="margin-top:20px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:25px;">
+            <h2 style="margin:0; font-size: 24px;">Einstellungen</h2>
+            <button onclick="toggleSettings()" style="background:none; border:none; color:var(--nexus); font-weight:600; cursor:pointer; font-size:16px;">Fertig</button>
         </div>
-        <label style="font-size:11px; color:var(--sub); font-weight:700;">ANZEIGENAME</label>
-        <input type="text" id="edit-displayname">
-        <br><br>
-        <label style="font-size:11px; color:var(--sub); font-weight:700;">BIO</label>
-        <textarea id="edit-bio" rows="3" placeholder="Erzähl etwas über dich..."></textarea>
-        <br><br>
-        <button id="btn-save-settings" style="width:100%; background:var(--nexus); color:white; border:none; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;">Speichern</button>
-        <p id="settings-msg" style="text-align:center;"></p>
+        
+        <div style="margin-bottom:15px;">
+            <label style="font-size:12px; color:var(--sub); margin-left:5px; text-transform: uppercase; font-weight:700;">Anzeigename</label>
+            <input type="text" id="edit-displayname">
+        </div>
+
+        <div style="margin-bottom:20px;">
+            <label style="font-size:12px; color:var(--sub); margin-left:5px; text-transform: uppercase; font-weight:700;">Benutzername</label>
+            <input type="text" id="edit-username">
+        </div>
+
+        <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:15px; height:50px; margin-top:10px; font-size:16px; font-weight:700;">
+            Änderungen speichern
+        </button>
+        <p id="settings-msg" style="text-align:center; margin-top:15px; font-weight:500;"></p>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
@@ -170,9 +182,40 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
-    const verifiedIcon = "https://img.icons8.com/fluency/48/000000/verified-badge.png";
+    const adminEmail = "boxenjob5@gmail.com";
+    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT";
 
     let userData = null;
+
+    // --- THEME ---
+    function applyTheme() {
+        const saved = localStorage.getItem('theme') || 'light';
+        document.body.className = saved;
+        document.getElementById('theme-icon').setAttribute('data-lucide', saved === 'dark' ? 'sun' : 'moon');
+        lucide.createIcons();
+    }
+    window.toggleDarkMode = () => {
+        const next = document.body.className === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', next);
+        applyTheme();
+    };
+
+    // --- PREVIEW ---
+    window.showPreview = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (rs) => {
+                document.getElementById('preview-img').src = rs.target.result;
+                document.getElementById('preview-container').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    window.clearPreview = () => {
+        document.getElementById('image-input').value = "";
+        document.getElementById('preview-container').style.display = 'none';
+    };
 
     // --- AUTH ---
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
@@ -181,167 +224,115 @@
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('navbar').classList.remove('hidden');
             document.getElementById('input-bar').classList.remove('hidden');
-            const uRef = doc(db, "users", user.uid);
-            const uDoc = await getDoc(uRef);
+            const uDoc = await getDoc(doc(db, "users", user.uid));
             if (uDoc.exists()) { 
-                userData = uDoc.data();
+                userData = uDoc.data(); 
+                if(!userData.changeLog) userData.changeLog = [];
+                showApp(); 
             } else {
-                userData = { username: "user_"+Math.floor(Math.random()*999), displayname: user.displayName, photoURL: user.photoURL, bio: "", following: [], followers: [], verified: false };
-                await setDoc(uRef, userData);
+                userData = { username: "user_"+Math.floor(Math.random()*999), displayname: user.displayName, photoURL: user.photoURL, email: user.email, verified: (user.email === adminEmail), changeLog: [] };
+                await setDoc(doc(db, "users", user.uid), userData);
+                showApp();
             }
-            showApp();
         }
     });
 
     function showApp() { 
         document.getElementById('main-content').classList.remove('hidden'); 
         loadFeed(); 
-        lucide.createIcons();
+        applyTheme(); 
     }
 
-    // --- PROFIL ANSICHT ---
-    window.openProfile = (uid) => {
-        document.getElementById('main-content').classList.add('hidden');
-        document.getElementById('input-bar').classList.add('hidden');
-        document.getElementById('profile-screen').classList.remove('hidden');
-        
-        const btnFollow = document.getElementById('btn-follow-action');
-        
-        // Echtzeit-Update für Profil-Daten (Bio, Follower)
-        onSnapshot(doc(db, "users", uid), (uSnap) => {
-            const u = uSnap.data();
-            document.getElementById('prof-header-img').src = u.photoURL;
-            document.getElementById('prof-displayname').innerText = u.displayname;
-            document.getElementById('prof-username').innerText = "@" + (u.username || "user");
-            document.getElementById('prof-bio').innerText = u.bio || "";
-            document.getElementById('count-followers').innerText = (u.followers || []).length;
-            document.getElementById('count-following').innerText = (u.following || []).length;
+    window.toggleSettings = () => {
+        document.getElementById('main-content').classList.toggle('hidden');
+        document.getElementById('settings-screen').classList.toggle('hidden');
+        document.getElementById('input-bar').classList.toggle('hidden');
+        document.getElementById('edit-displayname').value = userData.displayname;
+        document.getElementById('edit-username').value = userData.username;
+    };
 
-            if (auth.currentUser.uid !== uid) {
-                btnFollow.classList.remove('hidden');
-                const isFollowing = (u.followers || []).includes(auth.currentUser.uid);
-                btnFollow.innerText = isFollowing ? "Gefolgt" : "Folgen";
-                btnFollow.className = isFollowing ? "btn-follow following" : "btn-follow";
-                btnFollow.onclick = () => toggleFollow(uid, isFollowing);
-            } else {
-                btnFollow.classList.add('hidden');
+    // --- SAVE SETTINGS ---
+    document.getElementById('btn-save-settings').onclick = async () => {
+        const newDisp = document.getElementById('edit-displayname').value.trim();
+        const newUser = document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+        const msg = document.getElementById('settings-msg');
+        const now = Date.now();
+        const twoWeeks = 14 * 24 * 60 * 60 * 1000;
+
+        if (auth.currentUser.email !== adminEmail) {
+            const recent = (userData.changeLog || []).filter(t => (now - t) < twoWeeks);
+            if (recent.length >= 2 && (newDisp !== userData.displayname || newUser !== userData.username)) {
+                msg.innerText = "Max. 2 Änderungen in 14 Tagen!"; msg.style.color = "red";
+                return;
             }
-        });
-
-        // Posts des Nutzers
-        onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
-            const pFeed = document.getElementById('profile-feed');
-            pFeed.innerHTML = '';
-            snap.forEach(d => {
-                if(d.data().uid === uid) {
-                    const div = document.createElement('div');
-                    div.className = 'card';
-                    div.innerHTML = `<div style="white-space:pre-wrap;">${d.data().text}</div>${d.data().imageUrl ? `<img src="${d.data().imageUrl}" class="post-img">` : ''}`;
-                    pFeed.appendChild(div);
-                }
-            });
-        });
-    };
-
-    window.toggleFollow = async (targetUid, isFollowing) => {
-        const myUid = auth.currentUser.uid;
-        const myRef = doc(db, "users", myUid);
-        const targetRef = doc(db, "users", targetUid);
-
-        if (isFollowing) {
-            await updateDoc(myRef, { following: arrayRemove(targetUid) });
-            await updateDoc(targetRef, { followers: arrayRemove(myUid) });
-        } else {
-            await updateDoc(myRef, { following: arrayUnion(targetUid) });
-            await updateDoc(targetRef, { followers: arrayUnion(myUid) });
+            if (newDisp !== userData.displayname || newUser !== userData.username) {
+                if(!userData.changeLog) userData.changeLog = [];
+                userData.changeLog.push(now);
+            }
         }
+
+        userData.displayname = newDisp;
+        userData.username = newUser;
+        await updateDoc(doc(db, "users", auth.currentUser.uid), userData);
+        msg.innerText = "Profil aktualisiert!"; msg.style.color = "green";
     };
 
-    window.closeProfile = () => {
-        document.getElementById('profile-screen').classList.add('hidden');
-        document.getElementById('main-content').classList.remove('hidden');
-        document.getElementById('input-bar').classList.remove('hidden');
+    // --- SEND POST ---
+    document.getElementById('btn-share').onclick = async () => {
+        const text = document.getElementById('post-input').innerText;
+        const file = document.getElementById('image-input').files[0];
+        if (!text.trim() && !file) return;
+        const btn = document.getElementById('btn-share'); btn.disabled = true;
+
+        let imageUrl = null;
+        if (file) {
+            const formData = new FormData(); formData.append("image", file);
+            const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
+            const json = await res.json(); imageUrl = json.data.url;
+        }
+        await addDoc(collection(db, "posts"), { text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp() });
+        document.getElementById('post-input').innerText = ""; clearPreview(); btn.disabled = false;
+        window.scrollTo({top: 0, behavior: 'smooth'});
     };
 
-    // --- FEED ---
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('feed');
+            const feed = document.getElementById('feed'); feed.innerHTML = '';
             snap.forEach((d) => {
                 const p = d.data();
                 onSnapshot(doc(db, "users", p.uid), (uSnap) => {
                     const u = uSnap.data() || {};
+                    const isAdmin = auth.currentUser.email === adminEmail;
                     const pid = 'post-'+d.id;
                     const html = `
                         <div class="post-header">
-                            <img src="${u.photoURL}" class="user-img" onclick="openProfile('${p.uid}')" style="cursor:pointer">
-                            <div onclick="openProfile('${p.uid}')" style="cursor:pointer">
+                            <img src="${u.photoURL}" class="user-img">
+                            <div style="flex-grow:1">
                                 <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
-                                <div style="color:var(--sub); font-size:12px;">@${u.username}</div>
+                                <div class="username">@${u.username}</div>
+                            </div>
+                            ${isAdmin ? `<button onclick="toggleAdminMenu('${d.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer;"><i data-lucide="more-horizontal"></i></button>` : ''}
+                            <div id="menu-${d.id}" class="admin-menu hidden">
+                                <button onclick="deletePost('${d.id}')"><i data-lucide="trash-2"></i> Löschen</button>
+                                <button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Verif. weg' : 'Verifizieren'}</button>
                             </div>
                         </div>
-                        <div style="white-space:pre-wrap; margin-bottom:10px;">${p.text}</div>
+                        <div style="font-size:16px; white-space:pre-wrap; line-height:1.4;">${p.text}</div>
                         ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}`;
-                    let div = document.getElementById(pid) || document.createElement('div');
-                    div.id = pid; div.className = 'card'; div.innerHTML = html;
-                    if (!document.getElementById(pid)) feed.appendChild(div);
+                    
+                    let div = document.getElementById(pid);
+                    if (!div) { div = document.createElement('div'); div.id = pid; div.className = 'card'; feed.appendChild(div); }
+                    div.innerHTML = html; lucide.createIcons();
                 });
             });
         });
     }
 
-    // --- SETTINGS ---
-    window.toggleSettings = () => {
-        document.getElementById('settings-screen').classList.toggle('hidden');
-        document.getElementById('main-content').classList.toggle('hidden');
-        document.getElementById('input-bar').classList.toggle('hidden');
-        document.getElementById('edit-displayname').value = userData.displayname;
-        document.getElementById('edit-bio').value = userData.bio || "";
-    };
+    window.toggleAdminMenu = (id) => document.getElementById('menu-' + id).classList.toggle('hidden');
+    window.deletePost = (id) => confirm("Post wirklich löschen?") && deleteDoc(doc(db, "posts", id));
+    window.toggleVerify = async (uid, status) => await updateDoc(doc(db, "users", uid), { verified: status });
 
-    document.getElementById('btn-save-settings').onclick = async () => {
-        const newName = document.getElementById('edit-displayname').value;
-        const newBio = document.getElementById('edit-bio').value;
-        await updateDoc(doc(db, "users", auth.currentUser.uid), { displayname: newName, bio: newBio });
-        userData.displayname = newName; userData.bio = newBio;
-        document.getElementById('settings-msg').innerText = "Gespeichert!";
-        setTimeout(() => { document.getElementById('settings-msg').innerText = ""; toggleSettings(); }, 1000);
-    };
-
-    // --- POSTING ---
-    document.getElementById('btn-share').onclick = async () => {
-        const text = document.getElementById('post-input').innerText;
-        const file = document.getElementById('image-input').files[0];
-        if(!text.trim() && !file) return;
-        let imageUrl = null;
-        if(file) {
-            const fd = new FormData(); fd.append("image", file);
-            const res = await fetch("https://api.imgbb.com/1/upload?key="+imgbbKey, {method:"POST", body:fd});
-            const j = await res.json(); imageUrl = j.data.url;
-        }
-        await addDoc(collection(db, "posts"), { text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp() });
-        document.getElementById('post-input').innerText = ""; clearPreview();
-    };
-
-    window.showPreview = (e) => {
-        const f = e.target.files[0];
-        if(f) {
-            const rd = new FileReader();
-            rd.onload = (r) => { document.getElementById('preview-img').src = r.target.result; document.getElementById('preview-container').style.display='block'; };
-            rd.readAsDataURL(f);
-        }
-    };
-    window.clearPreview = () => { document.getElementById('image-input').value = ""; document.getElementById('preview-container').style.display='none'; };
-
-    window.toggleDarkMode = () => {
-        const b = document.body;
-        b.className = b.className === 'dark' ? 'light' : 'dark';
-        localStorage.setItem('theme', b.className);
-        document.getElementById('theme-icon').setAttribute('data-lucide', b.className === 'dark' ? 'sun' : 'moon');
-        lucide.createIcons();
-    };
-    if(localStorage.getItem('theme') === 'dark') window.toggleDarkMode();
-
+    applyTheme();
 </script>
 </body>
 </html>

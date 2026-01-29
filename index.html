@@ -3,44 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusPost</title>
+    <title>NexusPost | Social Platform</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; }
-        nav { background: #fff; padding: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #ddd; }
-        .container { max-width: 600px; margin: 20px auto; }
-        .post-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .verified-icon { width: 16px; height: 16px; vertical-align: middle; margin-left: 5px; }
-        #login-btn { cursor: pointer; background: #4285F4; color: white; border: none; padding: 10px; border-radius: 4px; }
-        .hidden { display: none; }
+        :root { --nexus-blue: #1877f2; --bg-gray: #f0f2f5; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-gray); margin: 0; padding-bottom: 50px; }
+        
+        /* Header */
+        nav { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; 
+               box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .logo { color: var(--nexus-blue); font-size: 24px; font-weight: bold; text-decoration: none; }
+        
+        /* Main Container */
+        .container { max-width: 550px; margin: 20px auto; padding: 0 10px; }
+        
+        /* Post Creator */
+        .create-post { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        textarea { width: 100%; border: none; background: #f0f2f5; border-radius: 20px; padding: 15px; resize: none; box-sizing: border-box; outline: none; }
+        .post-actions { display: flex; justify-content: space-between; margin-top: 10px; align-items: center; }
+        .btn-post { background: var(--nexus-blue); color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        
+        /* Feed */
+        .post { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .post-header { display: flex; align-items: center; margin-bottom: 10px; }
+        .user-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+        .user-name { font-weight: bold; display: flex; align-items: center; }
+        .verified-badge { width: 18px; height: 18px; margin-left: 5px; }
+        .post-content { font-size: 15px; line-height: 1.4; margin-bottom: 10px; }
+        .post-image { width: calc(100% + 30px); margin-left: -15px; max-height: 400px; object-fit: cover; }
+        
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; 
+                         display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<nav>
-    <h2>NexusPost</h2>
-    <button id="login-btn">Mit Google anmelden</button>
-    <div id="user-info" class="hidden">
-        <span id="user-name"></span>
-        <button onclick="logout()">Logout</button>
+<div id="login-screen" class="login-overlay">
+    <h1 style="color: var(--nexus-blue); font-size: 3rem;">NexusPost</h1>
+    <p>Bitte melde dich an, um beizutreten.</p>
+    <button id="btn-login" class="btn-post" style="padding: 15px 30px;">Mit Google anmelden</button>
+</div>
+
+<nav class="hidden" id="navbar">
+    <a href="#" class="logo">NexusPost</a>
+    <div id="user-profile" style="display: flex; align-items: center;">
+        <span id="display-name" style="margin-right: 10px; font-weight: 500;"></span>
+        <button onclick="logout()" style="border: none; background: none; color: #65676b; cursor: pointer;">Abmelden</button>
     </div>
 </nav>
 
-<div class="container">
-    <div id="post-area" class="post-card hidden">
-        <textarea id="post-text" placeholder="Was denkst du gerade?" style="width:100%; height:60px;"></textarea>
-        <input type="file" id="post-image" accept="image/*">
-        <button onclick="uploadPost()">Teilen</button>
+<div class="container hidden" id="main-content">
+    <div class="create-post">
+        <textarea id="post-input" placeholder="Was gibt's Neues?"></textarea>
+        <div class="post-actions">
+            <input type="file" id="image-input" accept="image/*" style="font-size: 12px;">
+            <button class="btn-post" id="btn-share">Teilen</button>
+        </div>
     </div>
 
-    <div id="feed"></div>
+    <div id="feed">
+        </div>
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // DEINE FIREBASE CONFIG HIER EINTRAGEN
+    // HIER DEINE CONFIG EINTRAGEN
 const firebaseConfig = {
   apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
   authDomain: "nexuspost-a00b1.firebaseapp.com",
@@ -50,46 +80,69 @@ const firebaseConfig = {
   appId: "1:124843068065:web:035b15d01910dc6b8d7ee0"
 };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-  const adminEmail = "boxenjob5@gmail.com";
-  const verifiedImage = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; // Drive-Direktlink Format
+    const adminEmail = "boxenjob5@gmail.com";
+    const verifiedIconUrl = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; 
 
-  // Login Funktion
-  document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
+    // Login / Logout
+    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
+    window.logout = () => signOut(auth).then(() => location.reload());
 
-  // Auth Status prüfen
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      document.getElementById('login-btn').classList.add('hidden');
-      document.getElementById('user-info').classList.remove('hidden');
-      document.getElementById('post-area').classList.remove('hidden');
-      document.getElementById('user-name').innerText = user.displayName;
-    }
-  });
-
-  // Funktion zum Anzeigen der Posts (inkl. Verifizierung)
-  const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-  onSnapshot(q, (snapshot) => {
-    const feed = document.getElementById('feed');
-    feed.innerHTML = '';
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      const isVerified = data.email === adminEmail; // Beispiel: Admin ist immer verifiziert
-      
-      feed.innerHTML += `
-        <div class="post-card">
-          <strong>${data.author}</strong>
-          ${isVerified ? `<img src="${verifiedImage}" class="verified-icon">` : ''}
-          <p>${data.text}</p>
-          ${data.img ? `<img src="${data.img}" style="max-width:100%">` : ''}
-        </div>
-      `;
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('navbar').classList.remove('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('display-name').innerText = user.displayName;
+            loadPosts();
+        }
     });
-  });
+
+    // Post erstellen
+    document.getElementById('btn-share').onclick = async () => {
+        const text = document.getElementById('post-input').value;
+        if (!text.trim()) return;
+
+        await addDoc(collection(db, "posts"), {
+            author: auth.currentUser.displayName,
+            authorEmail: auth.currentUser.email,
+            authorPic: auth.currentUser.photoURL,
+            text: text,
+            timestamp: serverTimestamp()
+        });
+
+        document.getElementById('post-input').value = "";
+    };
+
+    // Feed laden
+    function loadPosts() {
+        const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const isVerified = data.authorEmail === adminEmail;
+                
+                feed.innerHTML += `
+                    <div class="post">
+                        <div class="post-header">
+                            <img src="${data.authorPic}" class="user-img">
+                            <div class="user-name">
+                                ${data.author} 
+                                ${isVerified ? `<img src="${verifiedIconUrl}" class="verified-badge" title="Verifiziert">` : ''}
+                            </div>
+                        </div>
+                        <div class="post-content">${data.text}</div>
+                    </div>
+                `;
+            });
+        });
+    }
 </script>
 </body>
 </html>

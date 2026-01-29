@@ -3,64 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusPost | Willkommen</title>
+    <title>NexusPost</title>
     <style>
-        :root { --nexus-blue: #1877f2; --bg-gray: #f0f2f5; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-gray); margin: 0; }
-        
+        :root { --nexus: #1877f2; --bg: #f0f2f5; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; }
         .hidden { display: none !important; }
-        .container { max-width: 550px; margin: 20px auto; padding: 0 10px; }
-        
-        /* UI Elements */
-        nav { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        
-        /* Setup Screen */
-        .setup-screen { text-align: center; padding: 40px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        
-        /* Buttons */
-        .btn { background: var(--nexus-blue); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
-        .btn:disabled { background: #ccc; }
-
-        /* Post Style */
+        .container { max-width: 500px; margin: 20px auto; padding: 0 10px; }
+        nav { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .btn { background: var(--nexus); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
         .post { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; position: relative; }
         .user-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
-        .verified-badge { width: 16px; height: 16px; vertical-align: middle; }
-        .handle { color: #65676b; font-size: 14px; }
+        .verified-badge { width: 16px; height: 16px; vertical-align: middle; margin-left: 4px; }
+        .post-img { width: calc(100% + 30px); margin-left: -15px; margin-top: 10px; max-height: 500px; object-fit: cover; }
+        input[type="text"] { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<div id="login-screen" class="setup-screen">
-    <h1 style="color: var(--nexus-blue);">NexusPost</h1>
-    <button id="btn-login" class="btn">Mit Google anmelden</button>
+<div id="login-screen" style="text-align:center; margin-top:100px;">
+    <h1 style="color: var(--nexus); font-size: 3rem;">NexusPost</h1>
+    <button id="btn-login" class="btn" style="width:250px;">Mit Google anmelden</button>
 </div>
 
 <div id="setup-screen" class="container hidden">
     <div class="card">
-        <h2>Profil vervollständigen</h2>
-        <p>Wähle einen einzigartigen Benutzernamen:</p>
-        <input type="text" id="setup-username" placeholder="@benutzername (nur Kleinbuchstaben/Zahlen)">
-        <input type="text" id="setup-displayname" placeholder="Anzeigename (z.B. Max Mustermann)">
-        <p style="font-size: 12px; color: #666;">Dein Profilbild wird von Google übernommen.</p>
-        <button id="btn-save-profile" class="btn">NexusPost beitreten</button>
-        <p id="setup-error" style="color: red; font-size: 14px;"></p>
+        <h2>Profil erstellen</h2>
+        <label>Wähle deinen Benutzernamen:</label>
+        <input type="text" id="setup-username" placeholder="z.B. deinname_1">
+        <label>Anzeigename:</label>
+        <input type="text" id="setup-displayname">
+        <button id="btn-save-profile" class="btn">Profil speichern</button>
+        <p id="setup-error" style="color:red;"></p>
     </div>
 </div>
 
 <nav id="navbar" class="hidden">
-    <b style="color: var(--nexus-blue); font-size: 20px;">NexusPost</b>
-    <div>
-        <span id="nav-user" style="font-weight: 600; margin-right: 10px;"></span>
-        <button onclick="auth.signOut().then(() => location.reload())">Logout</button>
-    </div>
+    <b style="color: var(--nexus); font-size: 22px;">NexusPost</b>
+    <div id="nav-info" style="font-weight: bold; font-size: 14px;"></div>
 </nav>
 
 <div id="main-content" class="container hidden">
     <div class="card">
-        <textarea id="post-input" style="width:100%; height:80px; border:none; background:#f0f2f5; border-radius:10px; padding:10px;" placeholder="Was gibt's Neues?"></textarea>
-        <button id="btn-share" class="btn" style="margin-top:10px;">Teilen</button>
+        <textarea id="post-input" placeholder="Was gibt's Neues?" style="width:100%; height:70px; border:none; background:#f0f2f5; border-radius:10px; padding:10px; resize:none; font-family: inherit;"></textarea>
+        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+            <input type="file" id="image-input" accept="image/*" style="font-size:12px;">
+            <button id="btn-share" class="btn" style="width:120px;">Posten</button>
+        </div>
     </div>
     <div id="feed"></div>
 </div>
@@ -70,36 +59,35 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // Deine Konfiguration
     const firebaseConfig = {
-  apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
-  authDomain: "nexuspost-a00b1.firebaseapp.com",
-  projectId: "nexuspost-a00b1",
-  storageBucket: "nexuspost-a00b1.firebasestorage.app",
-  messagingSenderId: "124843068065",
-  appId: "1:124843068065:web:035b15d01910dc6b8d7ee0"
-};
+        apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
+        authDomain: "nexuspost-a00b1.firebaseapp.com",
+        projectId: "nexuspost-a00b1",
+        storageBucket: "nexuspost-a00b1.firebasestorage.app",
+        messagingSenderId: "124843068065",
+        appId: "1:124843068065:web:035b15d01910dc6b8d7ee0"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
+    const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
     const adminEmail = "boxenjob5@gmail.com";
-    const verifiedIcon = "https://lh3.googleusercontent.com/u/0/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; 
+    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; 
 
-    let currentUserData = null;
+    let userData = null;
 
-    // LOGIN
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
-    // AUTH CHECKER
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('login-screen').classList.add('hidden');
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            
-            if (userDoc.exists()) {
-                currentUserData = userDoc.data();
+            const uDoc = await getDoc(doc(db, "users", user.uid));
+            if (uDoc.exists()) {
+                userData = uDoc.data();
                 showApp();
             } else {
                 document.getElementById('setup-screen').classList.remove('hidden');
@@ -108,32 +96,20 @@
         }
     });
 
-    // PROFIL SPEICHERN (Mit Unique Username Check)
     document.getElementById('btn-save-profile').onclick = async () => {
-        const username = document.getElementById('setup-username').value.trim().toLowerCase();
-        const displayname = document.getElementById('setup-displayname').value.trim();
-        const errorEl = document.getElementById('setup-error');
+        const userN = document.getElementById('setup-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+        const displayN = document.getElementById('setup-displayname').value.trim();
+        if (userN.length < 3) return;
 
-        if (username.length < 3) return errorEl.innerText = "Benutzername zu kurz.";
-
-        // Check ob Username existiert
-        const nameRef = doc(db, "usernames", username);
+        const nameRef = doc(db, "usernames", userN);
         const nameSnap = await getDoc(nameRef);
 
         if (nameSnap.exists()) {
-            errorEl.innerText = "Benutzername bereits vergeben!";
+            document.getElementById('setup-error').innerText = "Name leider schon vergeben!";
         } else {
-            // 1. Namen reservieren
             await setDoc(nameRef, { uid: auth.currentUser.uid });
-            // 2. User Profil erstellen
-            const userData = {
-                username: username,
-                displayname: displayname,
-                photoURL: auth.currentUser.photoURL,
-                email: auth.currentUser.email
-            };
+            userData = { username: userN, displayname: displayN, photoURL: auth.currentUser.photoURL, email: auth.currentUser.email };
             await setDoc(doc(db, "users", auth.currentUser.uid), userData);
-            currentUserData = userData;
             showApp();
         }
     };
@@ -142,55 +118,68 @@
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('navbar').classList.remove('hidden');
         document.getElementById('main-content').classList.remove('hidden');
-        document.getElementById('nav-user').innerText = "@" + currentUserData.username;
+        document.getElementById('nav-info').innerText = "@" + userData.username;
         loadFeed();
     }
 
-    // POSTEN
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').value;
-        if (!text.trim()) return;
+        const file = document.getElementById('image-input').files[0];
+        const btn = document.getElementById('btn-share');
+        if (!text.trim() && !file) return;
+
+        btn.disabled = true;
+        btn.innerText = "Lädt...";
+        let imageUrl = null;
+
+        if (file) {
+            const formData = new FormData();
+            formData.append("image", file);
+            try {
+                const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
+                const json = await res.json();
+                imageUrl = json.data.url;
+            } catch (e) { alert("Upload-Fehler!"); }
+        }
+
         await addDoc(collection(db, "posts"), {
-            text: text,
-            uid: auth.currentUser.uid,
-            username: currentUserData.username,
-            displayname: currentUserData.displayname,
-            photoURL: currentUserData.photoURL,
-            email: currentUserData.email,
-            timestamp: serverTimestamp()
+            text, imageUrl, uid: auth.currentUser.uid, username: userData.username, 
+            displayname: userData.displayname, photoURL: userData.photoURL, 
+            email: userData.email, timestamp: serverTimestamp()
         });
+
         document.getElementById('post-input').value = "";
+        document.getElementById('image-input').value = "";
+        btn.disabled = false;
+        btn.innerText = "Posten";
     };
 
-    // FEED
     function loadFeed() {
-        const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
+        onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
             feed.innerHTML = '';
-            snapshot.forEach(d => {
+            snap.forEach(d => {
                 const p = d.data();
-                const isVerified = p.email === adminEmail;
-                const canDelete = (auth.currentUser.email === adminEmail || auth.currentUser.uid === p.uid);
-                
+                const isV = p.email === adminEmail;
+                const canDel = (auth.currentUser && (auth.currentUser.email === adminEmail || auth.currentUser.uid === p.uid));
                 feed.innerHTML += `
-                    <div class="post card">
+                    <div class="post">
                         <div style="display:flex; align-items:center;">
                             <img src="${p.photoURL}" class="user-img">
-                            <div>
-                                <b>${p.displayname}</b> ${isVerified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}<br>
-                                <span class="handle">@${p.username}</span>
+                            <div style="flex-grow:1">
+                                <b>${p.displayname}</b> ${isV ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}<br>
+                                <span style="color:#65676b; font-size:13px;">@${p.username}</span>
                             </div>
-                            ${canDelete ? `<button onclick="deletePost('${d.id}')" style="margin-left:auto;">🗑️</button>` : ''}
+                            ${canDel ? `<button onclick="deletePost('${d.id}')" style="border:none; background:none; cursor:pointer; color:#ccc; font-size:18px;">🗑️</button>` : ''}
                         </div>
-                        <p>${p.text}</p>
-                    </div>
-                `;
+                        <p style="margin-top:10px; white-space:pre-wrap;">${p.text}</p>
+                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
+                    </div>`;
             });
         });
     }
 
-    window.deletePost = (id) => confirm("Löschen?") && deleteDoc(doc(db, "posts", id));
+    window.deletePost = (id) => confirm("Post wirklich löschen?") && deleteDoc(doc(db, "posts", id));
 </script>
 </body>
 </html>

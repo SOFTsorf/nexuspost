@@ -7,180 +7,85 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --nexus: #1877f2;
-            --bg: #f0f2f5;
-            --card: rgba(255, 255, 255, 0.9);
-            --text: #1c1e21;
-            --sub: #65676b;
-            --border: #dddfe2;
-            --header-bg: rgba(255, 255, 255, 0.7);
+            --nexus: #1877f2; --bg: #f0f2f5; --card: rgba(255, 255, 255, 0.9);
+            --text: #1c1e21; --sub: #65676b; --border: #dddfe2; --header-bg: rgba(255, 255, 255, 0.7);
         }
-
         body.dark {
-            --bg: #18191a;
-            --card: rgba(36, 37, 38, 0.9);
-            --text: #e4e6eb;
-            --sub: #b0b3b8;
-            --border: #3e4042;
-            --header-bg: rgba(24, 25, 26, 0.7);
+            --bg: #18191a; --card: rgba(36, 37, 38, 0.9); --text: #e4e6eb;
+            --sub: #b0b3b8; --border: #3e4042; --header-bg: rgba(24, 25, 26, 0.7);
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding-top: 70px;
-            transition: background 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg); color: var(--text); margin: 0; padding-top: 70px;
+            transition: background 0.3s ease; -webkit-tap-highlight-color: transparent;
         }
-
-        /* Blur Header */
         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: var(--header-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            background: var(--header-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+            border-bottom: 1px solid var(--border); z-index: 1000;
         }
-
-        .logo { font-size: 22px; font-weight: 800; color: var(--nexus); letter-spacing: -0.5px; }
-
+        .logo { font-size: 22px; font-weight: 800; color: var(--nexus); }
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
-
-        /* Modern Cards */
         .card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 16px;
+            border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
+        textarea { width: 100%; border: none; background: transparent; color: var(--text); font-size: 17px; outline: none; }
+        .btn { background: var(--nexus); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .icon-btn { background: none; border: none; color: var(--sub); cursor: pointer; padding: 8px; border-radius: 50%; }
+        
+        /* Preview Image */
+        #preview-container { display: none; margin-top: 10px; position: relative; }
+        #preview-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; }
 
-        textarea {
-            width: 100%;
-            border: none;
-            background: transparent;
-            color: var(--text);
-            font-size: 17px;
-            resize: none;
-            outline: none;
-            padding: 10px 0;
-        }
-
-        .btn {
-            background: var(--nexus);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-sec { background: var(--border); color: var(--text); border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: var(--sub);
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-        .icon-btn:hover { background: rgba(0,0,0,0.05); }
-
-        /* Post Styles */
+        /* Post Header & Verified */
         .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; position: relative; }
-        .user-img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .display-name { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 4px; }
-        .username { color: var(--sub); font-size: 13px; font-weight: 400; }
-        .verified-badge { width: 18px; height: 18px; vertical-align: middle; }
+        .user-img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+        .verified-badge { width: 18px; height: 18px; vertical-align: middle; margin-left: 4px; }
+        .post-img { width: calc(100% + 32px); margin: 12px -16px -16px -16px; max-height: 500px; object-fit: cover; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; }
 
-        .post-img { 
-            width: calc(100% + 32px); 
-            margin: 12px -16px -16px -16px; 
-            max-height: 500px; 
-            object-fit: cover; 
-            border-bottom-left-radius: 16px; 
-            border-bottom-right-radius: 16px;
-        }
-
-        /* Admin Menu */
+        /* Advanced Admin Menu Blur */
         .admin-menu {
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            z-index: 100;
-            min-width: 200px;
-            overflow: hidden;
+            position: absolute; top: 40px; right: 0;
+            background: rgba(var(--card), 0.7); 
+            backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100; min-width: 200px; overflow: hidden;
         }
         .admin-menu button {
-            width: 100%;
-            padding: 12px 16px;
-            text-align: left;
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
+            width: 100%; padding: 12px 16px; text-align: left; background: none; border: none;
+            color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer;
         }
-        .admin-menu button:hover { background: rgba(0,0,0,0.05); }
+        .admin-menu button:hover { background: rgba(24, 119, 242, 0.2); }
 
         .hidden { display: none !important; }
-
-        @media (max-width: 480px) {
-            .container { padding: 0 8px; }
-        }
     </style>
 </head>
-<body>
+<body class="light">
 
 <nav id="navbar" class="hidden">
     <div class="logo">NexusPost</div>
     <div style="display: flex; gap: 8px;">
-        <button class="icon-btn" onclick="toggleDarkMode()"><i data-lucide="moon"></i></button>
+        <button class="icon-btn" onclick="toggleDarkMode()"><i data-lucide="sun" id="theme-icon"></i></button>
         <button class="icon-btn" onclick="toggleSettings()"><i data-lucide="settings"></i></button>
     </div>
 </nav>
 
 <div id="login-screen" style="text-align:center; padding-top: 100px;">
-    <h1 style="color: var(--nexus); font-size: 48px; margin-bottom: 8px;">NexusPost</h1>
-    <p style="color: var(--sub); margin-bottom: 32px;">Connect with the world.</p>
-    <button id="btn-login" class="btn" style="margin: 0 auto; padding: 14px 28px;">
-        <i data-lucide="log-in"></i> Mit Google anmelden
-    </button>
+    <h1 style="color: var(--nexus); font-size: 48px;">NexusPost</h1>
+    <button id="btn-login" class="btn" style="margin: 0 auto; padding: 14px 28px;"><i data-lucide="log-in"></i> Mit Google anmelden</button>
 </div>
 
 <main id="main-content" class="container hidden">
     <div class="card">
         <textarea id="post-input" rows="3" placeholder="Was gibt's Neues?"></textarea>
+        <div id="preview-container">
+            <img id="preview-img" src="">
+            <button onclick="clearPreview()" style="position:absolute; top:5px; right:5px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:25px; height:25px; cursor:pointer;">×</button>
+        </div>
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 8px;">
-            <label style="cursor: pointer; color: var(--nexus);">
-                <i data-lucide="image"></i>
-                <input type="file" id="image-input" accept="image/*" class="hidden">
-            </label>
+            <label style="cursor: pointer; color: var(--nexus);"><i data-lucide="image"></i><input type="file" id="image-input" accept="image/*" class="hidden" onchange="showPreview(event)"></label>
             <button id="btn-share" class="btn">Teilen</button>
         </div>
     </div>
@@ -189,24 +94,12 @@
 
 <div id="settings-screen" class="container hidden">
     <div class="card">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-            <button class="icon-btn" onclick="toggleSettings()"><i data-lucide="arrow-left"></i></button>
-            <h2 style="margin:0">Einstellungen</h2>
-        </div>
-        
-        <label style="font-size:13px; color:var(--sub)">Anzeigename</label>
-        <input type="text" id="edit-displayname" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
-        
-        <label style="font-size:13px; color:var(--sub)">Benutzername (@)</label>
-        <input type="text" id="edit-username" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
-        
-        <label style="font-size:13px; color:var(--sub)">Profilbild ändern</label>
-        <input type="file" id="edit-avatar" accept="image/*" style="display:block; margin-top:5px; margin-bottom:15px;">
-        
-        <button id="btn-save-settings" class="btn" style="width:100%; justify-content:center;">
-            <i data-lucide="save"></i> Änderungen speichern
-        </button>
-        <p id="settings-msg" style="text-align:center; font-size:14px;"></p>
+        <button class="icon-btn" onclick="toggleSettings()"><i data-lucide="arrow-left"></i></button>
+        <h2>Profil bearbeiten</h2>
+        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text);">
+        <input type="text" id="edit-username" placeholder="Benutzername" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text);">
+        <button id="btn-save-settings" class="btn" style="width:100%; justify-content:center;">Speichern</button>
+        <p id="settings-msg"></p>
     </div>
 </div>
 
@@ -230,11 +123,59 @@
     const provider = new GoogleAuthProvider();
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
     const adminEmail = "boxenjob5@gmail.com";
-    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; // Dein Drive Icon via GoogleUserContent
+    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT";
 
     let userData = null;
 
-    window.toggleDarkMode = () => { document.body.classList.toggle('dark'); lucide.createIcons(); };
+    // --- THEME LOGIC ---
+    function applyTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.className = savedTheme;
+        document.getElementById('theme-icon').setAttribute('data-lucide', savedTheme === 'dark' ? 'sun' : 'moon');
+        lucide.createIcons();
+    }
+    window.toggleDarkMode = () => {
+        const current = document.body.className;
+        const newTheme = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme();
+    };
+
+    // --- PREVIEW LOGIC ---
+    window.showPreview = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('preview-img').src = e.target.result;
+                document.getElementById('preview-container').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    window.clearPreview = () => {
+        document.getElementById('image-input').value = "";
+        document.getElementById('preview-container').style.display = 'none';
+    };
+
+    // --- AUTH ---
+    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('navbar').classList.remove('hidden');
+            const uDoc = await getDoc(doc(db, "users", user.uid));
+            if (uDoc.exists()) { userData = uDoc.data(); showApp(); }
+            else {
+                userData = { username: "user_"+Math.floor(Math.random()*1000), displayname: user.displayName, photoURL: user.photoURL, email: user.email, verified: (user.email === adminEmail), changeLog: [] };
+                await setDoc(doc(db, "users", user.uid), userData);
+                showApp();
+            }
+        }
+    });
+
+    function showApp() { document.getElementById('main-content').classList.remove('hidden'); loadFeed(); applyTheme(); }
+
     window.toggleSettings = () => {
         document.getElementById('main-content').classList.toggle('hidden');
         document.getElementById('settings-screen').classList.toggle('hidden');
@@ -243,134 +184,63 @@
         lucide.createIcons();
     };
 
-    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('navbar').classList.remove('hidden');
-            const uDoc = await getDoc(doc(db, "users", user.uid));
-            if (uDoc.exists()) {
-                userData = uDoc.data();
-                if(!userData.changeLog) userData.changeLog = [];
-                showApp();
-            } else {
-                userData = { 
-                    username: "user_" + Math.floor(Math.random()*1000), 
-                    displayname: user.displayName, 
-                    photoURL: user.photoURL, 
-                    email: user.email,
-                    verified: (user.email === adminEmail),
-                    changeLog: [] 
-                };
-                await setDoc(doc(db, "users", user.uid), userData);
-                showApp();
-            }
-        }
-    });
-
-    function showApp() {
-        document.getElementById('main-content').classList.remove('hidden');
-        loadFeed();
-        lucide.createIcons();
-    }
-
-    document.getElementById('btn-save-settings').onclick = async () => {
-        const newDisp = document.getElementById('edit-displayname').value.trim();
-        const newUser = document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
-        const avatarFile = document.getElementById('edit-avatar').files[0];
-        const msg = document.getElementById('settings-msg');
-        
-        if (auth.currentUser.email !== adminEmail) {
-            const now = Date.now();
-            const twoWeeks = 14 * 24 * 60 * 60 * 1000;
-            const recentChanges = userData.changeLog.filter(t => (now - t) < twoWeeks);
-            if (recentChanges.length >= 2 && (newDisp !== userData.displayname || newUser !== userData.username)) {
-                msg.innerText = "Maximal 2 Namensänderungen alle 14 Tage!";
-                msg.style.color = "red";
-                return;
-            }
-            if (newDisp !== userData.displayname || newUser !== userData.username) userData.changeLog.push(now);
-        }
-
-        let newAvatarURL = userData.photoURL;
-        if (avatarFile) {
-            const formData = new FormData();
-            formData.append("image", avatarFile);
-            const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
-            const json = await res.json();
-            newAvatarURL = json.data.url;
-        }
-
-        userData.displayname = newDisp;
-        userData.username = newUser;
-        userData.photoURL = newAvatarURL;
-        await updateDoc(doc(db, "users", auth.currentUser.uid), userData);
-        msg.innerText = "Gespeichert!"; msg.style.color = "green";
-    };
-
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').value;
         const file = document.getElementById('image-input').files[0];
-        const btn = document.getElementById('btn-share');
         if (!text.trim() && !file) return;
+        const btn = document.getElementById('btn-share'); btn.disabled = true;
 
-        btn.disabled = true;
         let imageUrl = null;
         if (file) {
-            const formData = new FormData();
-            formData.append("image", file);
+            const formData = new FormData(); formData.append("image", file);
             const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
-            const json = await res.json();
-            imageUrl = json.data.url;
+            const json = await res.json(); imageUrl = json.data.url;
         }
-
         await addDoc(collection(db, "posts"), { text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp() });
-        document.getElementById('post-input').value = ""; document.getElementById('image-input').value = "";
-        btn.disabled = false;
+        document.getElementById('post-input').value = ""; clearPreview(); btn.disabled = false;
     };
 
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('feed');
-            feed.innerHTML = '';
+            const feed = document.getElementById('feed'); feed.innerHTML = '';
             snap.forEach(async (d) => {
                 const p = d.data();
-                const uSnap = await getDoc(doc(db, "users", p.uid));
-                const u = uSnap.exists() ? uSnap.data() : {};
-                const isAdmin = auth.currentUser.email === adminEmail;
-
-                const postDiv = document.createElement('div');
-                postDiv.className = 'post card';
-                postDiv.innerHTML = `
-                    <div class="post-header">
-                        <img src="${u.photoURL}" class="user-img">
-                        <div style="flex-grow:1">
-                            <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
-                            <div class="username">@${u.username}</div>
+                onSnapshot(doc(db, "users", p.uid), (uSnap) => {
+                    const u = uSnap.data();
+                    const isAdmin = auth.currentUser.email === adminEmail;
+                    const existingPost = document.getElementById('post-'+d.id);
+                    const html = `
+                        <div class="post-header">
+                            <img src="${u.photoURL}" class="user-img">
+                            <div style="flex-grow:1">
+                                <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
+                                <div class="username">@${u.username}</div>
+                            </div>
+                            ${isAdmin ? `<button class="icon-btn" onclick="toggleAdminMenu('${d.id}')"><i data-lucide="more-horizontal"></i></button>` : ''}
+                            <div id="menu-${d.id}" class="admin-menu hidden">
+                                <button onclick="deletePost('${d.id}')"><i data-lucide="trash-2"></i> Löschen</button>
+                                <button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Entverifizieren' : 'Verifizieren'}</button>
+                            </div>
                         </div>
-                        ${isAdmin ? `<button class="icon-btn" onclick="toggleAdminMenu('${d.id}')"><i data-lucide="more-horizontal"></i></button>` : ''}
-                        <div id="menu-${d.id}" class="admin-menu hidden">
-                            <button onclick="deletePost('${d.id}')"><i data-lucide="trash-2"></i> Post löschen</button>
-                            <button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Verif. aufheben' : 'Verifizieren'}</button>
-                            <button onclick="deleteUser('${p.uid}')" style="color:#ff4444"><i data-lucide="user-x"></i> User löschen</button>
-                        </div>
-                    </div>
-                    <div style="font-size:16px; line-height:1.5; white-space:pre-wrap;">${p.text}</div>
-                    ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
-                `;
-                feed.appendChild(postDiv);
-                lucide.createIcons();
+                        <div style="font-size:16px; white-space:pre-wrap;">${p.text}</div>
+                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}`;
+                    
+                    if (existingPost) { existingPost.innerHTML = html; } 
+                    else {
+                        const div = document.createElement('div'); div.id = 'post-'+d.id; div.className = 'post card'; div.innerHTML = html;
+                        feed.appendChild(div);
+                    }
+                    lucide.createIcons();
+                });
             });
         });
     }
 
     window.toggleAdminMenu = (id) => document.getElementById('menu-' + id).classList.toggle('hidden');
-    window.deletePost = (id) => confirm("Post löschen?") && deleteDoc(doc(db, "posts", id));
-    window.toggleVerify = async (uid, status) => { await updateDoc(doc(db, "users", uid), { verified: status }); };
-    window.deleteUser = async (uid) => { if(confirm("User löschen?")) await deleteDoc(doc(db, "users", uid)); };
+    window.deletePost = (id) => confirm("Löschen?") && deleteDoc(doc(db, "posts", id));
+    window.toggleVerify = async (uid, status) => await updateDoc(doc(db, "users", uid), { verified: status });
 
-    lucide.createIcons();
+    applyTheme();
 </script>
 </body>
 </html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusPost</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; }
+        nav { background: #fff; padding: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #ddd; }
+        .container { max-width: 600px; margin: 20px auto; }
+        .post-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .verified-icon { width: 16px; height: 16px; vertical-align: middle; margin-left: 5px; }
+        #login-btn { cursor: pointer; background: #4285F4; color: white; border: none; padding: 10px; border-radius: 4px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h2>NexusPost</h2>
+    <button id="login-btn">Mit Google anmelden</button>
+    <div id="user-info" class="hidden">
+        <span id="user-name"></span>
+        <button onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<div class="container">
+    <div id="post-area" class="post-card hidden">
+        <textarea id="post-text" placeholder="Was denkst du gerade?" style="width:100%; height:60px;"></textarea>
+        <input type="file" id="post-image" accept="image/*">
+        <button onclick="uploadPost()">Teilen</button>
+    </div>
+
+    <div id="feed"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // DEINE FIREBASE CONFIG HIER EINTRAGEN
+  const firebaseConfig = {
+  apiKey: "AIzaSyCefysePJNfZM_ng3wgiZvMXIQ0RcmFxJ0",
+  authDomain: "nexusanmeldung.firebaseapp.com",
+  projectId: "nexusanmeldung",
+  storageBucket: "nexusanmeldung.firebasestorage.app",
+  messagingSenderId: "1009526597247",
+  appId: "1:1009526597247:web:ca21d3f11ae1bb3bf2014a"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  const adminEmail = "boxenjob5@gmail.com";
+  const verifiedImage = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; // Drive-Direktlink Format
+
+  // Login Funktion
+  document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
+
+  // Auth Status prüfen
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById('login-btn').classList.add('hidden');
+      document.getElementById('user-info').classList.remove('hidden');
+      document.getElementById('post-area').classList.remove('hidden');
+      document.getElementById('user-name').innerText = user.displayName;
+    }
+  });
+
+  // Funktion zum Anzeigen der Posts (inkl. Verifizierung)
+  const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+  onSnapshot(q, (snapshot) => {
+    const feed = document.getElementById('feed');
+    feed.innerHTML = '';
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const isVerified = data.email === adminEmail; // Beispiel: Admin ist immer verifiziert
+      
+      feed.innerHTML += `
+        <div class="post-card">
+          <strong>${data.author}</strong>
+          ${isVerified ? `<img src="${verifiedImage}" class="verified-icon">` : ''}
+          <p>${data.text}</p>
+          ${data.img ? `<img src="${data.img}" style="max-width:100%">` : ''}
+        </div>
+      `;
+    });
+  });
+</script>
+</body>
+</html>

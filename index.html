@@ -7,26 +7,26 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --nexus: #1877f2; --bg: #f0f2f5; --card: rgba(255, 255, 255, 0.95);
-            --text: #1c1e21; --sub: #65676b; --border: #dddfe2; --header-bg: rgba(255, 255, 255, 0.75);
+            --nexus: #1877f2; --bg: #f0f2f5; --card: #ffffff;
+            --text: #1c1e21; --sub: #65676b; --border: #dddfe2; --header-bg: rgba(255, 255, 255, 0.8);
             --ios-input: #efeff0;
         }
         body.dark {
             --bg: #000000; --card: #1c1c1e; --text: #ffffff;
-            --sub: #8e8e93; --border: #38383a; --header-bg: rgba(28, 28, 30, 0.85);
+            --sub: #8e8e93; --border: #38383a; --header-bg: rgba(28, 28, 30, 0.8);
             --ios-input: #2c2c2e;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg); color: var(--text); margin: 0; 
-            padding-top: 60px; padding-bottom: 90px;
-            transition: background 0.3s ease;
+            padding-top: 60px; padding-bottom: 90px; transition: background 0.3s;
         }
 
-        /* Blur Effekt */
-        .blur-active #main-content, .blur-active #navbar, .blur-active #input-bar {
-            filter: blur(15px) brightness(0.8); pointer-events: none;
+        /* Blur Effekt für Hintergrund */
+        #app-wrapper.blur-active {
+            filter: blur(20px) brightness(0.8); pointer-events: none; transform: scale(0.98);
         }
+        #app-wrapper { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
         nav {
             position: fixed; top: 0; left: 0; right: 0; height: 50px;
@@ -37,85 +37,89 @@
 
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
 
-        /* Posts */
+        /* Card Design */
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
-        .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .display-name { font-weight: 600; font-size: 15px; }
-        .post-img { width: calc(100% + 30px); margin: 10px -15px 0 -15px; border-top: 0.5px solid var(--border); }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; position: relative; }
+        .user-img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; background: #ccc; }
+        .display-name { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 4px; }
+        .verified-badge { width: 16px; height: 16px; }
+        .post-img { width: calc(100% + 30px); margin: 12px -15px 0 -15px; border-top: 0.5px solid var(--border); }
 
         /* Actions */
-        .post-actions { display: flex; gap: 20px; margin-top: 12px; padding-top: 8px; border-top: 0.5px solid var(--border); }
-        .action-btn { background:none; border:none; color:var(--sub); display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; font-weight:600; padding: 5px; }
+        .post-actions { display: flex; gap: 20px; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+        .action-btn { background:none; border:none; color:var(--sub); display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; font-weight:600; }
         .action-btn.liked { color: #ff3b30; }
         .action-btn.liked i { fill: #ff3b30; }
 
         /* Kommentare */
-        .comments-area { margin-top: 10px; padding-top: 10px; display: none; }
-        .comment-item { font-size: 14px; margin-bottom: 6px; line-height: 1.4; }
-        .comment-item b { font-weight: 600; margin-right: 5px; }
-        .comment-input-wrapper { display: flex; gap: 8px; margin-top: 10px; }
-        .comment-input { flex-grow: 1; background: var(--ios-input); border: none; border-radius: 15px; padding: 8px 12px; color: var(--text); font-size: 14px; outline: none; }
+        .comments-section { margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--border); font-size: 14px; }
+        .comment-item { margin-bottom: 4px; line-height: 1.4; }
+        .comment-item b { margin-right: 6px; }
+        .comment-input-box { display: flex; gap: 8px; margin-top: 12px; }
+        .comment-input { flex-grow: 1; background: var(--ios-input); border: none; border-radius: 18px; padding: 8px 15px; color: var(--text); outline: none; font-size: 14px; }
 
-        /* Settings Overlay */
-        #settings-screen {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 2000;
+        /* Admin Menu Overlay */
+        .admin-menu {
+            position: absolute; top: 40px; right: 0; background: var(--card); 
+            border: 0.5px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 100;
         }
+        .admin-menu button { display: block; width: 100%; padding: 10px 15px; background: none; border: none; color: var(--text); text-align: left; cursor: pointer; font-size: 13px; }
 
+        /* UI Elements */
         .ios-footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--header-bg); backdrop-filter: blur(20px); border-top: 0.5px solid var(--border); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); z-index: 1000; }
         .ios-post-box { display: flex; align-items: flex-end; gap: 12px; max-width: 580px; margin: 0 auto; }
         .ios-input-container { flex-grow: 1; background: var(--ios-input); border-radius: 20px; padding: 8px 15px; min-height: 20px; max-height: 120px; overflow-y: auto; color: var(--text); outline: none; }
-        .send-btn { background: var(--nexus); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .send-btn-circle { background: var(--nexus); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="light">
 
-<nav id="navbar">
-    <div style="font-size: 20px; font-weight: 700;">NexusPost</div>
-    <div style="display: flex; gap: 15px;">
-        <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text);"><i data-lucide="moon" id="theme-icon"></i></button>
-        <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text);"><i data-lucide="settings"></i></button>
+<div id="app-wrapper">
+    <nav id="navbar">
+        <div style="font-size: 20px; font-weight: 800;">NexusPost</div>
+        <div style="display: flex; gap: 18px;">
+            <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="moon"></i></button>
+            <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="settings"></i></button>
+        </div>
+    </nav>
+
+    <div id="login-screen" style="text-align:center; padding-top: 150px;">
+        <h1 style="color: var(--nexus); font-size: 45px; font-weight: 800;">NexusPost</h1>
+        <button id="btn-login" style="background:var(--nexus); color:white; border:none; padding:15px 40px; border-radius:30px; font-weight:700; cursor:pointer;">Mit Google anmelden</button>
     </div>
-</nav>
 
-<div id="login-screen" style="text-align:center; padding-top: 150px;">
-    <h1 style="color: var(--nexus); font-size: 45px;">NexusPost</h1>
-    <button id="btn-login" style="background:var(--nexus); color:white; border:none; padding:14px 40px; border-radius:25px; font-weight:700;">Mit Google anmelden</button>
-</div>
+    <main id="main-content" class="container hidden">
+        <div id="feed"></div>
+    </main>
 
-<main id="main-content" class="container hidden">
-    <div id="feed"></div>
-</main>
-
-<div id="input-bar" class="ios-footer hidden">
-    <div class="ios-post-box">
-        <label style="color: var(--nexus); cursor:pointer;">
-            <i data-lucide="plus-circle"></i>
-            <input type="file" id="image-input" accept="image/*" class="hidden" onchange="console.log('Bild gewählt')">
-        </label>
-        <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
-        <button id="btn-share" class="send-btn"><i data-lucide="arrow-up"></i></button>
+    <div id="input-bar" class="ios-footer hidden">
+        <div class="ios-post-box">
+            <label style="color: var(--nexus); cursor:pointer; padding-bottom: 4px;">
+                <i data-lucide="image"></i>
+                <input type="file" id="image-input" accept="image/*" class="hidden">
+            </label>
+            <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
+            <button id="btn-share" class="send-btn-circle"><i data-lucide="arrow-up"></i></button>
+        </div>
     </div>
 </div>
 
 <div id="settings-screen" class="hidden">
-    <div class="card container" style="width: 85%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-        <h2>Profil bearbeiten</h2>
-        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);">
-        <input type="text" id="edit-username" placeholder="Username" style="width:100%; padding:10px; margin-bottom:20px; border-radius:8px; border:1px solid var(--border);">
-        <button id="btn-save-settings" style="width:100%; background:var(--nexus); color:white; border:none; padding:12px; border-radius:10px; font-weight:700;">Speichern</button>
-        <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--sub); margin-top:10px;">Abbrechen</button>
+    <div class="card container" style="width: 85%; max-width: 380px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+        <h2 style="margin-top:0;">Einstellungen</h2>
+        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:10px; margin-bottom:10px; box-sizing:border-box;">
+        <input type="text" id="edit-username" placeholder="Username" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:10px; margin-bottom:20px; box-sizing:border-box;">
+        <button id="btn-save-settings" style="width:100%; background:var(--nexus); color:white; border:none; padding:14px; border-radius:12px; font-weight:700; cursor:pointer;">Speichern</button>
+        <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--sub); margin-top:10px; cursor:pointer;">Schließen</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
@@ -131,36 +135,39 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
+    const adminEmail = "boxenjob5@gmail.com";
+    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; // Dein gewünschtes Icon
 
     let userData = null;
 
-    // Theme & Blur
     window.toggleDarkMode = () => {
-        const next = document.body.className === 'dark' ? 'light' : 'dark';
-        localStorage.setItem('theme', next);
+        const next = document.body.classList.contains('dark') ? 'light' : 'dark';
         document.body.className = next;
+        localStorage.setItem('theme', next);
         lucide.createIcons();
     };
 
     window.toggleSettings = () => {
-        const s = document.getElementById('settings-screen');
-        s.classList.toggle('hidden');
-        document.body.classList.toggle('blur-active');
-        if(!s.classList.contains('hidden')) {
+        const modal = document.getElementById('settings-screen');
+        const wrapper = document.getElementById('app-wrapper');
+        modal.classList.toggle('hidden');
+        wrapper.classList.toggle('blur-active');
+        if(!modal.classList.contains('hidden')) {
             document.getElementById('edit-displayname').value = userData.displayname;
             document.getElementById('edit-username').value = userData.username;
         }
     };
 
-    // Auth
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            const uDoc = await getDoc(doc(db, "users", user.uid));
-            if (uDoc.exists()) { userData = uDoc.data(); } 
-            else {
-                userData = { username: "user"+Math.floor(Math.random()*1000), displayname: user.displayName, photoURL: user.photoURL, uid: user.uid };
-                await setDoc(doc(db, "users", user.uid), userData);
+            const uRef = doc(db, "users", user.uid);
+            const uSnap = await getDoc(uRef);
+            if (uSnap.exists()) {
+                userData = uSnap.data();
+            } else {
+                userData = { uid: user.uid, displayname: user.displayName, username: "user_"+Math.floor(Math.random()*999), photoURL: user.photoURL, verified: (user.email === adminEmail) };
+                await setDoc(uRef, userData);
             }
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
@@ -169,7 +176,6 @@
         }
     });
 
-    // Feed & Actions
     function loadFeed() {
         const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
         onSnapshot(q, (snap) => {
@@ -178,69 +184,96 @@
             snap.forEach((postDoc) => {
                 const p = postDoc.data();
                 const pid = postDoc.id;
-                const likes = p.likes || [];
-                const comments = p.comments || [];
-                const hasLiked = likes.includes(auth.currentUser.uid);
+                
+                // Wir holen die aktuellsten User-Daten für den Badge
+                onSnapshot(doc(db, "users", p.uid), (uSnap) => {
+                    const u = uSnap.data() || {};
+                    const likes = p.likes || [];
+                    const comments = p.comments || [];
+                    const hasLiked = likes.includes(auth.currentUser.uid);
+                    const isAdmin = auth.currentUser.email === adminEmail;
 
-                const postEl = document.createElement('div');
-                postEl.className = 'card';
-                postEl.innerHTML = `
-                    <div class="post-header">
-                        <img src="${p.userPhoto || ''}" class="user-img">
-                        <div>
-                            <div class="display-name">${p.displayName || 'User'}</div>
-                            <div style="font-size:12px; color:var(--sub);">@${p.username || 'anon'}</div>
+                    let postCard = document.getElementById('card-' + pid);
+                    if(!postCard) {
+                        postCard = document.createElement('div');
+                        postCard.id = 'card-' + pid;
+                        postCard.className = 'card';
+                        feed.appendChild(postCard);
+                    }
+
+                    postCard.innerHTML = `
+                        <div class="post-header">
+                            <img src="${u.photoURL}" class="user-img">
+                            <div style="flex-grow:1">
+                                <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
+                                <div style="font-size:12px; color:var(--sub);">@${u.username}</div>
+                            </div>
+                            ${isAdmin ? `<button class="admin-trigger" data-id="${pid}" style="background:none; border:none; color:var(--sub);"><i data-lucide="more-horizontal"></i></button>` : ''}
+                            <div id="menu-${pid}" class="admin-menu hidden">
+                                <button class="delete-post" data-id="${pid}">Löschen</button>
+                                <button class="verify-user" data-uid="${p.uid}" data-status="${!u.verified}">${u.verified ? 'Ent-verifizieren' : 'Verifizieren'}</button>
+                            </div>
                         </div>
-                    </div>
-                    <div style="white-space:pre-wrap;">${p.text}</div>
-                    ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
-                    
-                    <div class="post-actions">
-                        <button class="action-btn ${hasLiked ? 'liked' : ''}" id="like-${pid}">
-                            <i data-lucide="heart"></i> <span>${likes.length}</span>
-                        </button>
-                        <button class="action-btn" onclick="document.getElementById('comments-${pid}').style.display = 'block'">
-                            <i data-lucide="message-circle"></i> <span>${comments.length}</span>
-                        </button>
-                    </div>
-
-                    <div class="comments-area" id="comments-${pid}">
-                        <div id="list-${pid}">
-                            ${comments.map(c => `<div class="comment-item"><b>@${c.user}</b>${c.text}</div>`).join('')}
+                        <div style="white-space:pre-wrap; font-size:15px;">${p.text}</div>
+                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
+                        
+                        <div class="post-actions">
+                            <button class="action-btn like-trigger ${hasLiked ? 'liked' : ''}" data-id="${pid}" data-liked="${hasLiked}">
+                                <i data-lucide="heart"></i> <span>${likes.length}</span>
+                            </button>
+                            <button class="action-btn comment-toggle" data-id="${pid}">
+                                <i data-lucide="message-circle"></i> <span>${comments.length}</span>
+                            </button>
                         </div>
-                        <div class="comment-input-wrapper">
-                            <input type="text" class="comment-input" id="input-${pid}" placeholder="Kommentieren...">
-                            <button class="send-btn" id="send-comm-${pid}"><i data-lucide="send" style="width:14px;"></i></button>
+
+                        <div class="comments-section hidden" id="section-${pid}">
+                            <div id="list-${pid}">${comments.map(c => `<div class="comment-item"><b>@${c.user}</b>${c.text}</div>`).join('')}</div>
+                            <div class="comment-input-box">
+                                <input type="text" class="comment-input" id="input-${pid}" placeholder="Kommentar...">
+                                <button class="send-btn-circle comm-send-btn" data-id="${pid}"><i data-lucide="send" style="width:14px;"></i></button>
+                            </div>
                         </div>
-                    </div>
-                `;
-                feed.appendChild(postEl);
-
-                // Like Event
-                document.getElementById(`like-${pid}`).onclick = async () => {
-                    const ref = doc(db, "posts", pid);
-                    await updateDoc(ref, { likes: hasLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) });
-                };
-
-                // Comment Event
-                document.getElementById(`send-comm-${pid}`).onclick = async () => {
-                    const inp = document.getElementById(`input-${pid}`);
-                    if(!inp.value.trim()) return;
-                    await updateDoc(doc(db, "posts", pid), {
-                        comments: arrayUnion({ user: userData.username, text: inp.value, time: Date.now() })
-                    });
-                    inp.value = '';
-                };
+                    `;
+                    lucide.createIcons();
+                });
             });
-            lucide.createIcons();
         });
     }
 
-    // Share Post
+    // --- GLOBALER HANDLER FÜR ACTIONS ---
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('button');
+        if(!btn) return;
+
+        const pid = btn.dataset.id;
+
+        if(btn.classList.contains('like-trigger')) {
+            const liked = btn.dataset.liked === 'true';
+            await updateDoc(doc(db, "posts", pid), { likes: liked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) });
+        }
+        if(btn.classList.contains('comment-toggle')) {
+            document.getElementById('section-' + pid).classList.toggle('hidden');
+        }
+        if(btn.classList.contains('comm-send-btn')) {
+            const val = document.getElementById('input-' + pid).value;
+            if(!val.trim()) return;
+            await updateDoc(doc(db, "posts", pid), { comments: arrayUnion({ user: userData.username, text: val, time: Date.now() }) });
+        }
+        if(btn.classList.contains('admin-trigger')) {
+            document.getElementById('menu-' + pid).classList.toggle('hidden');
+        }
+        if(btn.classList.contains('delete-post')) {
+            if(confirm("Löschen?")) await deleteDoc(doc(db, "posts", pid));
+        }
+        if(btn.classList.contains('verify-user')) {
+            await updateDoc(doc(db, "users", btn.dataset.uid), { verified: btn.dataset.status === 'true' });
+        }
+    });
+
     document.getElementById('btn-share').onclick = async () => {
-        const text = document.getElementById('post-input').innerText;
+        const input = document.getElementById('post-input');
         const file = document.getElementById('image-input').files[0];
-        if(!text.trim() && !file) return;
+        if(!input.innerText.trim() && !file) return;
 
         let imageUrl = null;
         if(file) {
@@ -250,21 +283,21 @@
         }
 
         await addDoc(collection(db, "posts"), {
-            text, imageUrl, uid: auth.currentUser.uid,
-            username: userData.username, displayName: userData.displayname, userPhoto: userData.photoURL,
+            text: input.innerText, imageUrl, uid: auth.currentUser.uid,
             timestamp: serverTimestamp(), likes: [], comments: []
         });
-        document.getElementById('post-input').innerText = '';
+        input.innerText = ''; document.getElementById('image-input').value = '';
     };
 
-    // Save Settings
     document.getElementById('btn-save-settings').onclick = async () => {
-        userData.displayname = document.getElementById('edit-displayname').value;
-        userData.username = document.getElementById('edit-username').value;
-        await updateDoc(doc(db, "users", auth.currentUser.uid), userData);
+        const nDisp = document.getElementById('edit-displayname').value;
+        const nUser = document.getElementById('edit-username').value;
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { displayname: nDisp, username: nUser });
+        userData.displayname = nDisp; userData.username = nUser;
         toggleSettings();
     };
 
+    if(localStorage.getItem('theme') === 'dark') document.body.className = 'dark';
     lucide.createIcons();
 </script>
 </body>

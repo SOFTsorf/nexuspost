@@ -2,85 +2,214 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NexusPost Pro</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root { 
-            --nexus: #1877f2; --bg: #f0f2f5; --card: #ffffff; --text: #050505; --sub: #65676b;
+        :root {
+            --nexus: #1877f2;
+            --bg: #f0f2f5;
+            --card: rgba(255, 255, 255, 0.9);
+            --text: #1c1e21;
+            --sub: #65676b;
+            --border: #dddfe2;
+            --header-bg: rgba(255, 255, 255, 0.7);
         }
-        body.dark { 
-            --bg: #18191a; --card: #242526; --text: #e4e6eb; --sub: #b0b3b8;
-        }
-        body { font-family: 'Segoe UI', system-ui; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
-        .hidden { display: none !important; }
-        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
-        
-        /* Navbar */
-        nav { background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); sticky: top; z-index: 100; }
-        
-        /* Cards */
-        .card { background: var(--card); padding: 15px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); margin-bottom: 20px; }
-        .btn { background: var(--nexus); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-sec { background: #e4e6eb; color: #050505; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
-        
-        /* Posts */
-        .post { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; position: relative; }
-        .user-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-        .post-img { width: calc(100% + 30px); margin-left: -15px; margin-top: 10px; max-height: 500px; object-fit: cover; }
-        
-        /* Admin Menu */
-        .admin-dots { cursor: pointer; font-size: 20px; padding: 5px; color: var(--sub); }
-        .admin-menu { position: absolute; right: 15px; top: 45px; background: var(--card); box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; z-index: 10; width: 180px; overflow: hidden; }
-        .admin-menu button { width: 100%; border: none; background: none; padding: 10px; text-align: left; cursor: pointer; color: var(--text); border-bottom: 1px solid #eee; }
-        .admin-menu button:hover { background: var(--nexus); color: white; }
 
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; background: var(--bg); color: var(--text); box-sizing: border-box; }
-        .verified-badge { color: var(--nexus); margin-left: 5px; font-size: 14px; }
+        body.dark {
+            --bg: #18191a;
+            --card: rgba(36, 37, 38, 0.9);
+            --text: #e4e6eb;
+            --sub: #b0b3b8;
+            --border: #3e4042;
+            --header-bg: rgba(24, 25, 26, 0.7);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding-top: 70px;
+            transition: background 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Blur Header */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--header-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .logo { font-size: 22px; font-weight: 800; color: var(--nexus); letter-spacing: -0.5px; }
+
+        .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
+
+        /* Modern Cards */
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 17px;
+            resize: none;
+            outline: none;
+            padding: 10px 0;
+        }
+
+        .btn {
+            background: var(--nexus);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--sub);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .icon-btn:hover { background: rgba(0,0,0,0.05); }
+
+        /* Post Styles */
+        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; position: relative; }
+        .user-img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .display-name { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 4px; }
+        .username { color: var(--sub); font-size: 13px; font-weight: 400; }
+        .verified-badge { color: var(--nexus); fill: var(--nexus); }
+
+        .post-img { 
+            width: calc(100% + 32px); 
+            margin: 12px -16px -16px -16px; 
+            max-height: 500px; 
+            object-fit: cover; 
+            border-bottom-left-radius: 16px; 
+            border-bottom-right-radius: 16px;
+        }
+
+        /* Admin Menu Overlay */
+        .admin-menu {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 200px;
+            overflow: hidden;
+        }
+        .admin-menu button {
+            width: 100%;
+            padding: 12px 16px;
+            text-align: left;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .admin-menu button:hover { background: rgba(0,0,0,0.05); }
+
+        .hidden { display: none !important; }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {
+            .container { padding: 0 8px; }
+            .post-img { width: calc(100% + 32px); }
+        }
     </style>
 </head>
 <body>
 
 <nav id="navbar" class="hidden">
-    <b style="color: var(--nexus); font-size: 24px;">NexusPost</b>
-    <div>
-        <button onclick="toggleSettings()" class="btn-sec">⚙️</button>
+    <div class="logo">NexusPost</div>
+    <div style="display: flex; gap: 8px;">
+        <button class="icon-btn" onclick="toggleDarkMode()"><i data-lucide="moon"></i></button>
+        <button class="icon-btn" onclick="toggleSettings()"><i data-lucide="settings"></i></button>
     </div>
 </nav>
 
-<div id="login-screen" style="text-align:center; margin-top:150px;">
-    <h1 style="color: var(--nexus); font-size: 3.5rem;">NexusPost</h1>
-    <button id="btn-login" class="btn" style="width:250px; font-size:1.1rem;">Mit Google anmelden</button>
+<div id="login-screen" style="text-align:center; padding-top: 100px;">
+    <h1 style="color: var(--nexus); font-size: 48px; margin-bottom: 8px;">NexusPost</h1>
+    <p style="color: var(--sub); margin-bottom: 32px;">Connect with the world.</p>
+    <button id="btn-login" class="btn" style="margin: 0 auto; padding: 14px 28px;">
+        <i data-lucide="log-in"></i> Mit Google anmelden
+    </button>
 </div>
 
-<div id="main-content" class="container hidden">
+<main id="main-content" class="container hidden">
     <div class="card">
-        <textarea id="post-input" placeholder="Teile etwas mit der Welt..."></textarea>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <input type="file" id="image-input" accept="image/*" style="width:auto;">
-            <button id="btn-share" class="btn" style="width:100px;">Posten</button>
+        <textarea id="post-input" rows="3" placeholder="Was gibt's Neues?"></textarea>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); pt: 12px; margin-top: 8px;">
+            <label style="cursor: pointer; color: var(--nexus);">
+                <i data-lucide="image"></i>
+                <input type="file" id="image-input" accept="image/*" class="hidden">
+            </label>
+            <button id="btn-share" class="btn">Teilen</button>
         </div>
     </div>
+
     <div id="feed"></div>
-</div>
+</main>
 
 <div id="settings-screen" class="container hidden">
     <div class="card">
-        <h2>Einstellungen</h2>
-        <button onclick="toggleDarkMode()" class="btn-sec" style="margin-bottom:20px;">Tag/Nacht Modus wechseln</button>
+        <div style="display:flex; align-items:center; gap:10px; mb:20px;">
+            <button class="icon-btn" onclick="toggleSettings()"><i data-lucide="arrow-left"></i></button>
+            <h2 style="margin:0">Einstellungen</h2>
+        </div>
         
-        <hr>
-        <h3>Profil bearbeiten</h3>
-        <label>Anzeigename ändern:</label>
-        <input type="text" id="edit-displayname">
-        <label>Benutzername (@):</label>
-        <input type="text" id="edit-username">
-        
-        <label>Profilbild ändern:</label>
-        <input type="file" id="edit-avatar" accept="image/*">
-        
-        <button id="btn-save-settings" class="btn" style="margin-top:10px;">Änderungen speichern</button>
-        <p id="settings-msg" style="font-size:12px; margin-top:10px;"></p>
-        <button onclick="toggleSettings()" class="btn-sec" style="width:100%; margin-top:10px;">Zurück zum Feed</button>
+        <div style="margin-top:20px;">
+            <label style="font-size:13px; color:var(--sub)">Anzeigename</label>
+            <input type="text" id="edit-displayname" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
+            
+            <label style="font-size:13px; color:var(--sub)">Benutzername (@)</label>
+            <input type="text" id="edit-username" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
+            
+            <label style="font-size:13px; color:var(--sub)">Profilbild ändern</label>
+            <input type="file" id="edit-avatar" accept="image/*" style="display:block; margin-top:5px;">
+            
+            <button id="btn-save-settings" class="btn" style="width:100%; margin-top:20px; justify-content:center;">
+                <i data-lucide="save"></i> Änderungen speichern
+            </button>
+            <p id="settings-msg" style="text-align:center; font-size:14px;"></p>
+        </div>
     </div>
 </div>
 
@@ -107,100 +236,59 @@
 
     let userData = null;
 
-    // --- AUTH & LOGIN ---
+    // UI Logik
+    window.toggleDarkMode = () => {
+        document.body.classList.toggle('dark');
+        lucide.createIcons();
+    };
+
+    window.toggleSettings = () => {
+        document.getElementById('main-content').classList.toggle('hidden');
+        document.getElementById('settings-screen').classList.toggle('hidden');
+        document.getElementById('edit-displayname').value = userData.displayname;
+        document.getElementById('edit-username').value = userData.username;
+        lucide.createIcons();
+    };
+
+    // Firebase Auth
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('navbar').classList.remove('hidden');
             const uDoc = await getDoc(doc(db, "users", user.uid));
             if (uDoc.exists()) {
                 userData = uDoc.data();
-                if(!userData.changeLog) userData.changeLog = [];
                 showApp();
             } else {
-                // Erster Login: Standard-Profil
-                const defaultData = { 
-                    username: "user_" + Math.floor(Math.random()*10000), 
+                userData = { 
+                    username: "user_" + Math.floor(Math.random()*1000), 
                     displayname: user.displayName, 
                     photoURL: user.photoURL, 
                     email: user.email,
-                    verified: false,
+                    verified: (user.email === adminEmail),
                     changeLog: [] 
                 };
-                await setDoc(doc(db, "users", user.uid), defaultData);
-                userData = defaultData;
+                await setDoc(doc(db, "users", user.uid), userData);
                 showApp();
             }
         }
     });
 
     function showApp() {
-        document.getElementById('navbar').classList.remove('hidden');
         document.getElementById('main-content').classList.remove('hidden');
         loadFeed();
+        lucide.createIcons();
     }
 
-    // --- SETTINGS LOGIC ---
-    window.toggleSettings = () => {
-        document.getElementById('main-content').classList.toggle('hidden');
-        document.getElementById('settings-screen').classList.toggle('hidden');
-        document.getElementById('edit-displayname').value = userData.displayname;
-        document.getElementById('edit-username').value = userData.username;
-    };
-
-    window.toggleDarkMode = () => document.body.classList.toggle('dark');
-
-    document.getElementById('btn-save-settings').onclick = async () => {
-        const newDisp = document.getElementById('edit-displayname').value.trim();
-        const newUser = document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
-        const avatarFile = document.getElementById('edit-avatar').files[0];
-        const msg = document.getElementById('settings-msg');
-        
-        const now = Date.now();
-        const twoWeeks = 14 * 24 * 60 * 60 * 1000;
-        
-        // Namensänderungs-Logik (außer Admin)
-        if (auth.currentUser.email !== adminEmail) {
-            const recentChanges = userData.changeLog.filter(t => (now - t) < twoWeeks);
-            if (recentChanges.length >= 2 && (newDisp !== userData.displayname || newUser !== userData.username)) {
-                msg.innerText = "Du kannst deinen Namen nur 2 Mal alle 14 Tage ändern!";
-                msg.style.color = "red";
-                return;
-            }
-            if (newDisp !== userData.displayname || newUser !== userData.username) {
-                userData.changeLog.push(now);
-            }
-        }
-
-        let newAvatarURL = userData.photoURL;
-        if (avatarFile) {
-            const formData = new FormData();
-            formData.append("image", avatarFile);
-            const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
-            const json = await res.json();
-            newAvatarURL = json.data.url;
-        }
-
-        userData.displayname = newDisp;
-        userData.username = newUser;
-        userData.photoURL = newAvatarURL;
-
-        await updateDoc(doc(db, "users", auth.currentUser.uid), userData);
-        msg.innerText = "Profil aktualisiert!";
-        msg.style.color = "green";
-    };
-
-    // --- FEED & POSTS ---
+    // Posten
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').value;
         const file = document.getElementById('image-input').files[0];
-        const btn = document.getElementById('btn-share');
         if (!text.trim() && !file) return;
 
-        btn.disabled = true;
         let imageUrl = null;
-
         if (file) {
             const formData = new FormData();
             formData.append("image", file);
@@ -210,53 +298,49 @@
         }
 
         await addDoc(collection(db, "posts"), {
-            text, imageUrl, uid: auth.currentUser.uid, 
-            timestamp: serverTimestamp()
+            text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp()
         });
-
         document.getElementById('post-input').value = "";
         document.getElementById('image-input').value = "";
-        btn.disabled = false;
     };
 
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
             feed.innerHTML = '';
-            snap.forEach(async (postDoc) => {
-                const p = postDoc.data();
-                // User-Daten für jeden Post live laden (wegen Verifizierung/Bildern)
+            snap.forEach(async (d) => {
+                const p = d.data();
                 const uSnap = await getDoc(doc(db, "users", p.uid));
                 const u = uSnap.exists() ? uSnap.data() : {};
-
                 const isAdmin = auth.currentUser.email === adminEmail;
-                
-                const postHTML = `
-                    <div class="post">
-                        <div style="display:flex; align-items:center;">
-                            <img src="${u.photoURL || ''}" class="user-img">
-                            <div style="flex-grow:1">
-                                <b>${u.displayname || 'User'}</b> ${u.verified ? '<span class="verified-badge">✔</span>' : ''}<br>
-                                <span style="color:var(--sub); font-size:13px;">@${u.username}</span>
-                            </div>
-                            ${isAdmin ? `<div class="admin-dots" onclick="toggleAdminMenu('${postDoc.id}')">⋮</div>` : ''}
+
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post card';
+                postDiv.innerHTML = `
+                    <div class="post-header">
+                        <img src="${u.photoURL}" class="user-img">
+                        <div style="flex-grow:1">
+                            <div class="display-name">${u.displayname} ${u.verified ? '<i data-lucide="badge-check" class="verified-badge"></i>' : ''}</div>
+                            <div class="username">@${u.username}</div>
                         </div>
-                        <div id="menu-${postDoc.id}" class="admin-menu hidden">
-                            <button onclick="deletePost('${postDoc.id}')">Post löschen</button>
-                            <button onclick="toggleVerify('${p.uid}', ${!u.verified})">${u.verified ? 'Verif. aufheben' : 'Verifizieren'}</button>
-                            <button onclick="deleteUser('${p.uid}')" style="color:red;">Benutzer löschen</button>
+                        ${isAdmin ? `<button class="icon-btn" onclick="toggleAdminMenu('${d.id}')"><i data-lucide="more-horizontal"></i></button>` : ''}
+                        <div id="menu-${d.id}" class="admin-menu hidden">
+                            <button onclick="deletePost('${d.id}')"><i data-lucide="trash-2"></i> Post löschen</button>
+                            <button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Entverifizieren' : 'Verifizieren'}</button>
+                            <button onclick="deleteUser('${p.uid}')" style="color:#ff4444"><i data-lucide="user-x"></i> User löschen</button>
                         </div>
-                        <p style="margin-top:10px; white-space:pre-wrap;">${p.text}</p>
-                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
-                    </div>`;
-                feed.innerHTML += postHTML;
+                    </div>
+                    <div style="font-size:16px; line-height:1.5;">${p.text}</div>
+                    ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
+                `;
+                feed.appendChild(postDiv);
+                lucide.createIcons();
             });
         });
     }
 
-    // --- ADMIN ACTIONS ---
+    // Admin Funktionen
     window.toggleAdminMenu = (id) => {
-        document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden') });
         document.getElementById('menu-' + id).classList.toggle('hidden');
     };
 
@@ -264,16 +348,14 @@
     
     window.toggleVerify = async (uid, status) => {
         await updateDoc(doc(db, "users", uid), { verified: status });
-        alert("Status geändert!");
     };
 
     window.deleteUser = async (uid) => {
-        if(confirm("Diesen Benutzer und alle seine Daten komplett löschen?")) {
-            await deleteDoc(doc(db, "users", uid));
-            alert("Benutzer gelöscht.");
-        }
+        if(confirm("Benutzer löschen?")) await deleteDoc(doc(db, "users", uid));
     };
 
+    // Icons initialisieren
+    lucide.createIcons();
 </script>
 </body>
 </html>

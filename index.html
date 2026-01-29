@@ -91,6 +91,8 @@
             gap: 6px;
         }
 
+        .btn-sec { background: var(--border); color: var(--text); border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+
         .icon-btn {
             background: none;
             border: none;
@@ -107,7 +109,7 @@
         .user-img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
         .display-name { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 4px; }
         .username { color: var(--sub); font-size: 13px; font-weight: 400; }
-        .verified-badge { color: var(--nexus); fill: var(--nexus); }
+        .verified-badge { width: 18px; height: 18px; vertical-align: middle; }
 
         .post-img { 
             width: calc(100% + 32px); 
@@ -118,7 +120,7 @@
             border-bottom-right-radius: 16px;
         }
 
-        /* Admin Menu Overlay */
+        /* Admin Menu */
         .admin-menu {
             position: absolute;
             top: 40px;
@@ -148,10 +150,8 @@
 
         .hidden { display: none !important; }
 
-        /* Mobile specific adjustments */
         @media (max-width: 480px) {
             .container { padding: 0 8px; }
-            .post-img { width: calc(100% + 32px); }
         }
     </style>
 </head>
@@ -176,7 +176,7 @@
 <main id="main-content" class="container hidden">
     <div class="card">
         <textarea id="post-input" rows="3" placeholder="Was gibt's Neues?"></textarea>
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); pt: 12px; margin-top: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 8px;">
             <label style="cursor: pointer; color: var(--nexus);">
                 <i data-lucide="image"></i>
                 <input type="file" id="image-input" accept="image/*" class="hidden">
@@ -184,32 +184,29 @@
             <button id="btn-share" class="btn">Teilen</button>
         </div>
     </div>
-
     <div id="feed"></div>
 </main>
 
 <div id="settings-screen" class="container hidden">
     <div class="card">
-        <div style="display:flex; align-items:center; gap:10px; mb:20px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
             <button class="icon-btn" onclick="toggleSettings()"><i data-lucide="arrow-left"></i></button>
             <h2 style="margin:0">Einstellungen</h2>
         </div>
         
-        <div style="margin-top:20px;">
-            <label style="font-size:13px; color:var(--sub)">Anzeigename</label>
-            <input type="text" id="edit-displayname" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
-            
-            <label style="font-size:13px; color:var(--sub)">Benutzername (@)</label>
-            <input type="text" id="edit-username" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
-            
-            <label style="font-size:13px; color:var(--sub)">Profilbild ändern</label>
-            <input type="file" id="edit-avatar" accept="image/*" style="display:block; margin-top:5px;">
-            
-            <button id="btn-save-settings" class="btn" style="width:100%; margin-top:20px; justify-content:center;">
-                <i data-lucide="save"></i> Änderungen speichern
-            </button>
-            <p id="settings-msg" style="text-align:center; font-size:14px;"></p>
-        </div>
+        <label style="font-size:13px; color:var(--sub)">Anzeigename</label>
+        <input type="text" id="edit-displayname" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
+        
+        <label style="font-size:13px; color:var(--sub)">Benutzername (@)</label>
+        <input type="text" id="edit-username" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text); margin-bottom:15px;">
+        
+        <label style="font-size:13px; color:var(--sub)">Profilbild ändern</label>
+        <input type="file" id="edit-avatar" accept="image/*" style="display:block; margin-top:5px; margin-bottom:15px;">
+        
+        <button id="btn-save-settings" class="btn" style="width:100%; justify-content:center;">
+            <i data-lucide="save"></i> Änderungen speichern
+        </button>
+        <p id="settings-msg" style="text-align:center; font-size:14px;"></p>
     </div>
 </div>
 
@@ -233,15 +230,11 @@
     const provider = new GoogleAuthProvider();
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
     const adminEmail = "boxenjob5@gmail.com";
+    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; // Dein Drive Icon via GoogleUserContent
 
     let userData = null;
 
-    // UI Logik
-    window.toggleDarkMode = () => {
-        document.body.classList.toggle('dark');
-        lucide.createIcons();
-    };
-
+    window.toggleDarkMode = () => { document.body.classList.toggle('dark'); lucide.createIcons(); };
     window.toggleSettings = () => {
         document.getElementById('main-content').classList.toggle('hidden');
         document.getElementById('settings-screen').classList.toggle('hidden');
@@ -250,7 +243,6 @@
         lucide.createIcons();
     };
 
-    // Firebase Auth
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (user) => {
@@ -260,6 +252,7 @@
             const uDoc = await getDoc(doc(db, "users", user.uid));
             if (uDoc.exists()) {
                 userData = uDoc.data();
+                if(!userData.changeLog) userData.changeLog = [];
                 showApp();
             } else {
                 userData = { 
@@ -282,12 +275,47 @@
         lucide.createIcons();
     }
 
-    // Posten
+    document.getElementById('btn-save-settings').onclick = async () => {
+        const newDisp = document.getElementById('edit-displayname').value.trim();
+        const newUser = document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+        const avatarFile = document.getElementById('edit-avatar').files[0];
+        const msg = document.getElementById('settings-msg');
+        
+        if (auth.currentUser.email !== adminEmail) {
+            const now = Date.now();
+            const twoWeeks = 14 * 24 * 60 * 60 * 1000;
+            const recentChanges = userData.changeLog.filter(t => (now - t) < twoWeeks);
+            if (recentChanges.length >= 2 && (newDisp !== userData.displayname || newUser !== userData.username)) {
+                msg.innerText = "Maximal 2 Namensänderungen alle 14 Tage!";
+                msg.style.color = "red";
+                return;
+            }
+            if (newDisp !== userData.displayname || newUser !== userData.username) userData.changeLog.push(now);
+        }
+
+        let newAvatarURL = userData.photoURL;
+        if (avatarFile) {
+            const formData = new FormData();
+            formData.append("image", avatarFile);
+            const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
+            const json = await res.json();
+            newAvatarURL = json.data.url;
+        }
+
+        userData.displayname = newDisp;
+        userData.username = newUser;
+        userData.photoURL = newAvatarURL;
+        await updateDoc(doc(db, "users", auth.currentUser.uid), userData);
+        msg.innerText = "Gespeichert!"; msg.style.color = "green";
+    };
+
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').value;
         const file = document.getElementById('image-input').files[0];
+        const btn = document.getElementById('btn-share');
         if (!text.trim() && !file) return;
 
+        btn.disabled = true;
         let imageUrl = null;
         if (file) {
             const formData = new FormData();
@@ -297,11 +325,9 @@
             imageUrl = json.data.url;
         }
 
-        await addDoc(collection(db, "posts"), {
-            text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp()
-        });
-        document.getElementById('post-input').value = "";
-        document.getElementById('image-input').value = "";
+        await addDoc(collection(db, "posts"), { text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp() });
+        document.getElementById('post-input').value = ""; document.getElementById('image-input').value = "";
+        btn.disabled = false;
     };
 
     function loadFeed() {
@@ -320,17 +346,17 @@
                     <div class="post-header">
                         <img src="${u.photoURL}" class="user-img">
                         <div style="flex-grow:1">
-                            <div class="display-name">${u.displayname} ${u.verified ? '<i data-lucide="badge-check" class="verified-badge"></i>' : ''}</div>
+                            <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
                             <div class="username">@${u.username}</div>
                         </div>
                         ${isAdmin ? `<button class="icon-btn" onclick="toggleAdminMenu('${d.id}')"><i data-lucide="more-horizontal"></i></button>` : ''}
                         <div id="menu-${d.id}" class="admin-menu hidden">
                             <button onclick="deletePost('${d.id}')"><i data-lucide="trash-2"></i> Post löschen</button>
-                            <button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Entverifizieren' : 'Verifizieren'}</button>
+                            <button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Verif. aufheben' : 'Verifizieren'}</button>
                             <button onclick="deleteUser('${p.uid}')" style="color:#ff4444"><i data-lucide="user-x"></i> User löschen</button>
                         </div>
                     </div>
-                    <div style="font-size:16px; line-height:1.5;">${p.text}</div>
+                    <div style="font-size:16px; line-height:1.5; white-space:pre-wrap;">${p.text}</div>
                     ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
                 `;
                 feed.appendChild(postDiv);
@@ -339,22 +365,11 @@
         });
     }
 
-    // Admin Funktionen
-    window.toggleAdminMenu = (id) => {
-        document.getElementById('menu-' + id).classList.toggle('hidden');
-    };
-
+    window.toggleAdminMenu = (id) => document.getElementById('menu-' + id).classList.toggle('hidden');
     window.deletePost = (id) => confirm("Post löschen?") && deleteDoc(doc(db, "posts", id));
-    
-    window.toggleVerify = async (uid, status) => {
-        await updateDoc(doc(db, "users", uid), { verified: status });
-    };
+    window.toggleVerify = async (uid, status) => { await updateDoc(doc(db, "users", uid), { verified: status }); };
+    window.deleteUser = async (uid) => { if(confirm("User löschen?")) await deleteDoc(doc(db, "users", uid)); };
 
-    window.deleteUser = async (uid) => {
-        if(confirm("Benutzer löschen?")) await deleteDoc(doc(db, "users", uid));
-    };
-
-    // Icons initialisieren
     lucide.createIcons();
 </script>
 </body>

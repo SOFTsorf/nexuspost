@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NexusPost Pro</title>
+    <title>NexusPost Ultimate</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --nexus: #1877f2; --bg: #f0f2f5; --card: rgba(255, 255, 255, 0.9);
             --text: #1c1e21; --sub: #65676b; --border: #dddfe2; --header-bg: rgba(255, 255, 255, 0.7);
-            --ios-input: #efeff0; --tab-bg: rgba(255, 255, 255, 0.85);
+            --ios-input: #efeff0; --tab-bg: rgba(255, 255, 255, 0.85); --heart: #eb3b5a;
         }
         body.dark {
             --bg: #000000; --card: #1c1c1e; --text: #ffffff;
@@ -23,8 +23,8 @@
             transition: background 0.3s ease; -webkit-tap-highlight-color: transparent;
         }
 
-        /* Blur Effekt für den Hintergrund wenn Menü offen */
-        .blur-bg #main-content, .blur-bg #navbar { filter: blur(15px); pointer-events: none; transition: filter 0.3s; }
+        /* Globaler Blur wenn Overlay offen */
+        .blur-active #main-content, .blur-active #navbar { filter: blur(20px); pointer-events: none; transition: filter 0.3s; }
 
         nav {
             position: fixed; top: 0; left: 0; right: 0; height: 50px;
@@ -32,17 +32,16 @@
             display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
             border-bottom: 0.5px solid var(--border); z-index: 1000;
         }
-        .logo { font-size: 19px; font-weight: 700; color: var(--text); }
+        .logo { font-size: 20px; font-weight: 800; color: var(--text); }
 
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
 
-        /* Sticky Footer */
+        /* Sticky iOS Input */
         .ios-footer {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--tab-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-top: 0.5px solid var(--border);
-            padding: 10px 15px calc(10px + env(safe-area-inset-bottom));
-            z-index: 2000;
+            padding: 10px 15px calc(12px + env(safe-area-inset-bottom)); z-index: 2000;
         }
         .ios-post-box { display: flex; align-items: flex-end; gap: 12px; max-width: 580px; margin: 0 auto; }
         .ios-input-container {
@@ -53,66 +52,74 @@
         }
         .ios-input-container:empty:before { content: attr(placeholder); color: var(--sub); }
 
-        .send-btn { background: var(--nexus); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .send-btn { background: var(--nexus); color: white; border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .send-btn:active { transform: scale(0.9); }
+
+        /* Preview Box */
+        #preview-box { display: none; position: absolute; bottom: 80px; left: 20px; background: var(--card); padding: 5px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        #preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
 
         /* Post Cards */
-        .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer; }
-        .display-name { font-weight: 600; font-size: 15px; }
-        .verified-badge { width: 16px; height: 16px; margin-left: 3px; }
-        
-        /* Actions & Comments */
-        .post-actions { display: flex; gap: 20px; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--border); }
-        .action-item { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--sub); font-size: 14px; transition: 0.2s; }
-        .action-item:hover { color: var(--nexus); }
+        .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 15px; border: 0.5px solid var(--border); position: relative; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; position: relative; }
+        .user-img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; cursor: pointer; }
+        .display-name { font-weight: 700; font-size: 15px; cursor: pointer; }
+        .verified-badge { width: 16px; height: 16px; margin-left: 4px; vertical-align: middle; }
+        .post-img { width: calc(100% + 30px); margin: 12px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; }
 
-        .comments-section { margin-top: 12px; border-top: 0.5px dashed var(--border); padding-top: 10px; }
-        .comment { font-size: 14px; margin-bottom: 6px; line-height: 1.4; }
-        .comment-user { font-weight: 700; color: var(--text); margin-right: 5px; }
+        /* Interaction Bar */
+        .action-bar { display: flex; gap: 25px; margin-top: 15px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+        .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--sub); font-size: 14px; font-weight: 600; }
+        .action-btn.liked { color: var(--heart); }
+        .action-btn.liked i { fill: var(--heart); }
 
-        /* Settings Overlay */
+        /* Admin Menu Blur */
+        .admin-menu {
+            position: absolute; top: 40px; right: 0; background: rgba(var(--card), 0.8);
+            backdrop-filter: blur(25px); border-radius: 14px; border: 0.5px solid var(--border);
+            z-index: 100; min-width: 170px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .admin-menu button { width: 100%; padding: 12px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; gap: 8px; cursor: pointer; }
+
+        /* Settings Popup */
         #settings-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 3000; background: rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center; z-index: 3000;
         }
         .settings-card {
-            width: 90%; max-width: 400px; background: var(--card); border-radius: 20px;
-            padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 0.5px solid var(--border); animation: pop 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+            width: 85%; max-width: 380px; background: var(--card); border-radius: 20px;
+            padding: 25px; border: 0.5px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            animation: zoomIn 0.3s ease;
         }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .ios-input { width: 100%; padding: 12px; border-radius: 12px; border: 0.5px solid var(--border); background: var(--ios-input); color: var(--text); margin-bottom: 15px; font-size: 16px; }
+        .ios-input { width: 100%; padding: 14px; border-radius: 12px; border: 0.5px solid var(--border); background: var(--ios-input); color: var(--text); margin-bottom: 15px; font-size: 16px; outline: none; }
 
         .hidden { display: none !important; }
-        .back-btn { background: none; border: none; color: var(--nexus); font-weight: 600; cursor: pointer; display: flex; align-items: center; }
     </style>
 </head>
 <body class="light">
 
 <nav id="navbar" class="hidden">
-    <div id="nav-left">
-        <div class="logo" id="main-logo">NexusPost</div>
-        <button id="btn-back" class="back-btn hidden" onclick="goHome()"><i data-lucide="chevron-left"></i> Zurück</button>
+    <div>
+        <div id="nav-title" class="logo">NexusPost</div>
+        <button id="btn-back" class="hidden" onclick="goHome()" style="background:none; border:none; color:var(--nexus); font-weight:700; cursor:pointer;">← Zurück</button>
     </div>
     <div style="display: flex; gap: 15px;">
-        <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text);"><i data-lucide="moon" id="theme-icon"></i></button>
-        <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text);"><i data-lucide="settings"></i></button>
+        <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="moon" id="theme-icon"></i></button>
+        <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="settings"></i></button>
     </div>
 </nav>
 
 <div id="login-screen" style="text-align:center; padding-top: 150px;">
-    <h1 style="color: var(--nexus); font-size: 45px; font-weight: 800;">NexusPost</h1>
+    <h1 style="color: var(--nexus); font-size: 45px; font-weight: 900;">NexusPost</h1>
     <button id="btn-login" style="background:var(--nexus); color:white; border:none; padding:15px 40px; border-radius:30px; font-weight:700; cursor:pointer;">Google Login</button>
 </div>
 
-<div id="profile-info" class="container hidden" style="margin-top: 20px; text-align: center;">
-    <img id="p-img" src="" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-    <h2 id="p-name" style="margin: 10px 0 0 0;"></h2>
-    <p id="p-user" style="color: var(--sub); margin-bottom: 20px;"></p>
+<div id="profile-context" class="container hidden" style="text-align:center; margin-top:20px;">
+    <img id="ctx-img" style="width:90px; height:90px; border-radius:50%; border:3px solid var(--nexus);">
+    <h2 id="ctx-name" style="margin:10px 0 0 0;"></h2>
+    <p id="ctx-user" style="color:var(--sub); margin-bottom:20px;"></p>
 </div>
 
 <main id="main-content" class="container hidden">
@@ -120,7 +127,15 @@
 </main>
 
 <div id="input-bar" class="ios-footer hidden">
+    <div id="preview-box">
+        <img id="preview-img">
+        <button onclick="clearPreview()" style="position:absolute; top:-10px; right:-10px; background:#ff3b30; color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer;">×</button>
+    </div>
     <div class="ios-post-box">
+        <label style="cursor:pointer; color:var(--nexus);">
+            <i data-lucide="plus-circle" style="width:30px; height:30px;"></i>
+            <input type="file" id="image-input" accept="image/*" class="hidden" onchange="showPreview(event)">
+        </label>
         <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
         <button id="btn-share" class="send-btn"><i data-lucide="arrow-up" style="width:20px; height:20px;"></i></button>
     </div>
@@ -129,21 +144,21 @@
 <div id="settings-overlay" class="hidden">
     <div class="settings-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0;">Profil</h2>
-            <button onclick="toggleSettings()" style="background:none; border:none; color:var(--nexus); font-weight:600; cursor:pointer;">Fertig</button>
+            <h2 style="margin:0;">Einstellungen</h2>
+            <button onclick="toggleSettings()" style="background:none; border:none; color:var(--nexus); font-weight:700; cursor:pointer;">Fertig</button>
         </div>
-        <label style="font-size:12px; color:var(--sub); font-weight:700; margin-left:5px;">ANZEIGENAME</label>
+        <label style="font-size:11px; color:var(--sub); font-weight:800; margin-left:5px;">ANZEIGENAME</label>
         <input type="text" id="edit-displayname" class="ios-input">
-        <label style="font-size:12px; color:var(--sub); font-weight:700; margin-left:5px;">BENUTZERNAME</label>
+        <label style="font-size:11px; color:var(--sub); font-weight:800; margin-left:5px;">BENUTZERNAME</label>
         <input type="text" id="edit-username" class="ios-input">
-        <button id="btn-save-settings" style="width:100%; background:var(--nexus); color:white; border:none; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;">Speichern</button>
+        <button id="btn-save" style="width:100%; background:var(--nexus); color:white; border:none; padding:15px; border-radius:15px; font-weight:700; cursor:pointer;">Speichern</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
@@ -158,50 +173,69 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
+    const adminEmail = "boxenjob5@gmail.com";
     const verifiedIcon = "https://cdn-icons-png.flaticon.com/512/7641/7641727.png";
+    const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
 
     let userData = null;
-    let commentModeId = null; // Wenn gesetzt, wird kommentiert statt gepostet
+    let currentMode = "home"; // home, profile, comment
+    let targetId = null; 
 
-    // UI Toggles
+    // --- UTILS ---
     window.toggleDarkMode = () => {
-        const t = document.body.className === 'dark' ? 'light' : 'dark';
-        document.body.className = t; localStorage.setItem('theme', t); lucide.createIcons();
+        const t = document.body.classList.contains('dark') ? 'light' : 'dark';
+        document.body.className = t; localStorage.setItem('theme', t);
+        lucide.createIcons();
     };
     if(localStorage.getItem('theme') === 'dark') document.body.className = 'dark';
 
-    window.toggleSettings = () => {
-        const overlay = document.getElementById('settings-overlay');
-        overlay.classList.toggle('hidden');
-        document.body.classList.toggle('blur-bg');
-        if(!overlay.classList.contains('hidden')) {
-            document.getElementById('edit-displayname').value = userData.displayname;
-            document.getElementById('edit-username').value = userData.username;
+    window.showPreview = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (rs) => { document.getElementById('preview-img').src = rs.target.result; document.getElementById('preview-box').style.display = 'block'; };
+            reader.readAsDataURL(file);
         }
     };
+    window.clearPreview = () => { document.getElementById('image-input').value = ""; document.getElementById('preview-box').style.display = 'none'; };
 
-    // Navigation
+    window.toggleSettings = () => {
+        document.body.classList.toggle('blur-active');
+        document.getElementById('settings-overlay').classList.toggle('hidden');
+        document.getElementById('edit-displayname').value = userData.displayname;
+        document.getElementById('edit-username').value = userData.username;
+    };
+
+    // --- NAVIGATION ---
     window.goHome = () => {
-        commentModeId = null;
+        currentMode = "home"; targetId = null;
+        document.getElementById('nav-title').classList.remove('hidden');
         document.getElementById('btn-back').classList.add('hidden');
-        document.getElementById('main-logo').classList.remove('hidden');
-        document.getElementById('profile-info').classList.add('hidden');
+        document.getElementById('profile-context').classList.add('hidden');
         document.getElementById('post-input').setAttribute('placeholder', 'Was gibt\'s Neues?');
         loadFeed();
     };
 
     window.viewProfile = async (uid) => {
+        currentMode = "profile"; targetId = uid;
+        document.getElementById('nav-title').classList.add('hidden');
         document.getElementById('btn-back').classList.remove('hidden');
-        document.getElementById('main-logo').classList.add('hidden');
         const u = (await getDoc(doc(db, "users", uid))).data();
-        document.getElementById('p-img').src = u.photoURL;
-        document.getElementById('p-name').innerText = u.displayname;
-        document.getElementById('p-user').innerText = "@" + u.username;
-        document.getElementById('profile-info').classList.remove('hidden');
+        document.getElementById('ctx-img').src = u.photoURL;
+        document.getElementById('ctx-name').innerText = u.displayname;
+        document.getElementById('ctx-user').innerText = "@" + u.username;
+        document.getElementById('profile-context').classList.remove('hidden');
         loadFeed(uid);
     };
 
-    // Auth
+    window.setCommentMode = (postId) => {
+        currentMode = "comment"; targetId = postId;
+        const input = document.getElementById('post-input');
+        input.setAttribute('placeholder', 'Antwort schreiben...');
+        input.focus();
+    };
+
+    // --- AUTH ---
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     onAuthStateChanged(auth, async (u) => {
         if (u) {
@@ -209,60 +243,65 @@
             document.getElementById('navbar').classList.remove('hidden');
             document.getElementById('input-bar').classList.remove('hidden');
             const snap = await getDoc(doc(db, "users", u.uid));
-            userData = snap.exists() ? snap.data() : { username: "user_"+Math.floor(Math.random()*999), displayname: u.displayName, photoURL: u.photoURL, email: u.email, verified: false };
+            userData = snap.exists() ? snap.data() : { username: "user_"+Math.floor(Math.random()*999), displayname: u.displayName, photoURL: u.photoURL, email: u.email, verified: u.email === adminEmail };
             if(!snap.exists()) await setDoc(doc(db, "users", u.uid), userData);
             document.getElementById('main-content').classList.remove('hidden');
             loadFeed();
         }
     });
 
-    // Save Settings
-    document.getElementById('btn-save-settings').onclick = async () => {
+    document.getElementById('btn-save').onclick = async () => {
         userData.displayname = document.getElementById('edit-displayname').value;
         userData.username = document.getElementById('edit-username').value;
         await updateDoc(doc(db, "users", auth.currentUser.uid), userData);
         toggleSettings();
     };
 
-    // Post / Comment Logic
-    window.prepareComment = (postId) => {
-        commentModeId = postId;
-        const input = document.getElementById('post-input');
-        input.setAttribute('placeholder', 'Antwort schreiben...');
-        input.focus();
-    };
-
+    // --- CORE ACTIONS ---
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').innerText.trim();
-        if (!text) return;
+        const file = document.getElementById('image-input').files[0];
+        if (!text && !file) return;
 
-        if (commentModeId) {
-            // Kommentar speichern
-            const postRef = doc(db, "posts", commentModeId);
-            const snap = await getDoc(postRef);
-            const comments = snap.data().comments || [];
-            comments.push({ text, displayname: userData.displayname, uid: auth.currentUser.uid });
-            await updateDoc(postRef, { comments });
-            commentModeId = null;
-            document.getElementById('post-input').setAttribute('placeholder', 'Was gibt\'s Neues?');
+        const btn = document.getElementById('btn-share'); btn.disabled = true;
+
+        if (currentMode === "comment") {
+            const postRef = doc(db, "posts", targetId);
+            await updateDoc(postRef, { comments: arrayUnion({ text, displayname: userData.displayname, uid: auth.currentUser.uid }) });
+            goHome();
         } else {
-            // Normaler Post
-            await addDoc(collection(db, "posts"), { text, uid: auth.currentUser.uid, timestamp: serverTimestamp(), comments: [] });
+            let imageUrl = null;
+            if (file) {
+                const fd = new FormData(); fd.append("image", file);
+                const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: fd });
+                const json = await res.json(); imageUrl = json.data.url;
+            }
+            await addDoc(collection(db, "posts"), { text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [], comments: [] });
         }
-        document.getElementById('post-input').innerText = "";
+
+        document.getElementById('post-input').innerText = ""; clearPreview(); btn.disabled = false;
     };
 
-    function loadFeed(uid = null) {
+    window.toggleLike = async (postId, likes) => {
+        const postRef = doc(db, "posts", postId);
+        const myUid = auth.currentUser.uid;
+        if (likes.includes(myUid)) { await updateDoc(postRef, { likes: arrayRemove(myUid) }); }
+        else { await updateDoc(postRef, { likes: arrayUnion(myUid) }); }
+    };
+
+    function loadFeed(uidFilter = null) {
         let q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-        if (uid) q = query(collection(db, "posts"), where("uid", "==", uid), orderBy("timestamp", "desc"));
+        if (uidFilter) q = query(collection(db, "posts"), where("uid", "==", uidFilter), orderBy("timestamp", "desc"));
 
         onSnapshot(q, (snap) => {
             const feed = document.getElementById('feed'); feed.innerHTML = '';
             snap.forEach(async (docSnap) => {
                 const p = docSnap.data();
                 const uSnap = await getDoc(doc(db, "users", p.uid));
-                const u = uSnap.data() || { displayname: "Unbekannt", photoURL: "" };
-                
+                const u = uSnap.data() || {};
+                const isLiked = p.likes?.includes(auth.currentUser.uid);
+                const isAdmin = auth.currentUser.email === adminEmail;
+
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -272,17 +311,26 @@
                             <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
                             <div style="font-size:12px; color:var(--sub)">@${u.username}</div>
                         </div>
+                        ${isAdmin ? `<button onclick="this.nextElementSibling.classList.toggle('hidden')" style="margin-left:auto; background:none; border:none; color:var(--sub); cursor:pointer;"><i data-lucide="more-horizontal"></i></button>
+                        <div class="admin-menu hidden">
+                            <button onclick="deleteDoc(doc(db,'posts','${docSnap.id}'))"><i data-lucide="trash-2"></i> Löschen</button>
+                            <button onclick="updateDoc(doc(db,'users','${p.uid}'), {verified: ${!u.verified}})">
+                                <i data-lucide="shield-check"></i> ${u.verified ? 'Entverifizieren' : 'Verifizieren'}
+                            </button>
+                        </div>` : ''}
                     </div>
                     <div style="font-size:16px; white-space:pre-wrap;">${p.text}</div>
-                    <div class="post-actions">
-                        <div class="action-item" onclick="prepareComment('${docSnap.id}')">
-                            <i data-lucide="message-circle" style="width:18px;"></i> ${p.comments ? p.comments.length : 0}
+                    ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
+                    <div class="action-bar">
+                        <div class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${docSnap.id}', ${JSON.stringify(p.likes || [])})">
+                            <i data-lucide="heart" style="width:18px;"></i> ${p.likes?.length || 0}
+                        </div>
+                        <div class="action-btn" onclick="setCommentMode('${docSnap.id}')">
+                            <i data-lucide="message-circle" style="width:18px;"></i> ${p.comments?.length || 0}
                         </div>
                     </div>
-                    <div class="comments-section ${p.comments && p.comments.length > 0 ? '' : 'hidden'}">
-                        ${(p.comments || []).map(c => `
-                            <div class="comment"><span class="comment-user">${c.displayname}:</span>${c.text}</div>
-                        `).join('')}
+                    <div style="margin-top:10px;">
+                        ${(p.comments || []).map(c => `<div style="font-size:13px; margin-bottom:4px;"><span style="font-weight:700;">${c.displayname}:</span> ${c.text}</div>`).join('')}
                     </div>
                 `;
                 feed.appendChild(card);

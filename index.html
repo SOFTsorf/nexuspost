@@ -3,63 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusPost</title>
+    <title>NexusPost Pro</title>
     <style>
-        :root { --nexus: #1877f2; --bg: #f0f2f5; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; }
+        :root { 
+            --nexus: #1877f2; --bg: #f0f2f5; --card: #ffffff; --text: #050505; --sub: #65676b;
+        }
+        body.dark { 
+            --bg: #18191a; --card: #242526; --text: #e4e6eb; --sub: #b0b3b8;
+        }
+        body { font-family: 'Segoe UI', system-ui; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
         .hidden { display: none !important; }
-        .container { max-width: 500px; margin: 20px auto; padding: 0 10px; }
-        nav { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .btn { background: var(--nexus); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
-        .post { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; position: relative; }
-        .user-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
-        .verified-badge { width: 16px; height: 16px; vertical-align: middle; margin-left: 4px; }
+        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+        
+        /* Navbar */
+        nav { background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); sticky: top; z-index: 100; }
+        
+        /* Cards */
+        .card { background: var(--card); padding: 15px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        .btn { background: var(--nexus); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-sec { background: #e4e6eb; color: #050505; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+        
+        /* Posts */
+        .post { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; position: relative; }
+        .user-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
         .post-img { width: calc(100% + 30px); margin-left: -15px; margin-top: 10px; max-height: 500px; object-fit: cover; }
-        input[type="text"] { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        
+        /* Admin Menu */
+        .admin-dots { cursor: pointer; font-size: 20px; padding: 5px; color: var(--sub); }
+        .admin-menu { position: absolute; right: 15px; top: 45px; background: var(--card); box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; z-index: 10; width: 180px; overflow: hidden; }
+        .admin-menu button { width: 100%; border: none; background: none; padding: 10px; text-align: left; cursor: pointer; color: var(--text); border-bottom: 1px solid #eee; }
+        .admin-menu button:hover { background: var(--nexus); color: white; }
+
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; background: var(--bg); color: var(--text); box-sizing: border-box; }
+        .verified-badge { color: var(--nexus); margin-left: 5px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div id="login-screen" style="text-align:center; margin-top:100px;">
-    <h1 style="color: var(--nexus); font-size: 3rem;">NexusPost</h1>
-    <button id="btn-login" class="btn" style="width:250px;">Mit Google anmelden</button>
-</div>
-
-<div id="setup-screen" class="container hidden">
-    <div class="card">
-        <h2>Profil erstellen</h2>
-        <label>Wähle deinen Benutzernamen:</label>
-        <input type="text" id="setup-username" placeholder="z.B. deinname_1">
-        <label>Anzeigename:</label>
-        <input type="text" id="setup-displayname">
-        <button id="btn-save-profile" class="btn">Profil speichern</button>
-        <p id="setup-error" style="color:red;"></p>
-    </div>
-</div>
-
 <nav id="navbar" class="hidden">
-    <b style="color: var(--nexus); font-size: 22px;">NexusPost</b>
-    <div id="nav-info" style="font-weight: bold; font-size: 14px;"></div>
+    <b style="color: var(--nexus); font-size: 24px;">NexusPost</b>
+    <div>
+        <button onclick="toggleSettings()" class="btn-sec">⚙️</button>
+    </div>
 </nav>
+
+<div id="login-screen" style="text-align:center; margin-top:150px;">
+    <h1 style="color: var(--nexus); font-size: 3.5rem;">NexusPost</h1>
+    <button id="btn-login" class="btn" style="width:250px; font-size:1.1rem;">Mit Google anmelden</button>
+</div>
 
 <div id="main-content" class="container hidden">
     <div class="card">
-        <textarea id="post-input" placeholder="Was gibt's Neues?" style="width:100%; height:70px; border:none; background:#f0f2f5; border-radius:10px; padding:10px; resize:none; font-family: inherit;"></textarea>
-        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
-            <input type="file" id="image-input" accept="image/*" style="font-size:12px;">
-            <button id="btn-share" class="btn" style="width:120px;">Posten</button>
+        <textarea id="post-input" placeholder="Teile etwas mit der Welt..."></textarea>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <input type="file" id="image-input" accept="image/*" style="width:auto;">
+            <button id="btn-share" class="btn" style="width:100px;">Posten</button>
         </div>
     </div>
     <div id="feed"></div>
 </div>
 
+<div id="settings-screen" class="container hidden">
+    <div class="card">
+        <h2>Einstellungen</h2>
+        <button onclick="toggleDarkMode()" class="btn-sec" style="margin-bottom:20px;">Tag/Nacht Modus wechseln</button>
+        
+        <hr>
+        <h3>Profil bearbeiten</h3>
+        <label>Anzeigename ändern:</label>
+        <input type="text" id="edit-displayname">
+        <label>Benutzername (@):</label>
+        <input type="text" id="edit-username">
+        
+        <label>Profilbild ändern:</label>
+        <input type="file" id="edit-avatar" accept="image/*">
+        
+        <button id="btn-save-settings" class="btn" style="margin-top:10px;">Änderungen speichern</button>
+        <p id="settings-msg" style="font-size:12px; margin-top:10px;"></p>
+        <button onclick="toggleSettings()" class="btn-sec" style="width:100%; margin-top:10px;">Zurück zum Feed</button>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Deine Konfiguration
     const firebaseConfig = {
         apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
         authDomain: "nexuspost-a00b1.firebaseapp.com",
@@ -73,13 +102,12 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
-
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
     const adminEmail = "boxenjob5@gmail.com";
-    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT"; 
 
     let userData = null;
 
+    // --- AUTH & LOGIN ---
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (user) => {
@@ -88,40 +116,82 @@
             const uDoc = await getDoc(doc(db, "users", user.uid));
             if (uDoc.exists()) {
                 userData = uDoc.data();
+                if(!userData.changeLog) userData.changeLog = [];
                 showApp();
             } else {
-                document.getElementById('setup-screen').classList.remove('hidden');
-                document.getElementById('setup-displayname').value = user.displayName;
+                // Erster Login: Standard-Profil
+                const defaultData = { 
+                    username: "user_" + Math.floor(Math.random()*10000), 
+                    displayname: user.displayName, 
+                    photoURL: user.photoURL, 
+                    email: user.email,
+                    verified: false,
+                    changeLog: [] 
+                };
+                await setDoc(doc(db, "users", user.uid), defaultData);
+                userData = defaultData;
+                showApp();
             }
         }
     });
 
-    document.getElementById('btn-save-profile').onclick = async () => {
-        const userN = document.getElementById('setup-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
-        const displayN = document.getElementById('setup-displayname').value.trim();
-        if (userN.length < 3) return;
-
-        const nameRef = doc(db, "usernames", userN);
-        const nameSnap = await getDoc(nameRef);
-
-        if (nameSnap.exists()) {
-            document.getElementById('setup-error').innerText = "Name leider schon vergeben!";
-        } else {
-            await setDoc(nameRef, { uid: auth.currentUser.uid });
-            userData = { username: userN, displayname: displayN, photoURL: auth.currentUser.photoURL, email: auth.currentUser.email };
-            await setDoc(doc(db, "users", auth.currentUser.uid), userData);
-            showApp();
-        }
-    };
-
     function showApp() {
-        document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('navbar').classList.remove('hidden');
         document.getElementById('main-content').classList.remove('hidden');
-        document.getElementById('nav-info').innerText = "@" + userData.username;
         loadFeed();
     }
 
+    // --- SETTINGS LOGIC ---
+    window.toggleSettings = () => {
+        document.getElementById('main-content').classList.toggle('hidden');
+        document.getElementById('settings-screen').classList.toggle('hidden');
+        document.getElementById('edit-displayname').value = userData.displayname;
+        document.getElementById('edit-username').value = userData.username;
+    };
+
+    window.toggleDarkMode = () => document.body.classList.toggle('dark');
+
+    document.getElementById('btn-save-settings').onclick = async () => {
+        const newDisp = document.getElementById('edit-displayname').value.trim();
+        const newUser = document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+        const avatarFile = document.getElementById('edit-avatar').files[0];
+        const msg = document.getElementById('settings-msg');
+        
+        const now = Date.now();
+        const twoWeeks = 14 * 24 * 60 * 60 * 1000;
+        
+        // Namensänderungs-Logik (außer Admin)
+        if (auth.currentUser.email !== adminEmail) {
+            const recentChanges = userData.changeLog.filter(t => (now - t) < twoWeeks);
+            if (recentChanges.length >= 2 && (newDisp !== userData.displayname || newUser !== userData.username)) {
+                msg.innerText = "Du kannst deinen Namen nur 2 Mal alle 14 Tage ändern!";
+                msg.style.color = "red";
+                return;
+            }
+            if (newDisp !== userData.displayname || newUser !== userData.username) {
+                userData.changeLog.push(now);
+            }
+        }
+
+        let newAvatarURL = userData.photoURL;
+        if (avatarFile) {
+            const formData = new FormData();
+            formData.append("image", avatarFile);
+            const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
+            const json = await res.json();
+            newAvatarURL = json.data.url;
+        }
+
+        userData.displayname = newDisp;
+        userData.username = newUser;
+        userData.photoURL = newAvatarURL;
+
+        await updateDoc(doc(db, "users", auth.currentUser.uid), userData);
+        msg.innerText = "Profil aktualisiert!";
+        msg.style.color = "green";
+    };
+
+    // --- FEED & POSTS ---
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').value;
         const file = document.getElementById('image-input').files[0];
@@ -129,57 +199,81 @@
         if (!text.trim() && !file) return;
 
         btn.disabled = true;
-        btn.innerText = "Lädt...";
         let imageUrl = null;
 
         if (file) {
             const formData = new FormData();
             formData.append("image", file);
-            try {
-                const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
-                const json = await res.json();
-                imageUrl = json.data.url;
-            } catch (e) { alert("Upload-Fehler!"); }
+            const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
+            const json = await res.json();
+            imageUrl = json.data.url;
         }
 
         await addDoc(collection(db, "posts"), {
-            text, imageUrl, uid: auth.currentUser.uid, username: userData.username, 
-            displayname: userData.displayname, photoURL: userData.photoURL, 
-            email: userData.email, timestamp: serverTimestamp()
+            text, imageUrl, uid: auth.currentUser.uid, 
+            timestamp: serverTimestamp()
         });
 
         document.getElementById('post-input').value = "";
         document.getElementById('image-input').value = "";
         btn.disabled = false;
-        btn.innerText = "Posten";
     };
 
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
             feed.innerHTML = '';
-            snap.forEach(d => {
-                const p = d.data();
-                const isV = p.email === adminEmail;
-                const canDel = (auth.currentUser && (auth.currentUser.email === adminEmail || auth.currentUser.uid === p.uid));
-                feed.innerHTML += `
+            snap.forEach(async (postDoc) => {
+                const p = postDoc.data();
+                // User-Daten für jeden Post live laden (wegen Verifizierung/Bildern)
+                const uSnap = await getDoc(doc(db, "users", p.uid));
+                const u = uSnap.exists() ? uSnap.data() : {};
+
+                const isAdmin = auth.currentUser.email === adminEmail;
+                
+                const postHTML = `
                     <div class="post">
                         <div style="display:flex; align-items:center;">
-                            <img src="${p.photoURL}" class="user-img">
+                            <img src="${u.photoURL || ''}" class="user-img">
                             <div style="flex-grow:1">
-                                <b>${p.displayname}</b> ${isV ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}<br>
-                                <span style="color:#65676b; font-size:13px;">@${p.username}</span>
+                                <b>${u.displayname || 'User'}</b> ${u.verified ? '<span class="verified-badge">✔</span>' : ''}<br>
+                                <span style="color:var(--sub); font-size:13px;">@${u.username}</span>
                             </div>
-                            ${canDel ? `<button onclick="deletePost('${d.id}')" style="border:none; background:none; cursor:pointer; color:#ccc; font-size:18px;">🗑️</button>` : ''}
+                            ${isAdmin ? `<div class="admin-dots" onclick="toggleAdminMenu('${postDoc.id}')">⋮</div>` : ''}
+                        </div>
+                        <div id="menu-${postDoc.id}" class="admin-menu hidden">
+                            <button onclick="deletePost('${postDoc.id}')">Post löschen</button>
+                            <button onclick="toggleVerify('${p.uid}', ${!u.verified})">${u.verified ? 'Verif. aufheben' : 'Verifizieren'}</button>
+                            <button onclick="deleteUser('${p.uid}')" style="color:red;">Benutzer löschen</button>
                         </div>
                         <p style="margin-top:10px; white-space:pre-wrap;">${p.text}</p>
                         ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
                     </div>`;
+                feed.innerHTML += postHTML;
             });
         });
     }
 
-    window.deletePost = (id) => confirm("Post wirklich löschen?") && deleteDoc(doc(db, "posts", id));
+    // --- ADMIN ACTIONS ---
+    window.toggleAdminMenu = (id) => {
+        document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden') });
+        document.getElementById('menu-' + id).classList.toggle('hidden');
+    };
+
+    window.deletePost = (id) => confirm("Post löschen?") && deleteDoc(doc(db, "posts", id));
+    
+    window.toggleVerify = async (uid, status) => {
+        await updateDoc(doc(db, "users", uid), { verified: status });
+        alert("Status geändert!");
+    };
+
+    window.deleteUser = async (uid) => {
+        if(confirm("Diesen Benutzer und alle seine Daten komplett löschen?")) {
+            await deleteDoc(doc(db, "users", uid));
+            alert("Benutzer gelöscht.");
+        }
+    };
+
 </script>
 </body>
 </html>

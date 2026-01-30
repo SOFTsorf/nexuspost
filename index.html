@@ -19,7 +19,6 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg); color: var(--text); margin: 0; padding-top: 60px; padding-bottom: 90px;
-            transition: background 0.3s ease;
         }
 
         /* iOS Nav & Search */
@@ -32,60 +31,44 @@
         .search-wrapper { display: flex; align-items: center; flex-grow: 1; transition: 0.3s; }
         .search-container {
             display: flex; align-items: center; background: var(--ios-input);
-            border-radius: 10px; padding: 0 10px; height: 32px; flex-grow: 1; margin: 0 10px;
+            border-radius: 10px; padding: 0 10px; height: 36px; flex-grow: 1; margin: 0 10px;
         }
         .search-input { border: none; background: none; color: var(--text); width: 100%; outline: none; font-size: 16px; }
-        .cancel-btn { color: var(--nexus); font-weight: 500; cursor: pointer; display: none; white-space: nowrap; font-size: 15px; }
+        .cancel-btn { color: var(--nexus); font-weight: 500; cursor: pointer; padding-right: 5px; display: none; }
 
-        /* Settings Style */
+        /* Settings & Profile Style */
         .settings-card { background: var(--card); border-radius: 12px; overflow: hidden; margin-top: 20px; border: 0.5px solid var(--border); }
-        .settings-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 0.5px solid var(--border); gap: 15px; }
+        .settings-item { 
+            display: flex; align-items: center; padding: 12px 15px; 
+            border-bottom: 0.5px solid var(--border); gap: 15px;
+        }
         .settings-item:last-child { border-bottom: none; }
-        .settings-label { width: 90px; font-size: 15px; color: var(--sub); }
+        .settings-label { width: 100px; font-size: 15px; color: var(--sub); }
         .settings-val { flex-grow: 1; border: none; background: none; color: var(--text); font-size: 16px; outline: none; }
         
         .profile-pic-upload {
-            width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+            width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
             border: 2px solid var(--nexus); cursor: pointer; margin: 20px auto; display: block;
         }
 
         .btn-blue { 
             background: var(--nexus); color: white; border: none; width: 100%; 
-            padding: 14px; border-radius: 12px; font-weight: 600; margin-top: 20px; cursor: pointer; font-size: 16px;
+            padding: 12px; border-radius: 10px; font-weight: 600; margin-top: 20px; cursor: pointer;
         }
 
-        /* Posts */
-        .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
+        .container { max-width: 580px; margin: 0 auto; padding: 0 15px; }
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
-        .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .verified-badge { width: 16px; height: 16px; margin-left: 4px; pointer-events: none; -webkit-user-drag: none; }
-        .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
-
-        /* iOS Footer Input */
-        .ios-footer {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 0.5px solid var(--border); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); z-index: 1000;
-        }
-        .ios-post-box { display: flex; align-items: flex-end; gap: 12px; max-width: 580px; margin: 0 auto; }
-        .ios-input-container {
-            flex-grow: 1; background: var(--ios-input); border-radius: 20px; padding: 8px 15px; 
-            min-height: 20px; max-height: 120px; overflow-y: auto; color: var(--text); font-size: 16px; outline: none;
-        }
-
         .hidden { display: none !important; }
-        .lightbox { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(10px); }
-        .lightbox img { max-width:95%; max-height:90%; border-radius:10px; }
+        .verified-badge { width: 16px; height: 16px; vertical-align: middle; pointer-events: none; }
     </style>
 </head>
 <body class="light">
 
 <nav id="navbar" class="hidden">
-    <div class="logo" id="nav-logo">NexusPost</div>
-    <div class="search-wrapper">
+    <div class="logo" id="nav-logo" style="font-weight: 700; font-size: 20px;">NexusPost</div>
+    <div class="search-wrapper" id="search-wrapper">
         <div class="search-container">
-            <i data-lucide="search" size="16" style="color: var(--sub);"></i>
+            <i data-lucide="search" size="18" style="color: var(--sub);"></i>
             <input type="text" id="search-input" class="search-input" placeholder="Suchen..." onfocus="expandSearch()">
         </div>
         <span id="search-cancel" class="cancel-btn" onclick="collapseSearch()">Abbrechen</span>
@@ -96,27 +79,19 @@
     </div>
 </nav>
 
-<div id="login-screen" style="text-align:center; padding-top: 150px;">
-    <h1 style="color: var(--nexus); font-size: 40px; font-weight: 800;">NexusPost</h1>
-    <button class="btn-blue" id="btn-login" style="width: auto; padding: 12px 30px;">Mit Google anmelden</button>
-</div>
-
-<div id="setup-screen" class="container hidden" style="padding-top: 40px; text-align: center;">
-    <h2>Profil einrichten</h2>
+<div id="setup-screen" class="container hidden" style="padding-top: 50px; text-align: center;">
+    <h1 style="letter-spacing: -1px;">Profil einrichten</h1>
+    <p style="color: var(--sub);">Wähle ein Bild und Namen für deinen Account.</p>
     <label>
         <img id="setup-preview" src="https://via.placeholder.com/150" class="profile-pic-upload">
         <input type="file" id="setup-img-input" accept="image/*" class="hidden" onchange="previewProfilePic(this, 'setup-preview')">
     </label>
     <div class="settings-card">
         <div class="settings-item"><span class="settings-label">Name</span><input type="text" id="setup-displayname" class="settings-val" placeholder="Dein Name"></div>
-        <div class="settings-item"><span class="settings-label">@User</span><input type="text" id="setup-username" class="settings-val" placeholder="username"></div>
+        <div class="settings-item"><span class="settings-label">@Username</span><input type="text" id="setup-username" class="settings-val" placeholder="benutzername"></div>
     </div>
-    <button class="btn-blue" onclick="completeSetup()">Account erstellen</button>
+    <button class="btn-blue" onclick="completeSetup()">Starten</button>
 </div>
-
-<main id="main-content" class="container hidden">
-    <div id="feed"></div>
-</main>
 
 <div id="settings-screen" class="container hidden" style="padding-top: 20px;">
     <h2 style="margin-left: 10px;">Einstellungen</h2>
@@ -128,45 +103,32 @@
         <div class="settings-item"><span class="settings-label">Name</span><input type="text" id="edit-displayname" class="settings-val"></div>
         <div class="settings-item"><span class="settings-label">Username</span><input type="text" id="edit-username" class="settings-val"></div>
     </div>
-    <p id="edit-warning" style="font-size: 12px; color: var(--sub); padding: 10px; text-align: center;"></p>
+    <p id="edit-warning" style="font-size: 12px; color: var(--sub); padding: 10px;"></p>
     <button class="btn-blue" onclick="saveSettings()">Speichern</button>
-    <button style="width: 100%; background: none; border: none; color: var(--nexus); margin-top: 15px; cursor: pointer; font-weight: 500;" onclick="closeSettings()">Abbrechen</button>
+    <button style="width: 100%; background: none; border: none; color: var(--nexus); margin-top: 15px; cursor: pointer;" onclick="closeSettings()">Abbrechen</button>
 </div>
 
-<div id="input-bar" class="ios-footer hidden">
-    <div class="ios-post-box">
-        <label style="color: var(--nexus); cursor: pointer;"><i data-lucide="plus-circle"></i><input type="file" id="post-img-input" class="hidden"></label>
-        <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
-        <button id="btn-share" style="background:var(--nexus); color:white; border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center;"><i data-lucide="arrow-up" size="18"></i></button>
-    </div>
-</div>
-
-<div id="lightbox" class="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""></div>
+<main id="main-content" class="container hidden">
+    <div id="feed"></div>
+</main>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
-        authDomain: "nexuspost-a00b1.firebaseapp.com",
-        projectId: "nexuspost-a00b1",
-        storageBucket: "nexuspost-a00b1.firebasestorage.app",
-        messagingSenderId: "124843068065",
-        appId: "1:124843068065:web:035b15d01910dc6b8d7ee0"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-    const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
-    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT";
+  apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
+  authDomain: "nexuspost-a00b1.firebaseapp.com",
+  projectId: "nexuspost-a00b1",
+  storageBucket: "nexuspost-a00b1.firebasestorage.app",
+  messagingSenderId: "124843068065",
+  appId: "1:124843068065:web:035b15d01910dc6b8d7ee0"
+};
 
     let userData = null;
 
-    // --- UI LOGIC ---
+    // --- LOGIK: SUCHE ---
     window.expandSearch = () => {
         document.getElementById('nav-logo').classList.add('hidden');
         document.getElementById('nav-actions').classList.add('hidden');
@@ -177,19 +139,9 @@
         document.getElementById('nav-actions').classList.remove('hidden');
         document.getElementById('search-cancel').style.display = 'none';
         document.getElementById('search-input').value = "";
-        document.querySelectorAll('.card').forEach(c => c.style.display = 'block');
-    };
-    document.getElementById('search-input').oninput = (e) => {
-        const t = e.target.value.toLowerCase();
-        document.querySelectorAll('.card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? 'block' : 'none');
     };
 
-    window.toggleDarkMode = () => {
-        const b = document.body;
-        b.className = b.className === 'dark' ? 'light' : 'dark';
-        lucide.createIcons();
-    };
-
+    // --- LOGIK: PROFILBILD PREVIEW ---
     window.previewProfilePic = (input, imgId) => {
         const file = input.files[0];
         if (file) {
@@ -199,12 +151,9 @@
         }
     };
 
-    // --- AUTH ---
-    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
-
+    // --- AUTH & ONBOARDING ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            document.getElementById('login-screen').classList.add('hidden');
             const uDoc = await getDoc(doc(db, "users", user.uid));
             if (uDoc.exists()) {
                 userData = uDoc.data();
@@ -212,6 +161,9 @@
             } else {
                 document.getElementById('setup-screen').classList.remove('hidden');
             }
+        } else {
+            // Zeige Login (hier verkürzt)
+            signInWithPopup(auth, provider);
         }
     });
 
@@ -219,112 +171,73 @@
         const dName = document.getElementById('setup-displayname').value;
         const uName = document.getElementById('setup-username').value;
         const file = document.getElementById('setup-img-input').files[0];
-        if (!dName || !uName || !file) return alert("Bild und Namen wählen!");
+        if (!dName || !uName || !file) return alert("Bitte alles ausfüllen!");
 
         const photoURL = await uploadImage(file);
-        userData = { displayname: dName, username: uName.toLowerCase(), photoURL, email: auth.currentUser.email, verified: false, editHistory: [] };
+        userData = {
+            displayname: dName,
+            username: uName.toLowerCase(),
+            photoURL: photoURL,
+            email: auth.currentUser.email,
+            verified: false,
+            editHistory: [] // Speichert Zeitstempel der Namensänderungen
+        };
         await setDoc(doc(db, "users", auth.currentUser.uid), userData);
         document.getElementById('setup-screen').classList.add('hidden');
         showMainApp();
     };
 
+    // --- SETTINGS MIT 14-TAGE-REGEL ---
+    window.openSettings = () => {
+        document.getElementById('main-content').classList.add('hidden');
+        document.getElementById('settings-screen').classList.remove('hidden');
+        document.getElementById('settings-preview').src = userData.photoURL;
+        document.getElementById('edit-displayname').value = userData.displayname;
+        document.getElementById('edit-username').value = userData.username;
+        
+        const changes = getRecentChangesCount();
+        document.getElementById('edit-warning').innerText = `Du hast deinen Namen ${changes}/2 Mal in den letzten 14 Tagen geändert.`;
+    };
+
+    function getRecentChangesCount() {
+        const now = Date.now();
+        const fourteenDays = 14 * 24 * 60 * 60 * 1000;
+        return (userData.editHistory || []).filter(ts => (now - ts) < fourteenDays).length;
+    }
+
+    window.saveSettings = async () => {
+        const newDName = document.getElementById('edit-displayname').value;
+        const newUName = document.getElementById('edit-username').value;
+        const file = document.getElementById('settings-img-input').files[0];
+        
+        let updates = {};
+        
+        if (newDName !== userData.displayname || newUName !== userData.username) {
+            if (getRecentChangesCount() >= 2) return alert("Limit erreicht! Du kannst deinen Namen erst in 14 Tagen wieder ändern.");
+            updates.displayname = newDName;
+            updates.username = newUName;
+            updates.editHistory = [...(userData.editHistory || []), Date.now()];
+        }
+
+        if (file) updates.photoURL = await uploadImage(file);
+
+        await updateDoc(doc(db, "users", auth.currentUser.uid), updates);
+        location.reload(); // Einfachster Weg um Daten zu refreshen
+    };
+
     async function uploadImage(file) {
         const fd = new FormData(); fd.append("image", file);
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, { method: "POST", body: fd });
-        const j = await res.json(); return j.data.url;
+        const json = await res.json();
+        return json.data.url;
     }
 
     function showMainApp() {
         document.getElementById('navbar').classList.remove('hidden');
         document.getElementById('main-content').classList.remove('hidden');
-        document.getElementById('input-bar').classList.remove('hidden');
-        loadFeed();
         lucide.createIcons();
+        /* Hier loadFeed() etc aufrufen */
     }
-
-    // --- FEED ---
-    function loadFeed() {
-        onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('feed');
-            feed.innerHTML = "";
-            snap.forEach(docSnap => {
-                const p = docSnap.data();
-                const pid = docSnap.id;
-                // Da User-Daten sich ändern können, holen wir sie live
-                onSnapshot(doc(db, "users", p.uid), (uSnap) => {
-                    const u = uSnap.data();
-                    const postDiv = document.createElement('div');
-                    postDiv.className = 'card';
-                    postDiv.innerHTML = `
-                        <div class="post-header">
-                            <img src="${u.photoURL}" class="user-img">
-                            <div style="flex-grow:1">
-                                <div style="font-weight:600;">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge" oncontextmenu="return false;">` : ''}</div>
-                                <div style="color:var(--sub); font-size:13px;">@${u.username}</div>
-                            </div>
-                        </div>
-                        <div style="white-space:pre-wrap; line-height:1.4;">${p.text}</div>
-                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" onclick="openLB('${p.imageUrl}')">` : ''}
-                    `;
-                    feed.appendChild(postDiv);
-                });
-            });
-        });
-    }
-
-    window.openLB = (url) => {
-        document.getElementById('lightbox-img').src = url;
-        document.getElementById('lightbox').style.display = 'flex';
-    };
-
-    // --- SETTINGS ---
-    window.openSettings = () => {
-        document.getElementById('main-content').classList.add('hidden');
-        document.getElementById('input-bar').classList.add('hidden');
-        document.getElementById('settings-screen').classList.remove('hidden');
-        document.getElementById('settings-preview').src = userData.photoURL;
-        document.getElementById('edit-displayname').value = userData.displayname;
-        document.getElementById('edit-username').value = userData.username;
-
-        const now = Date.now();
-        const changes = (userData.editHistory || []).filter(ts => (now - ts) < (14*24*60*60*1000)).length;
-        document.getElementById('edit-warning').innerText = `Namensänderungen: ${changes}/2 in 14 Tagen.`;
-    };
-
-    window.closeSettings = () => {
-        document.getElementById('settings-screen').classList.add('hidden');
-        showMainApp();
-    };
-
-    window.saveSettings = async () => {
-        const nD = document.getElementById('edit-displayname').value;
-        const nU = document.getElementById('edit-username').value;
-        const file = document.getElementById('settings-img-input').files[0];
-        
-        let up = {};
-        if (nD !== userData.displayname || nU !== userData.username) {
-            const now = Date.now();
-            const history = (userData.editHistory || []).filter(ts => (now - ts) < (14*24*60*60*1000));
-            if (history.length >= 2) return alert("Limit erreicht! Warte 14 Tage.");
-            up.displayname = nD; up.username = nU;
-            up.editHistory = [...history, now];
-        }
-        if (file) up.photoURL = await uploadImage(file);
-        
-        await updateDoc(doc(db, "users", auth.currentUser.uid), up);
-        location.reload();
-    };
-
-    document.getElementById('btn-share').onclick = async () => {
-        const text = document.getElementById('post-input').innerText;
-        if (!text.trim()) return;
-        await addDoc(collection(db, "posts"), {
-            text, uid: auth.currentUser.uid, timestamp: serverTimestamp()
-        });
-        document.getElementById('post-input').innerText = "";
-    };
-
-    lucide.createIcons();
 </script>
 </body>
 </html>

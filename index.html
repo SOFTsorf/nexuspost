@@ -202,21 +202,31 @@
 
     let userData = null;
 
-    // --- SEARCH LOGIC (CLEAN & FULL WIDTH) ---
+    // --- RELATIVE TIME HELPER ---
+    function timeAgo(timestamp) {
+        if (!timestamp) return "Gerade eben";
+        const seconds = Math.floor((new Date() - timestamp.toDate()) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + " J.";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + " Mon.";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + " Tg.";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + " Std.";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + " Min.";
+        return "Gerade eben";
+    }
+
+    // --- SEARCH LOGIC ---
     window.expandSearch = () => {
         const wrap = document.getElementById('search-wrapper');
         const logo = document.getElementById('nav-logo');
         const acts = document.getElementById('nav-actions');
         const btn = document.getElementById('btn-close-search');
-
-        logo.classList.add('hidden');
-        acts.classList.add('hidden');
-        wrap.classList.add('active');
-        
-        setTimeout(() => {
-            btn.style.opacity = "1";
-            document.getElementById('search-input').focus();
-        }, 150);
+        logo.classList.add('hidden'); acts.classList.add('hidden'); wrap.classList.add('active');
+        setTimeout(() => { btn.style.opacity = "1"; document.getElementById('search-input').focus(); }, 150);
     };
 
     window.collapseSearch = () => {
@@ -225,17 +235,9 @@
         const acts = document.getElementById('nav-actions');
         const btn = document.getElementById('btn-close-search');
         const input = document.getElementById('search-input');
-
-        btn.style.opacity = "0";
-        wrap.classList.remove('active');
-        input.value = "";
-        
+        btn.style.opacity = "0"; wrap.classList.remove('active'); input.value = "";
         document.querySelectorAll('.card').forEach(post => post.style.display = 'block');
-
-        setTimeout(() => {
-            logo.classList.remove('hidden');
-            acts.classList.remove('hidden');
-        }, 200);
+        setTimeout(() => { logo.classList.remove('hidden'); acts.classList.remove('hidden'); }, 200);
     };
 
     document.getElementById('search-input').oninput = (e) => {
@@ -303,17 +305,20 @@
                     const likes = Array.isArray(p.likes) ? p.likes : [];
                     const hasLiked = likes.includes(auth.currentUser.uid);
                     const isAdmin = auth.currentUser.email === adminEmail;
+                    const isOwner = p.uid === auth.currentUser.uid;
+                    const timeLabel = timeAgo(p.timestamp);
+
                     const html = `
                         <div class="post-header">
                             <img src="${u.photoURL}" class="user-img">
                             <div style="flex-grow:1">
                                 <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
-                                <div style="font-size:13px; color:var(--sub);">@${u.username}</div>
+                                <div style="font-size:12px; color:var(--sub);">@${u.username} • ${timeLabel}</div>
                             </div>
-                            ${isAdmin ? `<button onclick="toggleAdminMenu('${d.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer;"><i data-lucide="more-horizontal"></i></button>` : ''}
+                            ${isAdmin || isOwner ? `<button onclick="toggleAdminMenu('${d.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer;"><i data-lucide="more-horizontal"></i></button>` : ''}
                             <div id="menu-${d.id}" class="admin-menu hidden">
                                 <button onclick="deletePost('${d.id}')"><i data-lucide="trash-2"></i> Löschen</button>
-                                <button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Ent-verifizieren' : 'Verifizieren'}</button>
+                                ${isAdmin ? `<button onclick="toggleVerify('${p.uid}', ${!u.verified})"><i data-lucide="shield-check"></i> ${u.verified ? 'Ent-verifizieren' : 'Verifizieren'}</button>` : ''}
                             </div>
                         </div>
                         <div style="font-size:16px; white-space:pre-wrap; line-height:1.4;">${p.text}</div>
@@ -326,7 +331,7 @@
                                 <i data-lucide="message-circle" style="width:18px;"></i> Kommentieren
                             </button>
                         </div>
-                        <div id="comments-section-${d.id}" class="hidden" style="margin-top:15px; background:rgba(0,0,0,0.02); padding:10px; border-radius:10px;"></div>`;
+                        <div id="comments-section-${d.id}" class="hidden" style="margin-top:15px; border-top: 0.5px solid var(--border); padding-top:10px;"></div>`;
                     let div = document.getElementById(pid);
                     if (!div) { div = document.createElement('div'); div.id = pid; div.className = 'card'; feed.appendChild(div); }
                     div.innerHTML = html; lucide.createIcons();
@@ -353,18 +358,36 @@
         const sec = document.getElementById(`comments-section-${pId}`);
         sec.classList.toggle('hidden');
         if (!sec.classList.contains('hidden')) {
-            sec.innerHTML = `<div style="display:flex; gap:8px; margin-bottom:15px;"><input type="text" id="input-${pId}" placeholder="Antworten..." style="flex-grow:1; padding:8px; border-radius:15px; border:0.5px solid var(--border); background:var(--bg); color:var(--text);"><button onclick="addComment('${pId}')" class="send-btn"><i data-lucide="arrow-up" style="width:16px;"></i></button></div><div id="list-${pId}"></div>`;
+            sec.innerHTML = `<div style="display:flex; gap:8px; margin-bottom:15px;"><input type="text" id="input-${pId}" placeholder="Antworten..." style="flex-grow:1; padding:8px 15px; border-radius:20px; border:none; background:var(--ios-input); color:var(--text);"><button onclick="addComment('${pId}')" class="send-btn"><i data-lucide="arrow-up" style="width:16px;"></i></button></div><div id="list-${pId}"></div>`;
             lucide.createIcons();
             onSnapshot(query(collection(db, "posts", pId, "comments"), orderBy("timestamp", "asc")), (snap) => {
                 const list = document.getElementById(`list-${pId}`); if (!list) return;
                 list.innerHTML = '';
                 snap.forEach(ds => {
                     const c = ds.data();
-                    list.innerHTML += `<div style="display:flex; gap:10px; margin-bottom:15px;"><img src="${c.photoURL}" class="comment-user-img"><div><div style="font-size:13px; font-weight:700;">${c.displayname} ${c.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div><div style="font-size:14px;">${c.text}</div></div></div>`;
+                    const isAdmin = auth.currentUser.email === adminEmail;
+                    const isOwner = c.uid === auth.currentUser.uid;
+                    const cTime = timeAgo(c.timestamp);
+
+                    list.innerHTML += `
+                        <div class="card" style="margin-bottom:8px; padding:10px; background: var(--ios-input); border:none;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                                <img src="${c.photoURL}" style="width:25px; height:25px; border-radius:50%;">
+                                <div style="flex-grow:1; font-size:13px; font-weight:700;">
+                                    ${c.displayname} ${c.verified ? `<img src="${verifiedIcon}" style="width:12px;">` : ''}
+                                    <span style="font-weight:400; color:var(--sub); margin-left:5px;">${cTime}</span>
+                                </div>
+                                ${isAdmin || isOwner ? `<button onclick="deleteComment('${pId}', '${ds.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i data-lucide="trash-2" style="width:14px;"></i></button>` : ''}
+                            </div>
+                            <div style="font-size:14px; margin-left:33px;">${c.text}</div>
+                        </div>`;
                 });
+                lucide.createIcons();
             });
         }
     };
+
+    window.deleteComment = async (pId, cId) => { if(confirm("Kommentar löschen?")) await deleteDoc(doc(db, "posts", pId, "comments", cId)); };
 
     window.showPreview = (e) => {
         const f = e.target.files[0]; if (!f) return;

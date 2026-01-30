@@ -61,8 +61,11 @@
         
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
 
-        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        #lightbox-img { max-width: 95%; max-height: 85vh; border-radius: 12px; }
+        /* LIGHTBOX & CLOSE BUTTON */
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
+        #lightbox-img { max-width: 95%; max-height: 85vh; border-radius: 12px; object-fit: contain; }
+        .close-lightbox-btn { position: absolute; top: 30px; right: 20px; background: rgba(255,255,255,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+        .close-lightbox-btn:hover { background: rgba(255,255,255,0.4); }
 
         .ios-footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--tab-bg); backdrop-filter: blur(20px); border-top: 0.5px solid var(--border); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); z-index: 1000; }
         .ios-post-box { display: flex; align-items: flex-end; gap: 12px; max-width: 580px; margin: 0 auto; }
@@ -154,7 +157,10 @@
 </div>
 
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <img id="lightbox-img" src="">
+    <button class="close-lightbox-btn" onclick="closeLightbox()">
+        <i data-lucide="x" style="width:24px; height:24px;"></i>
+    </button>
+    <img id="lightbox-img" src="" onclick="event.stopPropagation()">
 </div>
 
 <script type="module">
@@ -263,7 +269,7 @@
             snap.forEach(d => {
                 const a = d.data();
                 if(a.expiresAt && a.expiresAt.toDate() < new Date()) { deleteDoc(doc(db, "alerts", d.id)); return; }
-                const isAdmin = auth.currentUser.email === adminEmail;
+                const isAdmin = auth.currentUser?.email === adminEmail;
                 container.innerHTML += `
                     <div class="alert-banner alert-${a.type}">
                         <i data-lucide="${a.type === 'warning' ? 'alert-circle' : 'info'}" style="width:20px;"></i>
@@ -282,10 +288,7 @@
             const feed = document.getElementById('feed');
             let posts = [];
             snap.forEach(d => posts.push({id: d.id, ...d.data()}));
-            
-            // Sortierung: Angepinnte Posts nach oben
             posts.sort((a,b) => (b.isPinned || false) - (a.isPinned || false));
-
             feed.innerHTML = '';
             posts.forEach(p => {
                 onSnapshot(doc(db, "users", p.uid), (uSnap) => {
@@ -337,24 +340,28 @@
 
     // --- ADMIN FUNKTIONEN ---
     window.togglePin = async (id, status) => { await updateDoc(doc(db, "posts", id), { isPinned: !status }); toggleAdminMenu(id); };
-    
     window.toggleVerify = async (userId, currentStatus) => {
         if(confirm(currentStatus ? "Verifizierung entfernen?" : "Nutzer verifizieren?")) {
             await updateDoc(doc(db, "users", userId), { verified: !currentStatus });
         }
     };
-
     window.toggleAdminMenu = (id) => document.getElementById('menu-'+id).classList.toggle('hidden');
     window.deletePost = (id) => confirm("Post löschen?") && deleteDoc(doc(db, "posts", id));
-    
     window.toggleLike = async (id, likes) => {
         const ref = doc(db, "posts", id); const uid = auth.currentUser.uid;
         await updateDoc(ref, { likes: likes.includes(uid) ? arrayRemove(uid) : arrayUnion(uid) });
     };
 
     // --- BILDER & LIGHTBOX ---
-    window.openLightbox = (url) => { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').style.display = 'flex'; };
-    window.closeLightbox = () => document.getElementById('lightbox').style.display = 'none';
+    window.openLightbox = (url) => { 
+        document.getElementById('lightbox-img').src = url; 
+        document.getElementById('lightbox').style.display = 'flex'; 
+        document.body.style.overflow = 'hidden'; // Verhindert Scrollen im Hintergrund
+    };
+    window.closeLightbox = () => { 
+        document.getElementById('lightbox').style.display = 'none'; 
+        document.body.style.overflow = 'auto'; // Aktiviert Scrollen wieder
+    };
 
     window.showPreview = (e) => {
         const f = e.target.files[0]; if(!f) return;

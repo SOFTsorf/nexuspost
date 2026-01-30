@@ -35,18 +35,28 @@
         }
         .logo { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; transition: 0.2s; white-space: nowrap; }
         
+        .search-wrapper { display: flex; align-items: center; flex-grow: 0; transition: all 0.3s ease; gap: 0; }
+        .search-wrapper.active { flex-grow: 1; gap: 10px; }
+
         .search-container {
-            flex-grow: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; align-items: center; background: var(--ios-input);
-            border-radius: 10px; padding: 0 10px; height: 32px; margin: 0 10px;
-            max-width: 40px;
+            border-radius: 10px; padding: 0 10px; height: 32px;
+            width: 40px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .search-container.active { flex-grow: 1; margin: 0; max-width: 100%; }
+        .search-wrapper.active .search-container { width: 100%; }
+
         .search-input {
             border: none; background: none; color: var(--text); font-size: 15px;
             width: 0; transition: width 0.3s; outline: none; padding: 0;
         }
-        .search-container.active .search-input { width: 100%; padding-left: 8px; }
+        .search-wrapper.active .search-input { width: 100%; padding-left: 8px; }
+
+        .btn-close-search {
+            background: none; border: none; color: var(--nexus); font-weight: 600;
+            font-size: 15px; cursor: pointer; padding: 0; white-space: nowrap;
+            display: none; animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
 
@@ -91,24 +101,26 @@
         .settings-row input { flex-grow: 1; border: none; background: transparent; color: var(--nexus); font-size: 15px; text-align: right; outline: none; }
         .btn-cancel { background: transparent; color: var(--danger); border: none; font-weight: 600; cursor: pointer; width: 100%; padding: 15px; font-size: 16px; }
 
-        /* LIGHTBOX & MENUS */
-        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .lightbox img { max-width: 95%; max-height: 90%; border-radius: 10px; }
-        .admin-menu { position: absolute; top: 35px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden; }
-        .admin-menu button { width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-
         .hidden { display: none !important; }
         .comment-user-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .admin-menu { position: absolute; top: 35px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden; }
+        .admin-menu button { width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
     </style>
 </head>
 <body class="light">
 
 <nav id="navbar" class="hidden">
     <div class="logo" id="nav-logo">NexusPost</div>
-    <div class="search-container" id="search-box">
-        <i data-lucide="search" style="width:16px; color:var(--sub); cursor:pointer;" onclick="focusSearch()"></i>
-        <input type="text" class="search-input" id="search-input" placeholder="Suchen..." onfocus="expandSearch()" onblur="collapseSearch()">
+    
+    <div class="search-wrapper" id="search-wrapper">
+        <div class="search-container" onclick="expandSearch()">
+            <i data-lucide="search" style="width:16px; color:var(--sub); cursor:pointer;"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Suchen...">
+        </div>
+        <button id="btn-close-search" class="btn-close-search" onclick="collapseSearch()">Abbrechen</button>
     </div>
+
     <div id="nav-actions" style="display: flex; gap: 12px; align-items: center;">
         <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="moon" id="theme-icon"></i></button>
         <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="settings"></i></button>
@@ -185,6 +197,30 @@
 
     let userData = null;
 
+    // --- SEARCH LOGIC ---
+    window.expandSearch = () => {
+        document.getElementById('search-wrapper').classList.add('active');
+        document.getElementById('nav-logo').classList.add('hidden');
+        document.getElementById('nav-actions').classList.add('hidden');
+        document.getElementById('btn-close-search').style.display = 'block';
+        document.getElementById('search-input').focus();
+    };
+
+    window.collapseSearch = () => {
+        document.getElementById('search-wrapper').classList.remove('active');
+        document.getElementById('nav-logo').classList.remove('hidden');
+        document.getElementById('nav-actions').classList.remove('hidden');
+        document.getElementById('btn-close-search').style.display = 'none';
+        document.getElementById('search-input').value = "";
+        // Feed Filter zurücksetzen
+        document.querySelectorAll('.card').forEach(post => post.style.display = 'block');
+    };
+
+    document.getElementById('search-input').oninput = (e) => {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('.card').forEach(post => post.style.display = post.innerText.toLowerCase().includes(term) ? 'block' : 'none');
+    };
+
     // --- CORE UI ---
     window.toggleDarkMode = () => {
         const next = document.body.className === 'dark' ? 'light' : 'dark';
@@ -192,15 +228,6 @@
         localStorage.setItem('theme', next);
         document.getElementById('theme-icon').setAttribute('data-lucide', next === 'dark' ? 'sun' : 'moon');
         lucide.createIcons();
-    };
-
-    window.focusSearch = () => document.getElementById('search-input').focus();
-    window.expandSearch = () => { document.getElementById('search-box').classList.add('active'); document.getElementById('nav-logo').classList.add('hidden'); document.getElementById('nav-actions').classList.add('hidden'); };
-    window.collapseSearch = () => { if (!document.getElementById('search-input').value) { document.getElementById('search-box').classList.remove('active'); document.getElementById('nav-logo').classList.remove('hidden'); document.getElementById('nav-actions').classList.remove('hidden'); } };
-
-    document.getElementById('search-input').oninput = (e) => {
-        const term = e.target.value.toLowerCase();
-        document.querySelectorAll('.card').forEach(post => post.style.display = post.innerText.toLowerCase().includes(term) ? 'block' : 'none');
     };
 
     window.toggleSettings = () => {

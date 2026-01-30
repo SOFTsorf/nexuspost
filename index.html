@@ -46,6 +46,7 @@
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); position: relative; }
         
+        /* ALERTS */
         .alert-banner { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1.5px solid; }
         .alert-warning { border-color: var(--warning); background: rgba(255, 149, 0, 0.1); color: var(--warning); }
         .alert-info { border-color: #8e8e93; background: rgba(142, 142, 147, 0.1); color: #8e8e93; }
@@ -59,11 +60,12 @@
         
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
 
+        /* LIGHTBOX */
         .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
         #lightbox-img { max-width: 95%; max-height: 85vh; border-radius: 12px; object-fit: contain; }
         .close-lightbox-btn { position: absolute; top: 30px; right: 20px; background: rgba(255,255,255,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
-        .close-lightbox-btn:hover { background: rgba(255,255,255,0.4); }
 
+        /* FOOTER & INPUT */
         .ios-footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--tab-bg); backdrop-filter: blur(20px); border-top: 0.5px solid var(--border); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); z-index: 1000; }
         .ios-post-box { display: flex; align-items: flex-end; gap: 12px; max-width: 580px; margin: 0 auto; }
         .ios-input-container { flex-grow: 1; background: var(--ios-input); border-radius: 20px; padding: 8px 15px; color: var(--text); font-size: 16px; outline: none; min-height: 20px; max-height: 150px; overflow-y: auto; }
@@ -71,20 +73,29 @@
         .send-btn { background: var(--nexus); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .hidden { display: none !important; }
         
+        /* ADMIN MENU */
         .admin-menu { position: absolute; top: 35px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden; }
         .admin-menu button { width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 0.5px solid var(--border); }
-        .admin-menu button:last-child { border-bottom: none; }
 
-        /* NEU: Kommentar Styling */
-        .comment-item { margin-bottom: 8px; font-size: 14px; border-left: 2px solid var(--nexus); padding-left: 8px; }
-        .comment-user { font-weight: 700; font-size: 12px; color: var(--nexus); }
+        /* NEU: KOMMENTAR DESIGN (WIE BEITRÄGE) */
+        .comment-bubble { 
+            background: var(--ios-input); 
+            border-radius: 15px; 
+            padding: 10px 12px; 
+            margin-bottom: 8px; 
+            position: relative;
+            border: 0.5px solid var(--border);
+        }
+        .comment-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .comment-user { font-weight: 700; font-size: 13px; color: var(--text); }
+        .comment-time { font-size: 10px; color: var(--sub); }
+        .comment-text { font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
     </style>
 </head>
 <body class="light">
 
 <nav id="navbar" class="hidden">
     <div class="logo" id="nav-logo">NexusPost</div>
-    
     <div class="search-wrapper" id="search-wrapper">
         <div class="search-container" onclick="expandSearch()">
             <i data-lucide="search" style="width:16px; color:var(--sub);"></i>
@@ -92,7 +103,6 @@
         </div>
         <button id="btn-close-search" class="hidden" onclick="collapseSearch()" style="background:none; border:none; color:var(--nexus); font-weight:600; margin-left:10px;">Abbrechen</button>
     </div>
-
     <div id="nav-actions">
         <button id="admin-alert-btn" class="hidden" onclick="openAlertModal()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="plus-circle"></i></button>
         <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="moon" id="theme-icon"></i></button>
@@ -112,56 +122,40 @@
 
 <div id="alert-modal" class="lightbox">
     <div class="card" style="width: 90%; max-width: 400px; padding: 20px;" onclick="event.stopPropagation()">
-        <h3 style="margin-top:0;">Neue Meldung</h3>
+        <h3>Neue Meldung</h3>
         <select id="alert-type" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; background:var(--ios-input); color:var(--text); border:none;">
-            <option value="warning">Warnung (Orange)</option>
-            <option value="info">Information (Grau)</option>
+            <option value="warning">Warnung</option>
+            <option value="info">Information</option>
         </select>
-        <textarea id="alert-text" placeholder="Nachricht eingeben..." style="width:100%; height:100px; margin-bottom:12px; border-radius:8px; background:var(--ios-input); color:var(--text); border:none; padding:10px; font-family:inherit; resize:none;"></textarea>
-        <select id="alert-duration" style="width:100%; margin-bottom:20px; padding:10px; border-radius:8px; background:var(--ios-input); color:var(--text); border:none;">
-            <option value="0">Dauerhaft anzeigen</option>
-            <option value="1">1 Stunde sichtbar</option>
-            <option value="24">24 Stunden sichtbar</option>
-        </select>
-        <div style="display:flex; gap:10px;">
-            <button id="save-alert-btn" class="send-btn" style="flex:1; border-radius:10px; height:45px; font-weight:600;">Erstellen</button>
-            <button onclick="closeAlertModal()" style="flex:1; background:none; border:none; color:var(--danger); font-weight:600; cursor:pointer;">Abbrechen</button>
-        </div>
+        <textarea id="alert-text" style="width:100%; height:80px; margin-bottom:12px; border-radius:8px; background:var(--ios-input); color:var(--text); border:none; padding:10px;"></textarea>
+        <button id="save-alert-btn" class="send-btn" style="width:100%; border-radius:10px; height:40px;">Senden</button>
     </div>
 </div>
 
 <div id="settings-screen" class="container hidden" style="padding-top: 20px;">
     <h2>Einstellungen</h2>
     <div class="card">
-        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; margin-bottom:10px; padding:12px; border:none; background:var(--ios-input); border-radius:8px; color:var(--text);">
-        <input type="text" id="edit-username" placeholder="Nutzername" style="width:100%; padding:12px; border:none; background:var(--ios-input); border-radius:8px; color:var(--text);">
+        <input type="text" id="edit-displayname" style="width:100%; margin-bottom:10px; padding:12px; background:var(--ios-input); border-radius:8px; color:var(--text); border:none;">
+        <input type="text" id="edit-username" style="width:100%; padding:12px; background:var(--ios-input); border-radius:8px; color:var(--text); border:none;">
     </div>
-    <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:12px; height:50px; font-weight:600;">Speichern</button>
-    <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--danger); padding:15px; cursor:pointer; font-weight:600;">Abbrechen</button>
+    <button id="btn-save-settings" class="send-btn" style="width:100%; height:50px;">Speichern</button>
 </div>
 
 <div id="input-bar" class="ios-footer hidden">
-    <div id="preview-container" class="hidden" style="position: absolute; bottom: 80px; left: 15px; background: var(--card); padding: 5px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+    <div id="preview-container" class="hidden" style="position: absolute; bottom: 80px; left: 15px; background: var(--card); padding: 5px; border-radius: 10px;">
         <img id="preview-img" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
-        <button onclick="clearPreview()" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; cursor: pointer; width:20px; height:20px;">×</button>
+        <button onclick="clearPreview()" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; border:none;">×</button>
     </div>
     <div class="ios-post-box">
-        <label style="color: var(--nexus); cursor: pointer; margin-bottom: 5px;">
-            <i data-lucide="plus-circle" style="width:28px; height:28px;"></i>
-            <input type="file" id="image-input" accept="image/*" class="hidden" onchange="showPreview(event)">
-        </label>
+        <label style="color: var(--nexus); cursor: pointer;"><i data-lucide="plus-circle"></i><input type="file" id="image-input" class="hidden" onchange="showPreview(event)"></label>
         <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
-        <button id="btn-share" class="send-btn">
-            <i data-lucide="arrow-up" style="width:20px; height:20px; stroke-width:3px;"></i>
-        </button>
+        <button id="btn-share" class="send-btn"><i data-lucide="arrow-up"></i></button>
     </div>
 </div>
 
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <button class="close-lightbox-btn" onclick="closeLightbox()">
-        <i data-lucide="x" style="width:24px; height:24px;"></i>
-    </button>
-    <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+    <button class="close-lightbox-btn">×</button>
+    <img id="lightbox-img" src="">
 </div>
 
 <script type="module">
@@ -191,258 +185,139 @@
     function timeAgo(timestamp) {
         if (!timestamp) return "Gerade eben";
         const seconds = Math.floor((new Date() - timestamp.toDate()) / 1000);
-        let interval = seconds / 31536000; if (interval > 1) return Math.floor(interval) + " J.";
-        interval = seconds / 2592000; if (interval > 1) return Math.floor(interval) + " Mon.";
-        interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + " Tg.";
-        interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + " Std.";
-        interval = seconds / 60; if (interval > 1) return Math.floor(interval) + " Min.";
-        return "Gerade eben";
+        if (seconds < 60) return "Gerade eben";
+        const intervals = { "J.": 31536000, "Mon.": 2592000, "Tg.": 86400, "Std.": 3600, "Min.": 60 };
+        for (let key in intervals) {
+            const interval = Math.floor(seconds / intervals[key]);
+            if (interval >= 1) return interval + " " + key;
+        }
     }
 
-    // --- NAVIGATION & SUCHE ---
-    window.expandSearch = () => {
-        document.getElementById('nav-logo').classList.add('hidden');
-        document.getElementById('nav-actions').classList.add('hidden');
-        document.getElementById('search-wrapper').classList.add('active');
-        document.getElementById('btn-close-search').classList.remove('hidden');
-        document.getElementById('search-input').focus();
-    };
-    window.collapseSearch = () => {
-        document.getElementById('search-wrapper').classList.remove('active');
-        document.getElementById('nav-logo').classList.remove('hidden');
-        document.getElementById('nav-actions').classList.remove('hidden');
-        document.getElementById('btn-close-search').classList.add('hidden');
-        document.getElementById('search-input').value = "";
-        document.querySelectorAll('.card').forEach(p => p.style.display = 'block');
-    };
-    document.getElementById('search-input').oninput = (e) => {
-        const term = e.target.value.toLowerCase();
-        document.querySelectorAll('.card').forEach(post => post.style.display = post.innerText.toLowerCase().includes(term) ? 'block' : 'none');
-    };
-
-    window.toggleDarkMode = () => {
-        const next = document.body.className === 'dark' ? 'light' : 'dark';
-        document.body.className = next;
-        localStorage.setItem('theme', next);
-        document.getElementById('theme-icon').setAttribute('data-lucide', next === 'dark' ? 'sun' : 'moon');
-        lucide.createIcons();
-    };
-
-    // --- AUTHENTIFIZIERUNG ---
+    // AUTH
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('navbar').classList.remove('hidden');
-            document.getElementById('input-bar').classList.remove('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
+            document.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
             const uDoc = await getDoc(doc(db, "users", user.uid));
             if (uDoc.exists()) { userData = uDoc.data(); } 
             else {
                 userData = { username: "user_"+Math.floor(Math.random()*999), displayname: user.displayName, photoURL: user.photoURL, email: user.email, verified: (user.email === adminEmail) };
                 await setDoc(doc(db, "users", user.uid), userData);
             }
-            if(user.email === adminEmail) document.getElementById('admin-alert-btn').classList.remove('hidden');
             loadFeed(); loadAlerts();
-            if(localStorage.getItem('theme') === 'dark') toggleDarkMode();
             lucide.createIcons();
         }
     });
 
-    // --- ALERTS ---
-    window.openAlertModal = () => document.getElementById('alert-modal').style.display = 'flex';
-    window.closeAlertModal = () => document.getElementById('alert-modal').style.display = 'none';
-    document.getElementById('save-alert-btn').onclick = async () => {
-        const text = document.getElementById('alert-text').value;
-        const type = document.getElementById('alert-type').value;
-        const duration = parseInt(document.getElementById('alert-duration').value);
-        if(!text.trim()) return;
-        let expiresAt = null;
-        if(duration > 0) { expiresAt = new Date(); expiresAt.setHours(expiresAt.getHours() + duration); }
-        await addDoc(collection(db, "alerts"), { text, type, expiresAt, createdAt: serverTimestamp() });
-        document.getElementById('alert-text').value = ""; closeAlertModal();
-    };
-
-    function loadAlerts() {
-        onSnapshot(collection(db, "alerts"), (snap) => {
-            const container = document.getElementById('global-alerts');
-            container.innerHTML = '';
-            snap.forEach(d => {
-                const a = d.data();
-                if(a.expiresAt && a.expiresAt.toDate() < new Date()) { deleteDoc(doc(db, "alerts", d.id)); return; }
-                const isAdmin = auth.currentUser?.email === adminEmail;
-                container.innerHTML += `
-                    <div class="alert-banner alert-${a.type}">
-                        <i data-lucide="${a.type === 'warning' ? 'alert-circle' : 'info'}" style="width:20px;"></i>
-                        <div style="flex:1;">${a.text}</div>
-                        ${isAdmin ? `<button onclick="deleteAlert('${d.id}')" style="background:none; border:none; color:inherit; cursor:pointer;"><i data-lucide="x" style="width:16px;"></i></button>` : ''}
-                    </div>`;
-            });
-            lucide.createIcons();
-        });
-    }
-    window.deleteAlert = (id) => deleteDoc(doc(db, "alerts", id));
-
-    // --- FEED LOGIK ---
+    // FEED
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
-            let posts = [];
-            snap.forEach(d => posts.push({id: d.id, ...d.data()}));
-            posts.sort((a,b) => (b.isPinned || false) - (a.isPinned || false));
             feed.innerHTML = '';
-            posts.forEach(p => {
+            snap.forEach(d => {
+                const p = d.data();
+                const pid = d.id;
                 onSnapshot(doc(db, "users", p.uid), (uSnap) => {
                     const u = uSnap.data() || {};
-                    const pid = 'post-'+p.id;
-                    const likes = Array.isArray(p.likes) ? p.likes : [];
+                    const likes = p.likes || [];
                     const hasLiked = likes.includes(auth.currentUser?.uid);
-                    const isAdmin = auth.currentUser?.email === adminEmail;
-                    const isOwner = auth.currentUser?.uid === p.uid;
                     
-                    let div = document.getElementById(pid);
-                    if(!div) { div = document.createElement('div'); div.id = pid; div.className = 'card'; feed.appendChild(div); }
-                    
-                    div.innerHTML = `
-                        ${p.isPinned ? `<div class="pinned-label"><i data-lucide="pin" style="width:14px;"></i> Von NEXUS fixiert</div>` : ''}
+                    const postEl = document.createElement('div');
+                    postEl.className = 'card';
+                    postEl.innerHTML = `
+                        ${p.isPinned ? `<div class="pinned-label"><i data-lucide="pin" style="width:14px;"></i> NEXUS fixiert</div>` : ''}
                         <div class="post-header">
                             <img src="${u.photoURL}" class="user-img">
-                            <div style="flex-grow:1">
+                            <div style="flex:1">
                                 <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
                                 <div style="font-size:12px; color:var(--sub);">@${u.username} • ${timeAgo(p.timestamp)}</div>
                             </div>
-                            <button onclick="toggleAdminMenu('${p.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer;"><i data-lucide="more-horizontal"></i></button>
-                            <div id="menu-${p.id}" class="admin-menu hidden">
-                                ${isAdmin ? `
-                                    <button onclick="togglePin('${p.id}', ${p.isPinned || false})"><i data-lucide="pin"></i> ${p.isPinned ? 'Lösen' : 'Anpinnen'}</button>
-                                    <button onclick="toggleVerify('${p.uid}', ${u.verified || false})"><i data-lucide="shield-check"></i> ${u.verified ? 'Ent-verifizieren' : 'Verifizieren'}</button>
-                                ` : ''}
-                                ${isAdmin || isOwner ? `
-                                    <button onclick="deletePost('${p.id}')" style="color:var(--danger);"><i data-lucide="trash-2"></i> Löschen</button>
-                                ` : ''}
-                            </div>
                         </div>
-                        <div style="font-size:16px; white-space:pre-wrap; line-height:1.4;">${p.text}</div>
+                        <div style="font-size:16px;">${p.text}</div>
                         ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" onclick="openLightbox('${p.imageUrl}')">` : ''}
                         <div style="display:flex; gap:20px; margin-top:15px; border-top:0.5px solid var(--border); padding-top:10px;">
-                            <button onclick='toggleLike("${p.id}", ${JSON.stringify(likes)})' style="background:none; border:none; color:${hasLiked?'var(--nexus)':'var(--sub)'}; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                            <button onclick='toggleLike("${pid}", ${JSON.stringify(likes)})' style="background:none; border:none; color:${hasLiked?'var(--nexus)':'var(--sub)'}; cursor:pointer; display:flex; align-items:center; gap:5px;">
                                 <i data-lucide="heart" style="width:18px; ${hasLiked?'fill:var(--nexus)':''}"></i> ${likes.length}
                             </button>
-                            <button onclick="showComments('${p.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer; display:flex; align-items:center; gap:5px;">
-                                <i data-lucide="message-circle" style="width:18px;"></i> Kommentare
+                            <button onclick="showComments('${pid}')" style="background:none; border:none; color:var(--sub); cursor:pointer; display:flex; align-items:center; gap:5px;">
+                                <i data-lucide="message-circle" style="width:18px;"></i> Kommentieren
                             </button>
                         </div>
-                        <div id="comments-section-${p.id}" class="hidden" style="margin-top:10px;"></div>`;
+                        <div id="comments-section-${pid}" class="hidden" style="margin-top:15px; padding-top:10px; border-top: 0.5px dashed var(--border);"></div>
+                    `;
+                    feed.appendChild(postEl);
                     lucide.createIcons();
                 });
             });
         });
     }
 
-    // --- NEU: KOMMENTAR FUNKTIONEN ---
-    window.showComments = async (postId) => {
-        const container = document.getElementById(`comments-section-${postId}`);
-        if (!container.classList.contains('hidden')) { container.classList.add('hidden'); return; }
-        
-        container.classList.remove('hidden');
-        container.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--sub);">Lade...</div>';
+    // KOMMENTAR FUNKTION (Mini-Post Design)
+    window.showComments = (postId) => {
+        const section = document.getElementById(`comments-section-${postId}`);
+        if (!section.classList.contains('hidden')) { section.classList.add('hidden'); return; }
+        section.classList.remove('hidden');
 
-        const q = query(collection(db, "posts", postId, "comments"), orderBy("timestamp", "asc"));
-        onSnapshot(q, (snap) => {
-            container.innerHTML = `
-                <div style="margin-top:10px; padding:12px; background:var(--ios-input); border-radius:12px;">
-                    <div id="list-${postId}"></div>
-                    <div style="display:flex; gap:8px; margin-top:10px;">
-                        <input type="text" id="input-${postId}" placeholder="Kommentieren..." 
-                               style="flex:1; border:none; background:var(--card); padding:8px 12px; border-radius:18px; color:var(--text); font-size:14px; outline:none;">
-                        <button onclick="addComment('${postId}')" class="send-btn" style="width:30px; height:30px;">
-                            <i data-lucide="send" style="width:14px;"></i>
-                        </button>
-                    </div>
+        onSnapshot(query(collection(db, "posts", postId, "comments"), orderBy("timestamp", "asc")), (snap) => {
+            section.innerHTML = `<div id="list-${postId}"></div>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                    <input type="text" id="input-${postId}" placeholder="Antworten..." style="flex:1; border:none; background:var(--ios-input); padding:10px 15px; border-radius:20px; color:var(--text); outline:none;">
+                    <button onclick="addComment('${postId}')" class="send-btn"><i data-lucide="send" style="width:16px;"></i></button>
                 </div>`;
+            
             const list = document.getElementById(`list-${postId}`);
-            if (snap.empty) { list.innerHTML = '<div style="font-size:12px; color:var(--sub);">Noch keine Kommentare.</div>'; }
-            else {
-                list.innerHTML = '';
-                snap.forEach(doc => {
-                    const c = doc.data();
-                    list.innerHTML += `<div class="comment-item"><span class="comment-user">${c.displayname}</span>: ${c.text}</div>`;
-                });
-            }
+            snap.forEach(doc => {
+                const c = doc.data();
+                list.innerHTML += `
+                    <div class="comment-bubble">
+                        <div class="comment-meta">
+                            <span class="comment-user">${c.displayname}</span>
+                            <span class="comment-time">${timeAgo(c.timestamp)}</span>
+                        </div>
+                        <div class="comment-text">${c.text}</div>
+                    </div>`;
+            });
             lucide.createIcons();
         });
     };
 
     window.addComment = async (postId) => {
         const input = document.getElementById(`input-${postId}`);
-        const text = input.value.trim();
-        if (!text) return;
+        if (!input.value.trim()) return;
         await addDoc(collection(db, "posts", postId, "comments"), {
-            text, uid: auth.currentUser.uid, displayname: userData.displayname, timestamp: serverTimestamp()
+            text: input.value, uid: auth.currentUser.uid, displayname: userData.displayname, timestamp: serverTimestamp()
         });
         input.value = "";
     };
 
-    // --- ADMIN FUNKTIONEN ---
-    window.togglePin = async (id, status) => { await updateDoc(doc(db, "posts", id), { isPinned: !status }); toggleAdminMenu(id); };
-    window.toggleVerify = async (userId, currentStatus) => {
-        if(confirm(currentStatus ? "Verifizierung entfernen?" : "Nutzer verifizieren?")) {
-            await updateDoc(doc(db, "users", userId), { verified: !currentStatus });
-        }
-    };
-    window.toggleAdminMenu = (id) => document.getElementById('menu-'+id).classList.toggle('hidden');
-    window.deletePost = (id) => confirm("Post löschen?") && deleteDoc(doc(db, "posts", id));
+    // WEITERE FUNKTIONEN (Likes, DarkMode, Search etc.)
     window.toggleLike = async (id, likes) => {
-        const ref = doc(db, "posts", id); const uid = auth.currentUser.uid;
+        const ref = doc(db, "posts", id);
+        const uid = auth.currentUser.uid;
         await updateDoc(ref, { likes: likes.includes(uid) ? arrayRemove(uid) : arrayUnion(uid) });
     };
 
-    // --- BILDER & LIGHTBOX ---
-    window.openLightbox = (url) => { 
-        document.getElementById('lightbox-img').src = url; 
-        document.getElementById('lightbox').style.display = 'flex'; 
-        document.body.style.overflow = 'hidden';
-    };
-    window.closeLightbox = () => { 
-        document.getElementById('lightbox').style.display = 'none'; 
-        document.body.style.overflow = 'auto';
+    window.toggleDarkMode = () => {
+        document.body.className = document.body.className === 'dark' ? 'light' : 'dark';
+        document.getElementById('theme-icon').setAttribute('data-lucide', document.body.className === 'dark' ? 'sun' : 'moon');
+        lucide.createIcons();
     };
 
-    window.showPreview = (e) => {
-        const f = e.target.files[0]; if(!f) return;
-        const r = new FileReader(); r.onload = (rs) => { document.getElementById('preview-img').src = rs.target.result; document.getElementById('preview-container').classList.remove('hidden'); }; r.readAsDataURL(f);
-    };
-    window.clearPreview = () => { document.getElementById('image-input').value = ""; document.getElementById('preview-container').classList.add('hidden'); };
+    window.openLightbox = (url) => { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').style.display = 'flex'; };
+    window.closeLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
 
-    // --- EINSTELLUNGEN ---
-    window.toggleSettings = () => {
-        document.getElementById('main-content').classList.toggle('hidden');
-        document.getElementById('input-bar').classList.toggle('hidden');
-        document.getElementById('settings-screen').classList.toggle('hidden');
-        document.getElementById('edit-displayname').value = userData.displayname;
-        document.getElementById('edit-username').value = userData.username;
-    };
-    document.getElementById('btn-save-settings').onclick = async () => {
-        const dn = document.getElementById('edit-displayname').value;
-        const un = document.getElementById('edit-username').value.replace('@','');
-        await updateDoc(doc(db, "users", auth.currentUser.uid), { displayname: dn, username: un });
-        userData.displayname = dn; userData.username = un; toggleSettings();
-    };
-
-    // --- POSTEN ---
+    // POSTING LOGIK
     document.getElementById('btn-share').onclick = async () => {
         const txt = document.getElementById('post-input').innerText;
-        const file = document.getElementById('image-input').files[0];
-        if(!txt.trim() && !file) return;
-        let imageUrl = null;
-        if(file) {
-            const fd = new FormData(); fd.append("image", file);
-            const res = await fetch("https://api.imgbb.com/1/upload?key="+imgbbKey, { method: "POST", body: fd });
-            const j = await res.json(); imageUrl = j.data.url;
-        }
-        await addDoc(collection(db, "posts"), { text: txt, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [], isPinned: false });
-        document.getElementById('post-input').innerText = ""; clearPreview();
+        if(!txt.trim()) return;
+        await addDoc(collection(db, "posts"), { text: txt, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [], isPinned: false });
+        document.getElementById('post-input').innerText = "";
     };
+
+    window.expandSearch = () => { document.getElementById('search-wrapper').classList.add('active'); };
+    window.collapseSearch = () => { document.getElementById('search-wrapper').classList.remove('active'); };
+
 </script>
 </body>
 </html>

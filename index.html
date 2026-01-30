@@ -82,6 +82,7 @@
             border-radius: 12px;
             padding: 10px;
             margin-bottom: 8px;
+            position: relative;
         }
         .comment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
         .comment-user-img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
@@ -92,6 +93,7 @@
             background: var(--ios-input); border-radius: 20px; align-items: center;
         }
         .comment-verified { width: 14px; height: 14px; margin-left: 3px; }
+        .comment-delete-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--sub); cursor: pointer; padding: 0; }
     </style>
 </head>
 <body class="light">
@@ -353,7 +355,7 @@
         });
     }
 
-    // --- KOMMENTAR FUNKTIONEN (MIT VERIFIZIERUNG) ---
+    // --- KOMMENTAR FUNKTIONEN ---
     window.showComments = async (postId) => {
         const container = document.getElementById(`comments-section-${postId}`);
         if (!container.classList.contains('hidden')) { container.classList.add('hidden'); return; }
@@ -378,8 +380,11 @@
                 list.innerHTML = '<div style="font-size:12px; color:var(--sub); text-align:center; padding:10px;">Noch keine Kommentare.</div>'; 
             } else {
                 list.innerHTML = '';
-                snap.forEach(doc => {
-                    const c = doc.data();
+                snap.forEach(dDoc => {
+                    const c = dDoc.data();
+                    const isAdmin = auth.currentUser?.email === adminEmail;
+                    const isCommOwner = auth.currentUser?.uid === c.uid;
+
                     list.innerHTML += `
                         <div class="comment-card">
                             <div class="comment-header">
@@ -388,6 +393,11 @@
                                     ${c.displayname} 
                                     ${c.verified ? `<img src="${verifiedIcon}" class="comment-verified">` : ''}
                                 </span>
+                                ${ (isAdmin || isCommOwner) ? `
+                                    <button class="comment-delete-btn" onclick="deleteComment('${postId}', '${dDoc.id}')">
+                                        <i data-lucide="x" style="width:14px;"></i>
+                                    </button>` : '' 
+                                }
                             </div>
                             <div class="comment-text">${c.text}</div>
                         </div>`;
@@ -401,17 +411,17 @@
         const input = document.getElementById(`input-${postId}`);
         const text = input.value.trim();
         if (!text) return;
-        
-        // Speichere displayname, photoURL UND verified Status direkt im Kommentar ab
         await addDoc(collection(db, "posts", postId, "comments"), {
-            text, 
-            uid: auth.currentUser.uid, 
-            displayname: userData.displayname, 
-            photoURL: userData.photoURL,
-            verified: userData.verified || false, 
-            timestamp: serverTimestamp()
+            text, uid: auth.currentUser.uid, displayname: userData.displayname, 
+            photoURL: userData.photoURL, verified: userData.verified || false, timestamp: serverTimestamp()
         });
         input.value = "";
+    };
+
+    window.deleteComment = async (postId, commentId) => {
+        if(confirm("Kommentar löschen?")) {
+            await deleteDoc(doc(db, "posts", postId, "comments", commentId));
+        }
     };
 
     // --- ADMIN FUNKTIONEN ---

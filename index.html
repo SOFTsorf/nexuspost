@@ -12,6 +12,7 @@
             --nexus: #1877f2; --bg: #f0f2f5; --card: rgba(255, 255, 255, 0.95);
             --text: #1c1e21; --sub: #65676b; --border: #dddfe2; --header-bg: rgba(255, 255, 255, 0.75);
             --ios-input: #efeff0; --tab-bg: rgba(255, 255, 255, 0.85);
+            --danger: #ff3b30;
         }
         body.dark {
             --bg: #000000; --card: #1c1c1e; --text: #ffffff;
@@ -38,7 +39,7 @@
             flex-grow: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; align-items: center; background: var(--ios-input);
             border-radius: 10px; padding: 0 10px; height: 32px; margin: 0 10px;
-            max-width: 40px; /* Standardmäßig klein */
+            max-width: 40px;
         }
         .search-container.active { flex-grow: 1; margin: 0; max-width: 100%; }
         .search-input {
@@ -55,14 +56,7 @@
         .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; }
         
-        /* PROTECTION FOR VERIFIED BADGE */
-        .verified-badge { 
-            width: 17px; height: 17px; margin-left: 4px; 
-            pointer-events: none; /* Macht das Icon für Klicks "unsichtbar" */
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-
+        .verified-badge { width: 17px; height: 17px; margin-left: 4px; pointer-events: none; user-select: none; }
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
 
         /* FOOTER INPUT */
@@ -89,24 +83,19 @@
             cursor: pointer; flex-shrink: 0;
         }
 
-        /* LIGHTBOX */
-        .lightbox {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 2000;
-            display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-        }
-        .lightbox img { max-width: 95%; max-height: 90%; border-radius: 10px; }
+        /* SETTINGS UI */
+        .settings-group { background: var(--card); border-radius: 12px; border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+        .settings-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 0.5px solid var(--border); }
+        .settings-row:last-child { border-bottom: none; }
+        .settings-row label { font-size: 15px; font-weight: 500; width: 120px; color: var(--text); }
+        .settings-row input { flex-grow: 1; border: none; background: transparent; color: var(--nexus); font-size: 15px; text-align: right; outline: none; }
+        .btn-cancel { background: transparent; color: var(--danger); border: none; font-weight: 600; cursor: pointer; width: 100%; padding: 15px; font-size: 16px; }
 
-        .admin-menu {
-            position: absolute; top: 35px; right: 0;
-            background: var(--card); border: 0.5px solid var(--border); border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden;
-        }
-        .admin-menu button {
-            width: 100%; padding: 12px 16px; text-align: left; background: none; border: none;
-            color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer;
-        }
+        /* LIGHTBOX & MENUS */
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .lightbox img { max-width: 95%; max-height: 90%; border-radius: 10px; }
+        .admin-menu { position: absolute; top: 35px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden; }
+        .admin-menu button { width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
 
         .hidden { display: none !important; }
         .comment-user-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
@@ -116,12 +105,10 @@
 
 <nav id="navbar" class="hidden">
     <div class="logo" id="nav-logo">NexusPost</div>
-    
     <div class="search-container" id="search-box">
         <i data-lucide="search" style="width:16px; color:var(--sub); cursor:pointer;" onclick="focusSearch()"></i>
         <input type="text" class="search-input" id="search-input" placeholder="Suchen..." onfocus="expandSearch()" onblur="collapseSearch()">
     </div>
-
     <div id="nav-actions" style="display: flex; gap: 12px; align-items: center;">
         <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="moon" id="theme-icon"></i></button>
         <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="settings"></i></button>
@@ -137,6 +124,22 @@
     <div id="feed"></div>
 </main>
 
+<div id="settings-screen" class="container hidden" style="padding-top: 20px;">
+    <h2 style="margin-left: 5px; margin-bottom: 20px;">Einstellungen</h2>
+    <div class="settings-group">
+        <div class="settings-row">
+            <label>Anzeigename</label>
+            <input type="text" id="edit-displayname" placeholder="Name">
+        </div>
+        <div class="settings-row">
+            <label>Nutzername</label>
+            <input type="text" id="edit-username" placeholder="@username">
+        </div>
+    </div>
+    <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:12px; height:50px; font-weight:600;">Speichern</button>
+    <button onclick="toggleSettings()" class="btn-cancel">Abbrechen</button>
+</div>
+
 <div id="input-bar" class="ios-footer hidden">
     <div id="preview-container" class="hidden" style="position: absolute; bottom: 80px; left: 15px; background: var(--card); padding: 5px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
         <img id="preview-img" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
@@ -151,16 +154,6 @@
         <button id="btn-share" class="send-btn">
             <i data-lucide="arrow-up" style="width:20px; height:20px; stroke-width:3px;"></i>
         </button>
-    </div>
-</div>
-
-<div id="settings-screen" class="container hidden">
-    <div class="card" style="margin-top:20px;">
-        <h2>Einstellungen</h2>
-        <div style="margin-bottom:15px;"><label>Anzeigename</label><input type="text" id="edit-displayname"></div>
-        <div style="margin-bottom:20px;"><label>Benutzername</label><input type="text" id="edit-username"></div>
-        <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:15px; height:45px;">Speichern</button>
-        <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--sub); margin-top:10px; cursor:pointer;">Abbrechen</button>
     </div>
 </div>
 
@@ -202,36 +195,36 @@
     };
 
     window.focusSearch = () => document.getElementById('search-input').focus();
-
-    window.expandSearch = () => {
-        document.getElementById('search-box').classList.add('active');
-        document.getElementById('nav-logo').classList.add('hidden');
-        document.getElementById('nav-actions').classList.add('hidden');
-    };
-
-    window.collapseSearch = () => {
-        const input = document.getElementById('search-input');
-        if (input.value === "") {
-            document.getElementById('search-box').classList.remove('active');
-            document.getElementById('nav-logo').classList.remove('hidden');
-            document.getElementById('nav-actions').classList.remove('hidden');
-        }
-    };
+    window.expandSearch = () => { document.getElementById('search-box').classList.add('active'); document.getElementById('nav-logo').classList.add('hidden'); document.getElementById('nav-actions').classList.add('hidden'); };
+    window.collapseSearch = () => { if (!document.getElementById('search-input').value) { document.getElementById('search-box').classList.remove('active'); document.getElementById('nav-logo').classList.remove('hidden'); document.getElementById('nav-actions').classList.remove('hidden'); } };
 
     document.getElementById('search-input').oninput = (e) => {
         const term = e.target.value.toLowerCase();
-        document.querySelectorAll('.card').forEach(post => {
-            post.style.display = post.innerText.toLowerCase().includes(term) ? 'block' : 'none';
-        });
+        document.querySelectorAll('.card').forEach(post => post.style.display = post.innerText.toLowerCase().includes(term) ? 'block' : 'none');
     };
 
-    window.openLightbox = (url) => {
-        document.getElementById('lightbox-img').src = url;
-        document.getElementById('lightbox').style.display = 'flex';
+    window.toggleSettings = () => {
+        const isSettingsVisible = !document.getElementById('settings-screen').classList.contains('hidden');
+        document.getElementById('main-content').classList.toggle('hidden', !isSettingsVisible);
+        document.getElementById('input-bar').classList.toggle('hidden', !isSettingsVisible);
+        document.getElementById('settings-screen').classList.toggle('hidden', isSettingsVisible);
+        if(!isSettingsVisible) {
+            document.getElementById('edit-displayname').value = userData.displayname;
+            document.getElementById('edit-username').value = userData.username;
+        }
     };
-    window.closeLightbox = () => document.getElementById('lightbox').style.display = 'none';
 
-    // --- AUTH ---
+    document.getElementById('btn-save-settings').onclick = async () => {
+        const newDN = document.getElementById('edit-displayname').value;
+        const newUN = document.getElementById('edit-username').value;
+        if(newDN && newUN) {
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { displayname: newDN, username: newUN.replace('@','') });
+            userData.displayname = newDN; userData.username = newUN;
+            toggleSettings();
+        }
+    };
+
+    // --- AUTH & FEED ---
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -251,77 +244,6 @@
         }
     });
 
-    // --- POST & LIKE LOGIC ---
-    window.toggleLike = async (postId, currentLikes) => {
-        const postRef = doc(db, "posts", postId);
-        const myUid = auth.currentUser.uid;
-        const likesArray = Array.isArray(currentLikes) ? currentLikes : [];
-        if (likesArray.includes(myUid)) await updateDoc(postRef, { likes: arrayRemove(myUid) });
-        else await updateDoc(postRef, { likes: arrayUnion(myUid) });
-    };
-
-    window.showComments = (postId) => {
-        const section = document.getElementById(`comments-section-${postId}`);
-        section.classList.toggle('hidden');
-        if (!section.classList.contains('hidden')) {
-            section.innerHTML = `
-                <div style="display:flex; gap:8px; margin-bottom:15px;">
-                    <input type="text" id="input-${postId}" placeholder="Antworten..." style="flex-grow:1; padding:8px; border-radius:15px; border:0.5px solid var(--border); font-size:14px; background:var(--bg); color:var(--text);">
-                    <button onclick="addComment('${postId}')" class="send-btn" style="width:30px; height:30px;"><i data-lucide="arrow-up" style="width:16px;"></i></button>
-                </div>
-                <div id="list-${postId}"></div>`;
-            lucide.createIcons();
-            onSnapshot(query(collection(db, "posts", postId, "comments"), orderBy("timestamp", "asc")), (snap) => {
-                const list = document.getElementById(`list-${postId}`); if (!list) return;
-                list.innerHTML = '';
-                snap.forEach(ds => {
-                    const c = ds.data(); const cid = ds.id;
-                    const isMyC = c.uid === auth.currentUser.uid; const isAdmin = auth.currentUser.email === adminEmail;
-                    list.innerHTML += `
-                        <div style="display:flex; gap:10px; margin-bottom:15px;">
-                            <img src="${c.photoURL}" class="comment-user-img">
-                            <div style="flex-grow:1;">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <div style="font-size:13px; display:flex; align-items:center;">
-                                        <span style="font-weight:700;">${c.displayname}</span> 
-                                        ${c.verified ? `<img src="${verifiedIcon}" class="verified-badge" oncontextmenu="return false;">` : ''}
-                                    </div>
-                                    <div style="display:flex; gap:8px;">
-                                        ${isMyC ? `<button onclick="editCommentUI('${postId}','${cid}',\`${c.text.replace(/'/g,"\\'")}\`)" style="color:var(--nexus); border:none; background:none; font-size:11px; font-weight:600; cursor:pointer;">Edit</button>` : ''}
-                                        ${(isMyC || isAdmin) ? `<button onclick="deleteComment('${postId}','${cid}')" style="color:red; border:none; background:none; font-size:11px; font-weight:600; cursor:pointer;">Löschen</button>` : ''}
-                                    </div>
-                                </div>
-                                <div id="text-${cid}" style="font-size:14px; margin-top:2px;">${c.text}</div>
-                            </div>
-                        </div>`;
-                });
-            });
-        }
-    };
-
-    window.addComment = async (postId) => {
-        const input = document.getElementById(`input-${postId}`); if (!input.value.trim()) return;
-        await addDoc(collection(db, "posts", postId, "comments"), {
-            text: input.value, uid: auth.currentUser.uid, username: userData.username,
-            displayname: userData.displayname, photoURL: userData.photoURL,
-            verified: userData.verified || false, timestamp: serverTimestamp()
-        });
-        input.value = "";
-    };
-
-    window.deleteComment = (pId, cId) => confirm("Löschen?") && deleteDoc(doc(db, "posts", pId, "comments", cId));
-
-    window.editCommentUI = (pId, cId, old) => {
-        const div = document.getElementById(`text-${cId}`);
-        div.innerHTML = `<input type="text" id="edit-${cId}" value="${old}" style="width:100%; padding:5px; border-radius:5px; border:1px solid var(--nexus); background:var(--bg); color:var(--text); font-size:13px;">
-            <button onclick="saveEdit('${pId}','${cId}')" style="font-size:11px; margin-top:5px; background:var(--nexus); color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">Save</button>`;
-    };
-    window.saveEdit = async (pId, cId) => {
-        const val = document.getElementById(`edit-${cId}`).value;
-        await updateDoc(doc(db, "posts", pId, "comments", cId), { text: val });
-    };
-
-    // --- FEED ---
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
@@ -332,13 +254,12 @@
                     const likes = Array.isArray(p.likes) ? p.likes : [];
                     const hasLiked = likes.includes(auth.currentUser.uid);
                     const isAdmin = auth.currentUser.email === adminEmail;
-
                     const html = `
                         <div class="post-header">
                             <img src="${u.photoURL}" class="user-img">
                             <div style="flex-grow:1">
-                                <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge" oncontextmenu="return false;">` : ''}</div>
-                                <div class="username" style="font-size:13px; color:var(--sub);">@${u.username}</div>
+                                <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
+                                <div style="font-size:13px; color:var(--sub);">@${u.username}</div>
                             </div>
                             ${isAdmin ? `<button onclick="toggleAdminMenu('${d.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer;"><i data-lucide="more-horizontal"></i></button>` : ''}
                             <div id="menu-${d.id}" class="admin-menu hidden">
@@ -357,7 +278,6 @@
                             </button>
                         </div>
                         <div id="comments-section-${d.id}" class="hidden" style="margin-top:15px; background:rgba(0,0,0,0.02); padding:10px; border-radius:10px;"></div>`;
-                    
                     let div = document.getElementById(pid);
                     if (!div) { div = document.createElement('div'); div.id = pid; div.className = 'card'; feed.appendChild(div); }
                     div.innerHTML = html; lucide.createIcons();
@@ -366,13 +286,40 @@
         });
     }
 
-    // --- UTILS ---
+    // --- ACTIONS ---
+    window.toggleLike = async (postId, currentLikes) => {
+        const postRef = doc(db, "posts", postId);
+        const myUid = auth.currentUser.uid;
+        if (currentLikes.includes(myUid)) await updateDoc(postRef, { likes: arrayRemove(myUid) });
+        else await updateDoc(postRef, { likes: arrayUnion(myUid) });
+    };
+
+    window.addComment = async (postId) => {
+        const input = document.getElementById(`input-${postId}`); if (!input.value.trim()) return;
+        await addDoc(collection(db, "posts", postId, "comments"), { text: input.value, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL, verified: userData.verified || false, timestamp: serverTimestamp() });
+        input.value = "";
+    };
+
+    window.showComments = (postId) => {
+        const section = document.getElementById(`comments-section-${postId}`);
+        section.classList.toggle('hidden');
+        if (!section.classList.contains('hidden')) {
+            section.innerHTML = `<div style="display:flex; gap:8px; margin-bottom:15px;"><input type="text" id="input-${postId}" placeholder="Antworten..." style="flex-grow:1; padding:8px; border-radius:15px; border:0.5px solid var(--border); background:var(--bg); color:var(--text);"><button onclick="addComment('${postId}')" class="send-btn"><i data-lucide="arrow-up" style="width:16px;"></i></button></div><div id="list-${postId}"></div>`;
+            lucide.createIcons();
+            onSnapshot(query(collection(db, "posts", postId, "comments"), orderBy("timestamp", "asc")), (snap) => {
+                const list = document.getElementById(`list-${postId}`); if (!list) return;
+                list.innerHTML = '';
+                snap.forEach(ds => {
+                    const c = ds.data();
+                    list.innerHTML += `<div style="display:flex; gap:10px; margin-bottom:15px;"><img src="${c.photoURL}" class="comment-user-img"><div><div style="font-size:13px; font-weight:700;">${c.displayname} ${c.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div><div style="font-size:14px;">${c.text}</div></div></div>`;
+                });
+            });
+        }
+    };
+
     window.showPreview = (e) => {
         const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader(); reader.onload = (rs) => {
-            document.getElementById('preview-img').src = rs.target.result;
-            document.getElementById('preview-container').classList.remove('hidden');
-        }; reader.readAsDataURL(file);
+        const reader = new FileReader(); reader.onload = (rs) => { document.getElementById('preview-img').src = rs.target.result; document.getElementById('preview-container').classList.remove('hidden'); }; reader.readAsDataURL(file);
     };
     window.clearPreview = () => { document.getElementById('image-input').value = ""; document.getElementById('preview-container').classList.add('hidden'); };
 
@@ -390,10 +337,11 @@
         document.getElementById('post-input').innerText = ""; clearPreview();
     };
 
+    window.openLightbox = (url) => { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').style.display = 'flex'; };
+    window.closeLightbox = () => document.getElementById('lightbox').style.display = 'none';
     window.toggleAdminMenu = (id) => document.getElementById('menu-'+id).classList.toggle('hidden');
     window.deletePost = (id) => confirm("Löschen?") && deleteDoc(doc(db, "posts", id));
     window.toggleVerify = (uid, st) => updateDoc(doc(db, "users", uid), { verified: st });
-    window.toggleSettings = () => { document.getElementById('main-content').classList.toggle('hidden'); document.getElementById('settings-screen').classList.toggle('hidden'); document.getElementById('edit-displayname').value = userData.displayname; };
 </script>
 </body>
 </html>

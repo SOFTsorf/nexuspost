@@ -46,12 +46,10 @@
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); position: relative; }
         
-        /* ALERTS */
         .alert-banner { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1.5px solid; }
         .alert-warning { border-color: var(--warning); background: rgba(255, 149, 0, 0.1); color: var(--warning); }
         .alert-info { border-color: #8e8e93; background: rgba(142, 142, 147, 0.1); color: #8e8e93; }
 
-        /* PINNED POST */
         .pinned-label { display: flex; align-items: center; gap: 4px; color: var(--nexus); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
 
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
@@ -61,7 +59,6 @@
         
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
 
-        /* LIGHTBOX & CLOSE BUTTON */
         .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
         #lightbox-img { max-width: 95%; max-height: 85vh; border-radius: 12px; object-fit: contain; }
         .close-lightbox-btn { position: absolute; top: 30px; right: 20px; background: rgba(255,255,255,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
@@ -77,6 +74,10 @@
         .admin-menu { position: absolute; top: 35px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden; }
         .admin-menu button { width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 0.5px solid var(--border); }
         .admin-menu button:last-child { border-bottom: none; }
+
+        /* NEU: Kommentar Styling */
+        .comment-item { margin-bottom: 8px; font-size: 14px; border-left: 2px solid var(--nexus); padding-left: 8px; }
+        .comment-user { font-weight: 700; font-size: 12px; color: var(--nexus); }
     </style>
 </head>
 <body class="light">
@@ -248,7 +249,7 @@
         }
     });
 
-    // --- ALERTS (WARNUNGEN/INFOS) ---
+    // --- ALERTS ---
     window.openAlertModal = () => document.getElementById('alert-modal').style.display = 'flex';
     window.closeAlertModal = () => document.getElementById('alert-modal').style.display = 'none';
     document.getElementById('save-alert-btn').onclick = async () => {
@@ -328,7 +329,7 @@
                                 <i data-lucide="heart" style="width:18px; ${hasLiked?'fill:var(--nexus)':''}"></i> ${likes.length}
                             </button>
                             <button onclick="showComments('${p.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer; display:flex; align-items:center; gap:5px;">
-                                <i data-lucide="message-circle" style="width:18px;"></i> Kommentieren
+                                <i data-lucide="message-circle" style="width:18px;"></i> Kommentare
                             </button>
                         </div>
                         <div id="comments-section-${p.id}" class="hidden" style="margin-top:10px;"></div>`;
@@ -337,6 +338,50 @@
             });
         });
     }
+
+    // --- NEU: KOMMENTAR FUNKTIONEN ---
+    window.showComments = async (postId) => {
+        const container = document.getElementById(`comments-section-${postId}`);
+        if (!container.classList.contains('hidden')) { container.classList.add('hidden'); return; }
+        
+        container.classList.remove('hidden');
+        container.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--sub);">Lade...</div>';
+
+        const q = query(collection(db, "posts", postId, "comments"), orderBy("timestamp", "asc"));
+        onSnapshot(q, (snap) => {
+            container.innerHTML = `
+                <div style="margin-top:10px; padding:12px; background:var(--ios-input); border-radius:12px;">
+                    <div id="list-${postId}"></div>
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                        <input type="text" id="input-${postId}" placeholder="Kommentieren..." 
+                               style="flex:1; border:none; background:var(--card); padding:8px 12px; border-radius:18px; color:var(--text); font-size:14px; outline:none;">
+                        <button onclick="addComment('${postId}')" class="send-btn" style="width:30px; height:30px;">
+                            <i data-lucide="send" style="width:14px;"></i>
+                        </button>
+                    </div>
+                </div>`;
+            const list = document.getElementById(`list-${postId}`);
+            if (snap.empty) { list.innerHTML = '<div style="font-size:12px; color:var(--sub);">Noch keine Kommentare.</div>'; }
+            else {
+                list.innerHTML = '';
+                snap.forEach(doc => {
+                    const c = doc.data();
+                    list.innerHTML += `<div class="comment-item"><span class="comment-user">${c.displayname}</span>: ${c.text}</div>`;
+                });
+            }
+            lucide.createIcons();
+        });
+    };
+
+    window.addComment = async (postId) => {
+        const input = document.getElementById(`input-${postId}`);
+        const text = input.value.trim();
+        if (!text) return;
+        await addDoc(collection(db, "posts", postId, "comments"), {
+            text, uid: auth.currentUser.uid, displayname: userData.displayname, timestamp: serverTimestamp()
+        });
+        input.value = "";
+    };
 
     // --- ADMIN FUNKTIONEN ---
     window.togglePin = async (id, status) => { await updateDoc(doc(db, "posts", id), { isPinned: !status }); toggleAdminMenu(id); };
@@ -356,11 +401,11 @@
     window.openLightbox = (url) => { 
         document.getElementById('lightbox-img').src = url; 
         document.getElementById('lightbox').style.display = 'flex'; 
-        document.body.style.overflow = 'hidden'; // Verhindert Scrollen im Hintergrund
+        document.body.style.overflow = 'hidden';
     };
     window.closeLightbox = () => { 
         document.getElementById('lightbox').style.display = 'none'; 
-        document.body.style.overflow = 'auto'; // Aktiviert Scrollen wieder
+        document.body.style.overflow = 'auto';
     };
 
     window.showPreview = (e) => {

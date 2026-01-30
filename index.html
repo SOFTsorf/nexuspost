@@ -58,7 +58,7 @@
         .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; }
         .verified-badge { width: 17px; height: 17px; margin-left: 4px; }
         
-        /* OVERLAYS (AI & Lightbox) */
+        /* OVERLAYS */
         .full-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; backdrop-filter: blur(15px); }
         .overlay-header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: white; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
         .ai-frame { flex-grow: 1; border: none; width: 100%; background: white; }
@@ -102,20 +102,29 @@
 
 <div id="ai-overlay" class="full-overlay">
     <div class="overlay-header">
-        <div style="display:flex; align-items:center; gap:10px; font-weight:700;">
-            <i data-lucide="sparkles" style="color:#ffcf33;"></i> Nexus KI Assistent
-        </div>
-        <button class="close-btn" onclick="toggleAI()">
-            <i data-lucide="x"></i>
-        </button>
+        <div style="display:flex; align-items:center; gap:10px; font-weight:700;"><i data-lucide="sparkles" style="color:#ffcf33;"></i> KI Assistent</div>
+        <button class="close-btn" onclick="toggleAI()"><i data-lucide="x"></i></button>
     </div>
     <iframe id="ai-frame" class="ai-frame" src="https://softsorf.github.io/Ki-assistent/"></iframe>
 </div>
 
+<div id="alert-modal" class="full-overlay" style="justify-content:center; align-items:center;">
+    <div class="card" style="width: 90%; max-width: 400px; padding: 25px;" onclick="event.stopPropagation()">
+        <h3 style="margin-top:0;">Neue System-Meldung</h3>
+        <select id="alert-type" style="width:100%; margin-bottom:12px; padding:12px; border-radius:10px; background:var(--ios-input); color:var(--text); border:none; outline:none;">
+            <option value="warning">Warnung (Orange)</option>
+            <option value="info">Information (Grau)</option>
+        </select>
+        <textarea id="alert-text" placeholder="Nachricht hier eingeben..." style="width:100%; height:100px; margin-bottom:15px; border-radius:10px; background:var(--ios-input); color:var(--text); border:none; padding:12px; font-family:inherit; resize:none; outline:none;"></textarea>
+        <div style="display:flex; gap:10px;">
+            <button id="save-alert-btn" class="send-btn" style="flex:1; border-radius:12px; height:45px; font-weight:600;">Senden</button>
+            <button onclick="closeAlertModal()" style="flex:1; background:none; border:none; color:var(--danger); font-weight:600; cursor:pointer;">Abbrechen</button>
+        </div>
+    </div>
+</div>
+
 <div id="lightbox" class="full-overlay" onclick="closeLightbox()" style="justify-content:center; align-items:center;">
-    <button class="close-btn" style="position:absolute; top:30px; right:20px;" onclick="closeLightbox()">
-        <i data-lucide="x"></i>
-    </button>
+    <button class="close-btn" style="position:absolute; top:30px; right:20px;" onclick="closeLightbox()"><i data-lucide="x"></i></button>
     <img id="lightbox-img" src="" style="max-width: 95%; max-height: 85vh; border-radius: 12px; object-fit: contain;" onclick="event.stopPropagation()">
 </div>
 
@@ -129,20 +138,20 @@
     <div id="feed"></div>
 </main>
 
-<div id="settings-screen" class="container hidden">
+<div id="settings-screen" class="container hidden" style="padding-top: 20px;">
     <h2>Einstellungen</h2>
     <div class="card">
-        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; margin-bottom:10px; padding:12px; border:none; background:var(--ios-input); border-radius:8px;">
-        <input type="text" id="edit-username" placeholder="Nutzername" style="width:100%; padding:12px; border:none; background:var(--ios-input); border-radius:8px;">
+        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; margin-bottom:10px; padding:12px; border:none; background:var(--ios-input); border-radius:8px; color:var(--text);">
+        <input type="text" id="edit-username" placeholder="Nutzername" style="width:100%; padding:12px; border:none; background:var(--ios-input); border-radius:8px; color:var(--text);">
     </div>
     <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:12px; height:50px; font-weight:600;">Speichern</button>
-    <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--danger); padding:15px; font-weight:600;">Abbrechen</button>
+    <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--danger); padding:15px; font-weight:600; cursor:pointer;">Abbrechen</button>
 </div>
 
 <div id="input-bar" class="ios-footer hidden">
     <div id="preview-container" class="hidden" style="position: absolute; bottom: 80px; left: 15px; background: var(--card); padding: 5px; border-radius: 10px; box-shadow:0 5px 15px rgba(0,0,0,0.2);">
         <img id="preview-img" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
-        <button onclick="clearPreview()" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width:20px; height:20px;">×</button>
+        <button onclick="clearPreview()" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width:20px; height:20px; cursor:pointer;">×</button>
     </div>
     <div class="ios-post-box">
         <label style="color: var(--nexus); cursor: pointer; margin-bottom: 5px;">
@@ -178,14 +187,45 @@
 
     let userData = null;
 
-    // --- KI INTEGRATION ---
+    // --- KI & ALERT NAVIGATION ---
     window.toggleAI = () => {
         const overlay = document.getElementById('ai-overlay');
         const isOpen = overlay.style.display === 'flex';
         overlay.style.display = isOpen ? 'none' : 'flex';
-        document.body.style.overflow = isOpen ? 'auto' : 'hidden'; // Scrollen verhindern
+        document.body.style.overflow = isOpen ? 'auto' : 'hidden';
     };
 
+    window.openAlertModal = () => document.getElementById('alert-modal').style.display = 'flex';
+    window.closeAlertModal = () => document.getElementById('alert-modal').style.display = 'none';
+
+    document.getElementById('save-alert-btn').onclick = async () => {
+        const text = document.getElementById('alert-text').value;
+        const type = document.getElementById('alert-type').value;
+        if(!text.trim()) return;
+        await addDoc(collection(db, "alerts"), { text, type, createdAt: serverTimestamp() });
+        document.getElementById('alert-text').value = ""; 
+        closeAlertModal();
+    };
+
+    function loadAlerts() {
+        onSnapshot(collection(db, "alerts"), (snap) => {
+            const container = document.getElementById('global-alerts');
+            container.innerHTML = '';
+            snap.forEach(d => {
+                const a = d.data();
+                container.innerHTML += `
+                    <div class="alert-banner alert-${a.type}">
+                        <i data-lucide="${a.type === 'warning' ? 'alert-circle' : 'info'}" style="width:20px;"></i>
+                        <div style="flex:1;">${a.text}</div>
+                        ${auth.currentUser?.email === adminEmail ? `<button onclick="deleteAlert('${d.id}')" style="background:none; border:none; color:inherit; cursor:pointer;"><i data-lucide="x" style="width:16px;"></i></button>` : ''}
+                    </div>`;
+            });
+            lucide.createIcons();
+        });
+    }
+    window.deleteAlert = (id) => deleteDoc(doc(db, "alerts", id));
+
+    // --- BASIS FUNKTIONEN ---
     function timeAgo(timestamp) {
         if (!timestamp) return "Gerade eben";
         const seconds = Math.floor((new Date() - timestamp.toDate()) / 1000);
@@ -197,7 +237,6 @@
         return "Gerade eben";
     }
 
-    // --- NAVIGATION & SUCHE ---
     window.expandSearch = () => {
         document.getElementById('nav-logo').classList.add('hidden');
         document.getElementById('nav-actions').classList.add('hidden');
@@ -246,23 +285,6 @@
             lucide.createIcons();
         }
     });
-
-    // --- ALERTS ---
-    function loadAlerts() {
-        onSnapshot(collection(db, "alerts"), (snap) => {
-            const container = document.getElementById('global-alerts');
-            container.innerHTML = '';
-            snap.forEach(d => {
-                const a = d.data();
-                container.innerHTML += `<div class="alert-banner alert-${a.type}">
-                    <i data-lucide="info"></i><div style="flex:1;">${a.text}</div>
-                    ${auth.currentUser?.email === adminEmail ? `<button onclick="deleteAlert('${d.id}')" style="background:none; border:none; color:inherit; cursor:pointer;">×</button>` : ''}
-                </div>`;
-            });
-            lucide.createIcons();
-        });
-    }
-    window.deleteAlert = (id) => deleteDoc(doc(db, "alerts", id));
 
     // --- FEED ---
     function loadFeed() {
@@ -313,7 +335,6 @@
         });
     }
 
-    // --- ADMIN & POST FUNKTIONEN ---
     window.togglePin = async (id, status) => { await updateDoc(doc(db, "posts", id), { isPinned: !status }); toggleAdminMenu(id); };
     window.toggleVerify = async (userId, status) => { await updateDoc(doc(db, "users", userId), { verified: !status }); };
     window.toggleAdminMenu = (id) => document.getElementById('menu-'+id).classList.toggle('hidden');

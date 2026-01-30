@@ -32,14 +32,15 @@
             display: flex; justify-content: space-between; align-items: center; padding: 0 15px;
             border-bottom: 0.5px solid var(--border); z-index: 1000;
         }
-        .logo { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; transition: 0.2s; }
+        .logo { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; transition: 0.2s; white-space: nowrap; }
         
         .search-container {
             flex-grow: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; align-items: center; background: var(--ios-input);
             border-radius: 10px; padding: 0 10px; height: 32px; margin: 0 10px;
+            max-width: 40px; /* Standardmäßig klein */
         }
-        .search-container.active { flex-grow: 1; margin: 0; }
+        .search-container.active { flex-grow: 1; margin: 0; max-width: 100%; }
         .search-input {
             border: none; background: none; color: var(--text); font-size: 15px;
             width: 0; transition: width 0.3s; outline: none; padding: 0;
@@ -53,7 +54,15 @@
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
         .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; }
-        .verified-badge { width: 17px; height: 17px; margin-left: 4px; }
+        
+        /* PROTECTION FOR VERIFIED BADGE */
+        .verified-badge { 
+            width: 17px; height: 17px; margin-left: 4px; 
+            pointer-events: none; /* Macht das Icon für Klicks "unsichtbar" */
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
 
         /* FOOTER INPUT */
@@ -109,7 +118,7 @@
     <div class="logo" id="nav-logo">NexusPost</div>
     
     <div class="search-container" id="search-box">
-        <i data-lucide="search" style="width:16px; color:var(--sub);"></i>
+        <i data-lucide="search" style="width:16px; color:var(--sub); cursor:pointer;" onclick="focusSearch()"></i>
         <input type="text" class="search-input" id="search-input" placeholder="Suchen..." onfocus="expandSearch()" onblur="collapseSearch()">
     </div>
 
@@ -192,6 +201,8 @@
         lucide.createIcons();
     };
 
+    window.focusSearch = () => document.getElementById('search-input').focus();
+
     window.expandSearch = () => {
         document.getElementById('search-box').classList.add('active');
         document.getElementById('nav-logo').classList.add('hidden');
@@ -273,7 +284,7 @@
                                 <div style="display:flex; justify-content:space-between; align-items:center;">
                                     <div style="font-size:13px; display:flex; align-items:center;">
                                         <span style="font-weight:700;">${c.displayname}</span> 
-                                        ${c.verified ? `<img src="${verifiedIcon}" class="verified-badge" style="width:14px; height:14px;">` : ''}
+                                        ${c.verified ? `<img src="${verifiedIcon}" class="verified-badge" oncontextmenu="return false;">` : ''}
                                     </div>
                                     <div style="display:flex; gap:8px;">
                                         ${isMyC ? `<button onclick="editCommentUI('${postId}','${cid}',\`${c.text.replace(/'/g,"\\'")}\`)" style="color:var(--nexus); border:none; background:none; font-size:11px; font-weight:600; cursor:pointer;">Edit</button>` : ''}
@@ -326,7 +337,7 @@
                         <div class="post-header">
                             <img src="${u.photoURL}" class="user-img">
                             <div style="flex-grow:1">
-                                <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : ''}</div>
+                                <div class="display-name">${u.displayname} ${u.verified ? `<img src="${verifiedIcon}" class="verified-badge" oncontextmenu="return false;">` : ''}</div>
                                 <div class="username" style="font-size:13px; color:var(--sub);">@${u.username}</div>
                             </div>
                             ${isAdmin ? `<button onclick="toggleAdminMenu('${d.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer;"><i data-lucide="more-horizontal"></i></button>` : ''}

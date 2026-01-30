@@ -69,6 +69,7 @@
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
         .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .comment-user-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
         .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; }
         .verified-badge { width: 17px; height: 17px; margin-left: 4px; }
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); }
@@ -88,13 +89,6 @@
             width: 100%; padding: 10px; border-radius: 12px; border: 1px solid var(--border);
             background: var(--ios-input); color: var(--text); box-sizing: border-box;
         }
-
-        .comment-bubble {
-            font-size: 13px; margin-bottom: 8px; padding: 8px 12px; 
-            background: rgba(0,0,0,0.03); border-radius: 12px;
-            display: flex; flex-direction: column;
-        }
-        body.dark .comment-bubble { background: rgba(255,255,255,0.05); }
 
         .hidden { display: none !important; }
     </style>
@@ -204,7 +198,6 @@
         document.getElementById('preview-container').style.display = 'none';
     };
 
-    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('login-screen').classList.add('hidden');
@@ -236,6 +229,7 @@
         document.getElementById('edit-username').value = userData.username;
     };
 
+    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     document.getElementById('btn-save-settings').onclick = async () => {
         userData.displayname = document.getElementById('edit-displayname').value;
         userData.username = document.getElementById('edit-username').value;
@@ -243,12 +237,11 @@
         document.getElementById('settings-msg').innerText = "Gespeichert!";
     };
 
-    // --- LIKES (RELOAD-SICHER) ---
+    // --- LIKES ---
     window.toggleLike = async (postId, currentLikes) => {
         const postRef = doc(db, "posts", postId);
         const myUid = auth.currentUser.uid;
         const likesArray = Array.isArray(currentLikes) ? currentLikes : [];
-
         if (likesArray.includes(myUid)) {
             await updateDoc(postRef, { likes: arrayRemove(myUid) });
         } else {
@@ -256,14 +249,14 @@
         }
     };
 
-    // --- COMMENTS (STABIL) ---
+    // --- COMMENTS (POST-STIL + EDIT) ---
     window.showComments = (postId) => {
         const section = document.getElementById(`comments-section-${postId}`);
         section.classList.toggle('hidden');
         if (!section.classList.contains('hidden')) {
             section.innerHTML = `
-                <div style="display:flex; gap:8px; margin-bottom:12px;">
-                    <input type="text" id="input-${postId}" placeholder="Kommentieren..." style="flex-grow:1; padding:8px; border-radius:15px; border:0.5px solid var(--border); font-size:14px; background:var(--bg); color:var(--text);">
+                <div style="display:flex; gap:8px; margin-bottom:15px;">
+                    <input type="text" id="input-${postId}" placeholder="Antworten..." style="flex-grow:1; padding:8px; border-radius:15px; border:0.5px solid var(--border); font-size:14px; background:var(--bg); color:var(--text);">
                     <button onclick="addComment('${postId}')" class="send-btn" style="width:30px; height:30px;"><i data-lucide="arrow-up" style="width:16px;"></i></button>
                 </div>
                 <div id="list-${postId}"></div>
@@ -275,12 +268,23 @@
                 const list = document.getElementById(`list-${postId}`);
                 if (!list) return;
                 list.innerHTML = ''; 
-                snap.forEach(doc => {
-                    const c = doc.data();
+                snap.forEach(docSnap => {
+                    const c = docSnap.data();
+                    const cid = docSnap.id;
+                    const isMyComment = c.uid === auth.currentUser.uid;
                     list.innerHTML += `
-                        <div class="comment-bubble">
-                            <span style="font-weight:700; color:var(--nexus);">@${c.username}</span>
-                            <span>${c.text}</span>
+                        <div id="comment-${cid}" style="display:flex; gap:10px; margin-bottom:15px;">
+                            <img src="${c.photoURL}" class="comment-user-img">
+                            <div style="flex-grow:1;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="font-size:13px;">
+                                        <span style="font-weight:700;">${c.displayname}</span> 
+                                        <span style="color:var(--sub);">@${c.username}</span>
+                                    </div>
+                                    ${isMyComment ? `<button onclick="editCommentUI('${postId}', '${cid}', \`${c.text.replace(/'/g, "&apos;")}\`)" style="background:none; border:none; color:var(--nexus); font-size:11px; cursor:pointer; font-weight:600;">Bearbeiten</button>` : ''}
+                                </div>
+                                <div id="text-${cid}" style="font-size:14px; margin-top:2px; white-space:pre-wrap; line-height:1.3;">${c.text}</div>
+                            </div>
                         </div>`;
                 });
             });
@@ -294,11 +298,32 @@
             text: input.value,
             uid: auth.currentUser.uid,
             username: userData.username,
+            displayname: userData.displayname,
+            photoURL: userData.photoURL,
             timestamp: serverTimestamp()
         });
         input.value = "";
     };
 
+    window.editCommentUI = (postId, cid, oldText) => {
+        const textDiv = document.getElementById(`text-${cid}`);
+        textDiv.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:8px; margin-top:5px;">
+                <input type="text" id="edit-input-${cid}" value="${oldText}" style="font-size:14px; padding:6px; border-radius:8px; border:1px solid var(--nexus); background:var(--bg); color:var(--text);">
+                <div style="display:flex; gap:10px;">
+                    <button onclick="saveEditComment('${postId}', '${cid}')" style="background:var(--nexus); color:white; border:none; border-radius:6px; padding:4px 10px; font-size:11px; cursor:pointer; font-weight:600;">Speichern</button>
+                    <button onclick="showComments('${postId}')" style="background:none; border:none; color:var(--sub); font-size:11px; cursor:pointer;">Abbrechen</button>
+                </div>
+            </div>`;
+    };
+
+    window.saveEditComment = async (postId, cid) => {
+        const newText = document.getElementById(`edit-input-${cid}`).value;
+        if (!newText.trim()) return;
+        await updateDoc(doc(db, "posts", postId, "comments", cid), { text: newText });
+    };
+
+    // --- POSTS ---
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').innerText;
         const file = document.getElementById('image-input').files[0];
@@ -311,7 +336,6 @@
             const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: formData });
             const json = await res.json(); imageUrl = json.data.url;
         }
-        // Wichtig: Likes als leeres Array initialisieren
         await addDoc(collection(db, "posts"), { text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [] });
         document.getElementById('post-input').innerText = ""; clearPreview(); btn.disabled = false;
     };
@@ -325,7 +349,6 @@
                     const u = uSnap.data() || {};
                     const isAdmin = auth.currentUser.email === adminEmail;
                     const pid = 'post-'+d.id;
-                    
                     const currentLikes = Array.isArray(p.likes) ? p.likes : [];
                     const hasLiked = currentLikes.includes(auth.currentUser.uid);
 
@@ -354,7 +377,7 @@
                                 <i data-lucide="message-circle" style="width:18px;"></i> Kommentieren
                             </button>
                         </div>
-                        <div id="comments-section-${d.id}" class="hidden" style="margin-top: 15px; background: var(--ios-input); padding: 10px; border-radius: 10px;"></div>
+                        <div id="comments-section-${d.id}" class="hidden" style="margin-top: 15px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 14px; border: 0.5px solid var(--border);"></div>
                     `;
                     
                     let div = document.getElementById(pid);

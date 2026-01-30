@@ -19,27 +19,25 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg); color: var(--text); margin: 0; padding-top: 60px; padding-bottom: 90px;
-            transition: background 0.3s ease; -webkit-tap-highlight-color: transparent;
+            transition: background 0.3s ease;
         }
 
-        /* HEADER & SEARCH */
+        /* iOS Nav & Search */
         nav {
             position: fixed; top: 0; width: 100%; height: 50px; background: var(--header-bg);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
             border-bottom: 0.5px solid var(--border); z-index: 1000; box-sizing: border-box;
         }
-        .logo { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
-        .search-wrapper { display: flex; align-items: center; flex-grow: 1; transition: 0.3s; justify-content: flex-end; }
+        .search-wrapper { display: flex; align-items: center; flex-grow: 1; transition: 0.3s; }
         .search-container {
             display: flex; align-items: center; background: var(--ios-input);
-            border-radius: 10px; padding: 0 10px; height: 32px; width: 32px; transition: all 0.3s ease; overflow: hidden;
+            border-radius: 10px; padding: 0 10px; height: 32px; flex-grow: 1; margin: 0 10px;
         }
-        .search-container.active { width: 100%; margin: 0 10px; }
-        .search-input { border: none; background: none; color: var(--text); width: 100%; outline: none; font-size: 16px; margin-left: 8px; }
-        .cancel-btn { color: var(--nexus); font-weight: 600; cursor: pointer; display: none; font-size: 20px; line-height: 1; }
+        .search-input { border: none; background: none; color: var(--text); width: 100%; outline: none; font-size: 16px; }
+        .cancel-btn { color: var(--nexus); font-weight: 500; cursor: pointer; display: none; white-space: nowrap; font-size: 15px; }
 
-        /* SETTINGS & ONBOARDING */
+        /* Settings Style */
         .settings-card { background: var(--card); border-radius: 12px; overflow: hidden; margin-top: 20px; border: 0.5px solid var(--border); }
         .settings-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 0.5px solid var(--border); gap: 15px; }
         .settings-item:last-child { border-bottom: none; }
@@ -48,7 +46,7 @@
         
         .profile-pic-upload {
             width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
-            border: 2px solid var(--nexus); cursor: pointer; margin: 20px auto; display: block; background: #eee;
+            border: 2px solid var(--nexus); cursor: pointer; margin: 20px auto; display: block;
         }
 
         .btn-blue { 
@@ -56,7 +54,7 @@
             padding: 14px; border-radius: 12px; font-weight: 600; margin-top: 20px; cursor: pointer; font-size: 16px;
         }
 
-        /* POSTS */
+        /* Posts */
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
@@ -64,7 +62,7 @@
         .verified-badge { width: 16px; height: 16px; margin-left: 4px; pointer-events: none; -webkit-user-drag: none; }
         .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
 
-        /* FOOTER INPUT */
+        /* iOS Footer Input */
         .ios-footer {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -86,13 +84,13 @@
 <nav id="navbar" class="hidden">
     <div class="logo" id="nav-logo">NexusPost</div>
     <div class="search-wrapper">
-        <div class="search-container" id="s-cont">
-            <i data-lucide="search" id="s-icon" size="18" style="color: var(--sub); cursor:pointer;" onclick="expandSearch()"></i>
+        <div class="search-container">
+            <i data-lucide="search" size="16" style="color: var(--sub);"></i>
             <input type="text" id="search-input" class="search-input" placeholder="Suchen..." onfocus="expandSearch()">
         </div>
-        <span id="search-cancel" class="cancel-btn" onclick="collapseSearch()">✕</span>
+        <span id="search-cancel" class="cancel-btn" onclick="collapseSearch()">Abbrechen</span>
     </div>
-    <div id="nav-actions" style="display: flex; gap: 15px; margin-left: 10px;">
+    <div id="nav-actions" style="display: flex; gap: 15px;">
         <i data-lucide="moon" onclick="toggleDarkMode()" style="cursor: pointer;"></i>
         <i data-lucide="settings" onclick="openSettings()" style="cursor: pointer;"></i>
     </div>
@@ -104,17 +102,16 @@
 </div>
 
 <div id="setup-screen" class="container hidden" style="padding-top: 40px; text-align: center;">
-    <h2>Profil vervollständigen</h2>
-    <p style="color:var(--sub)">Wähle dein Profilbild und Namen.</p>
+    <h2>Profil einrichten</h2>
     <label>
         <img id="setup-preview" src="https://via.placeholder.com/150" class="profile-pic-upload">
         <input type="file" id="setup-img-input" accept="image/*" class="hidden" onchange="previewProfilePic(this, 'setup-preview')">
     </label>
     <div class="settings-card">
-        <div class="settings-item"><span class="settings-label">Name</span><input type="text" id="setup-displayname" class="settings-val" placeholder="Dein Anzeigename"></div>
+        <div class="settings-item"><span class="settings-label">Name</span><input type="text" id="setup-displayname" class="settings-val" placeholder="Dein Name"></div>
         <div class="settings-item"><span class="settings-label">@User</span><input type="text" id="setup-username" class="settings-val" placeholder="username"></div>
     </div>
-    <button class="btn-blue" onclick="completeSetup()">Account starten</button>
+    <button class="btn-blue" onclick="completeSetup()">Account erstellen</button>
 </div>
 
 <main id="main-content" class="container hidden">
@@ -122,7 +119,7 @@
 </main>
 
 <div id="settings-screen" class="container hidden" style="padding-top: 20px;">
-    <h2>Einstellungen</h2>
+    <h2 style="margin-left: 10px;">Einstellungen</h2>
     <label>
         <img id="settings-preview" src="" class="profile-pic-upload">
         <input type="file" id="settings-img-input" accept="image/*" class="hidden" onchange="previewProfilePic(this, 'settings-preview')">
@@ -133,14 +130,14 @@
     </div>
     <p id="edit-warning" style="font-size: 12px; color: var(--sub); padding: 10px; text-align: center;"></p>
     <button class="btn-blue" onclick="saveSettings()">Speichern</button>
-    <button style="width: 100%; background: none; border: none; color: var(--nexus); margin-top: 15px; cursor: pointer;" onclick="closeSettings()">Abbrechen</button>
+    <button style="width: 100%; background: none; border: none; color: var(--nexus); margin-top: 15px; cursor: pointer; font-weight: 500;" onclick="closeSettings()">Abbrechen</button>
 </div>
 
 <div id="input-bar" class="ios-footer hidden">
     <div class="ios-post-box">
-        <label style="color: var(--nexus); cursor: pointer;"><i data-lucide="image"></i><input type="file" id="post-img-input" class="hidden"></label>
+        <label style="color: var(--nexus); cursor: pointer;"><i data-lucide="plus-circle"></i><input type="file" id="post-img-input" class="hidden"></label>
         <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
-        <button id="btn-share" class="btn-blue" style="width:32px; height:32px; padding:0; margin:0; border-radius:50%;"><i data-lucide="arrow-up" size="18"></i></button>
+        <button id="btn-share" style="background:var(--nexus); color:white; border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center;"><i data-lucide="arrow-up" size="18"></i></button>
     </div>
 </div>
 
@@ -149,7 +146,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
@@ -169,30 +166,27 @@
 
     let userData = null;
 
-    // --- SEARCH LOGIC ---
+    // --- UI LOGIC ---
     window.expandSearch = () => {
         document.getElementById('nav-logo').classList.add('hidden');
         document.getElementById('nav-actions').classList.add('hidden');
-        document.getElementById('s-cont').classList.add('active');
         document.getElementById('search-cancel').style.display = 'block';
-        document.getElementById('search-input').focus();
     };
     window.collapseSearch = () => {
         document.getElementById('nav-logo').classList.remove('hidden');
         document.getElementById('nav-actions').classList.remove('hidden');
-        document.getElementById('s-cont').classList.remove('active');
         document.getElementById('search-cancel').style.display = 'none';
         document.getElementById('search-input').value = "";
         document.querySelectorAll('.card').forEach(c => c.style.display = 'block');
     };
-
     document.getElementById('search-input').oninput = (e) => {
         const t = e.target.value.toLowerCase();
         document.querySelectorAll('.card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? 'block' : 'none');
     };
 
     window.toggleDarkMode = () => {
-        document.body.classList.toggle('dark');
+        const b = document.body;
+        b.className = b.className === 'dark' ? 'light' : 'dark';
         lucide.createIcons();
     };
 
@@ -205,7 +199,7 @@
         }
     };
 
-    // --- AUTH & ONBOARDING ---
+    // --- AUTH ---
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (user) => {
@@ -248,17 +242,20 @@
         lucide.createIcons();
     }
 
+    // --- FEED ---
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
             feed.innerHTML = "";
             snap.forEach(docSnap => {
                 const p = docSnap.data();
+                const pid = docSnap.id;
+                // Da User-Daten sich ändern können, holen wir sie live
                 onSnapshot(doc(db, "users", p.uid), (uSnap) => {
-                    const u = uSnap.data(); if(!u) return;
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
+                    const u = uSnap.data();
+                    const postDiv = document.createElement('div');
+                    postDiv.className = 'card';
+                    postDiv.innerHTML = `
                         <div class="post-header">
                             <img src="${u.photoURL}" class="user-img">
                             <div style="flex-grow:1">
@@ -266,13 +263,19 @@
                                 <div style="color:var(--sub); font-size:13px;">@${u.username}</div>
                             </div>
                         </div>
-                        <div style="white-space:pre-wrap;">${p.text}</div>
+                        <div style="white-space:pre-wrap; line-height:1.4;">${p.text}</div>
+                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" onclick="openLB('${p.imageUrl}')">` : ''}
                     `;
-                    feed.appendChild(card);
+                    feed.appendChild(postDiv);
                 });
             });
         });
     }
+
+    window.openLB = (url) => {
+        document.getElementById('lightbox-img').src = url;
+        document.getElementById('lightbox').style.display = 'flex';
+    };
 
     // --- SETTINGS ---
     window.openSettings = () => {
@@ -282,6 +285,7 @@
         document.getElementById('settings-preview').src = userData.photoURL;
         document.getElementById('edit-displayname').value = userData.displayname;
         document.getElementById('edit-username').value = userData.username;
+
         const now = Date.now();
         const changes = (userData.editHistory || []).filter(ts => (now - ts) < (14*24*60*60*1000)).length;
         document.getElementById('edit-warning').innerText = `Namensänderungen: ${changes}/2 in 14 Tagen.`;
@@ -296,15 +300,17 @@
         const nD = document.getElementById('edit-displayname').value;
         const nU = document.getElementById('edit-username').value;
         const file = document.getElementById('settings-img-input').files[0];
+        
         let up = {};
         if (nD !== userData.displayname || nU !== userData.username) {
             const now = Date.now();
             const history = (userData.editHistory || []).filter(ts => (now - ts) < (14*24*60*60*1000));
-            if (history.length >= 2) return alert("Limit erreicht!");
+            if (history.length >= 2) return alert("Limit erreicht! Warte 14 Tage.");
             up.displayname = nD; up.username = nU;
             up.editHistory = [...history, now];
         }
         if (file) up.photoURL = await uploadImage(file);
+        
         await updateDoc(doc(db, "users", auth.currentUser.uid), up);
         location.reload();
     };
@@ -312,7 +318,9 @@
     document.getElementById('btn-share').onclick = async () => {
         const text = document.getElementById('post-input').innerText;
         if (!text.trim()) return;
-        await addDoc(collection(db, "posts"), { text, uid: auth.currentUser.uid, timestamp: serverTimestamp() });
+        await addDoc(collection(db, "posts"), {
+            text, uid: auth.currentUser.uid, timestamp: serverTimestamp()
+        });
         document.getElementById('post-input').innerText = "";
     };
 

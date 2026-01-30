@@ -51,7 +51,6 @@
         .alert-warning { border-color: var(--warning); background: rgba(255, 149, 0, 0.1); color: var(--warning); }
         .alert-info { border-color: #8e8e93; background: rgba(142, 142, 147, 0.1); color: #8e8e93; }
 
-        /* PINNED POST */
         .pinned-label { display: flex; align-items: center; gap: 4px; color: var(--nexus); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
 
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
@@ -59,13 +58,13 @@
         .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; }
         .verified-badge { width: 17px; height: 17px; margin-left: 4px; }
         
-        .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
+        /* OVERLAYS (AI & Lightbox) */
+        .full-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; backdrop-filter: blur(15px); }
+        .overlay-header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: white; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
+        .ai-frame { flex-grow: 1; border: none; width: 100%; background: white; }
+        .close-btn { background: rgba(255,255,255,0.2); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        /* LIGHTBOX & CLOSE BUTTON */
-        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        #lightbox-img { max-width: 95%; max-height: 85vh; border-radius: 12px; object-fit: contain; }
-        .close-lightbox-btn { position: absolute; top: 30px; right: 20px; background: rgba(255,255,255,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
-        .close-lightbox-btn:hover { background: rgba(255,255,255,0.4); }
+        .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); cursor: zoom-in; }
 
         .ios-footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--tab-bg); backdrop-filter: blur(20px); border-top: 0.5px solid var(--border); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); z-index: 1000; }
         .ios-post-box { display: flex; align-items: flex-end; gap: 12px; max-width: 580px; margin: 0 auto; }
@@ -76,7 +75,8 @@
         
         .admin-menu { position: absolute; top: 35px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden; }
         .admin-menu button { width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 0.5px solid var(--border); }
-        .admin-menu button:last-child { border-bottom: none; }
+        
+        .ai-nav-btn { background: var(--nexus); color: white; border: none; padding: 6px 14px; border-radius: 18px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
     </style>
 </head>
 <body class="light">
@@ -92,12 +92,32 @@
         <button id="btn-close-search" class="hidden" onclick="collapseSearch()" style="background:none; border:none; color:var(--nexus); font-weight:600; margin-left:10px;">Abbrechen</button>
     </div>
 
-    <div id="nav-actions">
+    <div id="nav-actions" style="display:flex; align-items:center; gap:10px;">
+        <button class="ai-nav-btn" onclick="toggleAI()"><i data-lucide="sparkles" style="width:14px;"></i> KI</button>
         <button id="admin-alert-btn" class="hidden" onclick="openAlertModal()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="plus-circle"></i></button>
         <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="moon" id="theme-icon"></i></button>
         <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="settings"></i></button>
     </div>
 </nav>
+
+<div id="ai-overlay" class="full-overlay">
+    <div class="overlay-header">
+        <div style="display:flex; align-items:center; gap:10px; font-weight:700;">
+            <i data-lucide="sparkles" style="color:#ffcf33;"></i> Nexus KI Assistent
+        </div>
+        <button class="close-btn" onclick="toggleAI()">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+    <iframe id="ai-frame" class="ai-frame" src="https://softsorf.github.io/Ki-assistent/"></iframe>
+</div>
+
+<div id="lightbox" class="full-overlay" onclick="closeLightbox()" style="justify-content:center; align-items:center;">
+    <button class="close-btn" style="position:absolute; top:30px; right:20px;" onclick="closeLightbox()">
+        <i data-lucide="x"></i>
+    </button>
+    <img id="lightbox-img" src="" style="max-width: 95%; max-height: 85vh; border-radius: 12px; object-fit: contain;" onclick="event.stopPropagation()">
+</div>
 
 <div id="login-screen" style="text-align:center; padding-top: 150px;">
     <h1 style="color: var(--nexus); font-size: 45px; font-weight: 800;">NexusPost</h1>
@@ -109,40 +129,20 @@
     <div id="feed"></div>
 </main>
 
-<div id="alert-modal" class="lightbox">
-    <div class="card" style="width: 90%; max-width: 400px; padding: 20px;" onclick="event.stopPropagation()">
-        <h3 style="margin-top:0;">Neue Meldung</h3>
-        <select id="alert-type" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; background:var(--ios-input); color:var(--text); border:none;">
-            <option value="warning">Warnung (Orange)</option>
-            <option value="info">Information (Grau)</option>
-        </select>
-        <textarea id="alert-text" placeholder="Nachricht eingeben..." style="width:100%; height:100px; margin-bottom:12px; border-radius:8px; background:var(--ios-input); color:var(--text); border:none; padding:10px; font-family:inherit; resize:none;"></textarea>
-        <select id="alert-duration" style="width:100%; margin-bottom:20px; padding:10px; border-radius:8px; background:var(--ios-input); color:var(--text); border:none;">
-            <option value="0">Dauerhaft anzeigen</option>
-            <option value="1">1 Stunde sichtbar</option>
-            <option value="24">24 Stunden sichtbar</option>
-        </select>
-        <div style="display:flex; gap:10px;">
-            <button id="save-alert-btn" class="send-btn" style="flex:1; border-radius:10px; height:45px; font-weight:600;">Erstellen</button>
-            <button onclick="closeAlertModal()" style="flex:1; background:none; border:none; color:var(--danger); font-weight:600; cursor:pointer;">Abbrechen</button>
-        </div>
-    </div>
-</div>
-
-<div id="settings-screen" class="container hidden" style="padding-top: 20px;">
+<div id="settings-screen" class="container hidden">
     <h2>Einstellungen</h2>
     <div class="card">
-        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; margin-bottom:10px; padding:12px; border:none; background:var(--ios-input); border-radius:8px; color:var(--text);">
-        <input type="text" id="edit-username" placeholder="Nutzername" style="width:100%; padding:12px; border:none; background:var(--ios-input); border-radius:8px; color:var(--text);">
+        <input type="text" id="edit-displayname" placeholder="Anzeigename" style="width:100%; margin-bottom:10px; padding:12px; border:none; background:var(--ios-input); border-radius:8px;">
+        <input type="text" id="edit-username" placeholder="Nutzername" style="width:100%; padding:12px; border:none; background:var(--ios-input); border-radius:8px;">
     </div>
     <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:12px; height:50px; font-weight:600;">Speichern</button>
-    <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--danger); padding:15px; cursor:pointer; font-weight:600;">Abbrechen</button>
+    <button onclick="toggleSettings()" style="width:100%; background:none; border:none; color:var(--danger); padding:15px; font-weight:600;">Abbrechen</button>
 </div>
 
 <div id="input-bar" class="ios-footer hidden">
-    <div id="preview-container" class="hidden" style="position: absolute; bottom: 80px; left: 15px; background: var(--card); padding: 5px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+    <div id="preview-container" class="hidden" style="position: absolute; bottom: 80px; left: 15px; background: var(--card); padding: 5px; border-radius: 10px; box-shadow:0 5px 15px rgba(0,0,0,0.2);">
         <img id="preview-img" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
-        <button onclick="clearPreview()" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; cursor: pointer; width:20px; height:20px;">×</button>
+        <button onclick="clearPreview()" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width:20px; height:20px;">×</button>
     </div>
     <div class="ios-post-box">
         <label style="color: var(--nexus); cursor: pointer; margin-bottom: 5px;">
@@ -150,17 +150,8 @@
             <input type="file" id="image-input" accept="image/*" class="hidden" onchange="showPreview(event)">
         </label>
         <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?"></div>
-        <button id="btn-share" class="send-btn">
-            <i data-lucide="arrow-up" style="width:20px; height:20px; stroke-width:3px;"></i>
-        </button>
+        <button id="btn-share" class="send-btn"><i data-lucide="arrow-up" style="width:20px; height:20px; stroke-width:3px;"></i></button>
     </div>
-</div>
-
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <button class="close-lightbox-btn" onclick="closeLightbox()">
-        <i data-lucide="x" style="width:24px; height:24px;"></i>
-    </button>
-    <img id="lightbox-img" src="" onclick="event.stopPropagation()">
 </div>
 
 <script type="module">
@@ -186,6 +177,14 @@
     const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT";
 
     let userData = null;
+
+    // --- KI INTEGRATION ---
+    window.toggleAI = () => {
+        const overlay = document.getElementById('ai-overlay');
+        const isOpen = overlay.style.display === 'flex';
+        overlay.style.display = isOpen ? 'none' : 'flex';
+        document.body.style.overflow = isOpen ? 'auto' : 'hidden'; // Scrollen verhindern
+    };
 
     function timeAgo(timestamp) {
         if (!timestamp) return "Gerade eben";
@@ -227,7 +226,7 @@
         lucide.createIcons();
     };
 
-    // --- AUTHENTIFIZIERUNG ---
+    // --- AUTH ---
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -248,41 +247,24 @@
         }
     });
 
-    // --- ALERTS (WARNUNGEN/INFOS) ---
-    window.openAlertModal = () => document.getElementById('alert-modal').style.display = 'flex';
-    window.closeAlertModal = () => document.getElementById('alert-modal').style.display = 'none';
-    document.getElementById('save-alert-btn').onclick = async () => {
-        const text = document.getElementById('alert-text').value;
-        const type = document.getElementById('alert-type').value;
-        const duration = parseInt(document.getElementById('alert-duration').value);
-        if(!text.trim()) return;
-        let expiresAt = null;
-        if(duration > 0) { expiresAt = new Date(); expiresAt.setHours(expiresAt.getHours() + duration); }
-        await addDoc(collection(db, "alerts"), { text, type, expiresAt, createdAt: serverTimestamp() });
-        document.getElementById('alert-text').value = ""; closeAlertModal();
-    };
-
+    // --- ALERTS ---
     function loadAlerts() {
         onSnapshot(collection(db, "alerts"), (snap) => {
             const container = document.getElementById('global-alerts');
             container.innerHTML = '';
             snap.forEach(d => {
                 const a = d.data();
-                if(a.expiresAt && a.expiresAt.toDate() < new Date()) { deleteDoc(doc(db, "alerts", d.id)); return; }
-                const isAdmin = auth.currentUser?.email === adminEmail;
-                container.innerHTML += `
-                    <div class="alert-banner alert-${a.type}">
-                        <i data-lucide="${a.type === 'warning' ? 'alert-circle' : 'info'}" style="width:20px;"></i>
-                        <div style="flex:1;">${a.text}</div>
-                        ${isAdmin ? `<button onclick="deleteAlert('${d.id}')" style="background:none; border:none; color:inherit; cursor:pointer;"><i data-lucide="x" style="width:16px;"></i></button>` : ''}
-                    </div>`;
+                container.innerHTML += `<div class="alert-banner alert-${a.type}">
+                    <i data-lucide="info"></i><div style="flex:1;">${a.text}</div>
+                    ${auth.currentUser?.email === adminEmail ? `<button onclick="deleteAlert('${d.id}')" style="background:none; border:none; color:inherit; cursor:pointer;">×</button>` : ''}
+                </div>`;
             });
             lucide.createIcons();
         });
     }
     window.deleteAlert = (id) => deleteDoc(doc(db, "alerts", id));
 
-    // --- FEED LOGIK ---
+    // --- FEED ---
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
@@ -297,7 +279,6 @@
                     const likes = Array.isArray(p.likes) ? p.likes : [];
                     const hasLiked = likes.includes(auth.currentUser?.uid);
                     const isAdmin = auth.currentUser?.email === adminEmail;
-                    const isOwner = auth.currentUser?.uid === p.uid;
                     
                     let div = document.getElementById(pid);
                     if(!div) { div = document.createElement('div'); div.id = pid; div.className = 'card'; feed.appendChild(div); }
@@ -316,9 +297,7 @@
                                     <button onclick="togglePin('${p.id}', ${p.isPinned || false})"><i data-lucide="pin"></i> ${p.isPinned ? 'Lösen' : 'Anpinnen'}</button>
                                     <button onclick="toggleVerify('${p.uid}', ${u.verified || false})"><i data-lucide="shield-check"></i> ${u.verified ? 'Ent-verifizieren' : 'Verifizieren'}</button>
                                 ` : ''}
-                                ${isAdmin || isOwner ? `
-                                    <button onclick="deletePost('${p.id}')" style="color:var(--danger);"><i data-lucide="trash-2"></i> Löschen</button>
-                                ` : ''}
+                                ${isAdmin || auth.currentUser?.uid === p.uid ? `<button onclick="deletePost('${p.id}')" style="color:var(--danger);"><i data-lucide="trash-2"></i> Löschen</button>` : ''}
                             </div>
                         </div>
                         <div style="font-size:16px; white-space:pre-wrap; line-height:1.4;">${p.text}</div>
@@ -327,40 +306,30 @@
                             <button onclick='toggleLike("${p.id}", ${JSON.stringify(likes)})' style="background:none; border:none; color:${hasLiked?'var(--nexus)':'var(--sub)'}; cursor:pointer; display:flex; align-items:center; gap:5px;">
                                 <i data-lucide="heart" style="width:18px; ${hasLiked?'fill:var(--nexus)':''}"></i> ${likes.length}
                             </button>
-                            <button onclick="showComments('${p.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer; display:flex; align-items:center; gap:5px;">
-                                <i data-lucide="message-circle" style="width:18px;"></i> Kommentieren
-                            </button>
-                        </div>
-                        <div id="comments-section-${p.id}" class="hidden" style="margin-top:10px;"></div>`;
+                        </div>`;
                     lucide.createIcons();
                 });
             });
         });
     }
 
-    // --- ADMIN FUNKTIONEN ---
+    // --- ADMIN & POST FUNKTIONEN ---
     window.togglePin = async (id, status) => { await updateDoc(doc(db, "posts", id), { isPinned: !status }); toggleAdminMenu(id); };
-    window.toggleVerify = async (userId, currentStatus) => {
-        if(confirm(currentStatus ? "Verifizierung entfernen?" : "Nutzer verifizieren?")) {
-            await updateDoc(doc(db, "users", userId), { verified: !currentStatus });
-        }
-    };
+    window.toggleVerify = async (userId, status) => { await updateDoc(doc(db, "users", userId), { verified: !status }); };
     window.toggleAdminMenu = (id) => document.getElementById('menu-'+id).classList.toggle('hidden');
     window.deletePost = (id) => confirm("Post löschen?") && deleteDoc(doc(db, "posts", id));
     window.toggleLike = async (id, likes) => {
-        const ref = doc(db, "posts", id); const uid = auth.currentUser.uid;
-        await updateDoc(ref, { likes: likes.includes(uid) ? arrayRemove(uid) : arrayUnion(uid) });
+        const uid = auth.currentUser.uid;
+        await updateDoc(doc(db, "posts", id), { likes: likes.includes(uid) ? arrayRemove(uid) : arrayUnion(uid) });
     };
 
-    // --- BILDER & LIGHTBOX ---
-    window.openLightbox = (url) => { 
-        document.getElementById('lightbox-img').src = url; 
-        document.getElementById('lightbox').style.display = 'flex'; 
-        document.body.style.overflow = 'hidden'; // Verhindert Scrollen im Hintergrund
-    };
-    window.closeLightbox = () => { 
-        document.getElementById('lightbox').style.display = 'none'; 
-        document.body.style.overflow = 'auto'; // Aktiviert Scrollen wieder
+    window.openLightbox = (url) => { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').style.display = 'flex'; };
+    window.closeLightbox = () => document.getElementById('lightbox').style.display = 'none';
+
+    window.toggleSettings = () => {
+        document.getElementById('main-content').classList.toggle('hidden');
+        document.getElementById('input-bar').classList.toggle('hidden');
+        document.getElementById('settings-screen').classList.toggle('hidden');
     };
 
     window.showPreview = (e) => {
@@ -369,22 +338,6 @@
     };
     window.clearPreview = () => { document.getElementById('image-input').value = ""; document.getElementById('preview-container').classList.add('hidden'); };
 
-    // --- EINSTELLUNGEN ---
-    window.toggleSettings = () => {
-        document.getElementById('main-content').classList.toggle('hidden');
-        document.getElementById('input-bar').classList.toggle('hidden');
-        document.getElementById('settings-screen').classList.toggle('hidden');
-        document.getElementById('edit-displayname').value = userData.displayname;
-        document.getElementById('edit-username').value = userData.username;
-    };
-    document.getElementById('btn-save-settings').onclick = async () => {
-        const dn = document.getElementById('edit-displayname').value;
-        const un = document.getElementById('edit-username').value.replace('@','');
-        await updateDoc(doc(db, "users", auth.currentUser.uid), { displayname: dn, username: un });
-        userData.displayname = dn; userData.username = un; toggleSettings();
-    };
-
-    // --- POSTEN ---
     document.getElementById('btn-share').onclick = async () => {
         const txt = document.getElementById('post-input').innerText;
         const file = document.getElementById('image-input').files[0];

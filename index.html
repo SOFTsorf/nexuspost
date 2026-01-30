@@ -24,35 +24,30 @@
             background-color: var(--bg); color: var(--text); margin: 0; 
             padding-top: 60px; padding-bottom: 90px;
             transition: background 0.3s ease; -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
         }
 
-        /* HEADER & SEARCH ANIMATION */
+        /* HEADER & SEARCH */
         nav {
             position: fixed; top: 0; left: 0; right: 0; height: 50px;
             background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             display: flex; align-items: center; padding: 0 15px;
             border-bottom: 0.5px solid var(--border); z-index: 1000;
+            justify-content: space-between;
         }
 
-        .logo { 
-            font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; 
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            white-space: nowrap; flex-shrink: 0;
-        }
+        .logo { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; white-space: nowrap; transition: opacity 0.2s; }
         
         .search-wrapper { 
-            display: flex; align-items: center; flex-grow: 1; 
-            justify-content: flex-end; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            gap: 0;
+            display: flex; align-items: center; gap: 0; transition: all 0.3s ease;
+            flex-grow: 0; justify-content: flex-end;
         }
-        .search-wrapper.active { justify-content: flex-start; gap: 10px; }
+        .search-wrapper.active { flex-grow: 1; gap: 12px; }
 
         .search-container {
             display: flex; align-items: center; background: var(--ios-input);
             border-radius: 10px; padding: 0 10px; height: 32px;
-            width: 32px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden; cursor: pointer;
+            width: 35px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; overflow: hidden;
         }
         .search-wrapper.active .search-container { width: 100%; cursor: text; }
 
@@ -65,19 +60,13 @@
         .btn-close-search {
             background: none; border: none; color: var(--nexus); font-weight: 600;
             font-size: 15px; cursor: pointer; padding: 0; white-space: nowrap;
-            display: none; opacity: 0; transition: opacity 0.2s ease;
+            display: none; opacity: 0;
         }
         .search-wrapper.active .btn-close-search { display: block; opacity: 1; }
 
-        #nav-actions { 
-            display: flex; gap: 12px; align-items: center; margin-left: 10px;
-            transition: opacity 0.2s ease;
-        }
+        #nav-actions { display: flex; gap: 12px; align-items: center; transition: opacity 0.2s; }
 
-        /* Hilfsklassen für Animation */
-        .fade-out { opacity: 0; pointer-events: none; transform: scale(0.95); }
-
-        /* POSTS & CONTAINER */
+        /* POSTS */
         .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
         .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
@@ -122,7 +111,6 @@
         .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .admin-menu { position: absolute; top: 35px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1100; min-width: 190px; overflow: hidden; }
         .admin-menu button { width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .comment-user-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
     </style>
 </head>
 <body class="light">
@@ -131,7 +119,7 @@
     <div class="logo" id="nav-logo">NexusPost</div>
     
     <div class="search-wrapper" id="search-wrapper">
-        <div class="search-container" onclick="expandSearch()">
+        <div class="search-container" id="s-cont" onclick="expandSearch()">
             <i data-lucide="search" style="width:16px; color:var(--sub); flex-shrink:0;"></i>
             <input type="text" class="search-input" id="search-input" placeholder="Suchen...">
         </div>
@@ -214,36 +202,39 @@
 
     let userData = null;
 
-    // --- SEARCH LOGIC (FIXED ANIMATION) ---
+    // --- SEARCH LOGIC (CLEAN & FULL WIDTH) ---
     window.expandSearch = () => {
-        const wrapper = document.getElementById('search-wrapper');
+        const wrap = document.getElementById('search-wrapper');
         const logo = document.getElementById('nav-logo');
-        const actions = document.getElementById('nav-actions');
+        const acts = document.getElementById('nav-actions');
+        const btn = document.getElementById('btn-close-search');
 
-        logo.classList.add('fade-out');
-        actions.classList.add('fade-out');
-
+        logo.classList.add('hidden');
+        acts.classList.add('hidden');
+        wrap.classList.add('active');
+        
         setTimeout(() => {
-            wrapper.classList.add('active');
+            btn.style.opacity = "1";
             document.getElementById('search-input').focus();
-        }, 100);
+        }, 150);
     };
 
     window.collapseSearch = () => {
-        const wrapper = document.getElementById('search-wrapper');
+        const wrap = document.getElementById('search-wrapper');
         const logo = document.getElementById('nav-logo');
-        const actions = document.getElementById('nav-actions');
+        const acts = document.getElementById('nav-actions');
+        const btn = document.getElementById('btn-close-search');
         const input = document.getElementById('search-input');
 
-        wrapper.classList.remove('active');
+        btn.style.opacity = "0";
+        wrap.classList.remove('active');
         input.value = "";
         
-        // Feed Filter Reset
         document.querySelectorAll('.card').forEach(post => post.style.display = 'block');
 
         setTimeout(() => {
-            logo.classList.remove('fade-out');
-            actions.classList.remove('fade-out');
+            logo.classList.remove('hidden');
+            acts.classList.remove('hidden');
         }, 200);
     };
 
@@ -262,11 +253,11 @@
     };
 
     window.toggleSettings = () => {
-        const isSettingsVisible = !document.getElementById('settings-screen').classList.contains('hidden');
-        document.getElementById('main-content').classList.toggle('hidden', !isSettingsVisible);
-        document.getElementById('input-bar').classList.toggle('hidden', !isSettingsVisible);
-        document.getElementById('settings-screen').classList.toggle('hidden', isSettingsVisible);
-        if(!isSettingsVisible) {
+        const isSet = !document.getElementById('settings-screen').classList.contains('hidden');
+        document.getElementById('main-content').classList.toggle('hidden', !isSet);
+        document.getElementById('input-bar').classList.toggle('hidden', !isSet);
+        document.getElementById('settings-screen').classList.toggle('hidden', isSet);
+        if(!isSet) {
             document.getElementById('edit-displayname').value = userData.displayname;
             document.getElementById('edit-username').value = userData.username;
         }
@@ -345,27 +336,27 @@
     }
 
     // --- ACTIONS ---
-    window.toggleLike = async (postId, currentLikes) => {
-        const postRef = doc(db, "posts", postId);
+    window.toggleLike = async (pId, cL) => {
+        const pRef = doc(db, "posts", pId);
         const myUid = auth.currentUser.uid;
-        if (currentLikes.includes(myUid)) await updateDoc(postRef, { likes: arrayRemove(myUid) });
-        else await updateDoc(postRef, { likes: arrayUnion(myUid) });
+        if (cL.includes(myUid)) await updateDoc(pRef, { likes: arrayRemove(myUid) });
+        else await updateDoc(pRef, { likes: arrayUnion(myUid) });
     };
 
-    window.addComment = async (postId) => {
-        const input = document.getElementById(`input-${postId}`); if (!input.value.trim()) return;
-        await addDoc(collection(db, "posts", postId, "comments"), { text: input.value, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL, verified: userData.verified || false, timestamp: serverTimestamp() });
-        input.value = "";
+    window.addComment = async (pId) => {
+        const inp = document.getElementById(`input-${pId}`); if (!inp.value.trim()) return;
+        await addDoc(collection(db, "posts", pId, "comments"), { text: inp.value, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL, verified: userData.verified || false, timestamp: serverTimestamp() });
+        inp.value = "";
     };
 
-    window.showComments = (postId) => {
-        const section = document.getElementById(`comments-section-${postId}`);
-        section.classList.toggle('hidden');
-        if (!section.classList.contains('hidden')) {
-            section.innerHTML = `<div style="display:flex; gap:8px; margin-bottom:15px;"><input type="text" id="input-${postId}" placeholder="Antworten..." style="flex-grow:1; padding:8px; border-radius:15px; border:0.5px solid var(--border); background:var(--bg); color:var(--text);"><button onclick="addComment('${postId}')" class="send-btn"><i data-lucide="arrow-up" style="width:16px;"></i></button></div><div id="list-${postId}"></div>`;
+    window.showComments = (pId) => {
+        const sec = document.getElementById(`comments-section-${pId}`);
+        sec.classList.toggle('hidden');
+        if (!sec.classList.contains('hidden')) {
+            sec.innerHTML = `<div style="display:flex; gap:8px; margin-bottom:15px;"><input type="text" id="input-${pId}" placeholder="Antworten..." style="flex-grow:1; padding:8px; border-radius:15px; border:0.5px solid var(--border); background:var(--bg); color:var(--text);"><button onclick="addComment('${pId}')" class="send-btn"><i data-lucide="arrow-up" style="width:16px;"></i></button></div><div id="list-${pId}"></div>`;
             lucide.createIcons();
-            onSnapshot(query(collection(db, "posts", postId, "comments"), orderBy("timestamp", "asc")), (snap) => {
-                const list = document.getElementById(`list-${postId}`); if (!list) return;
+            onSnapshot(query(collection(db, "posts", pId, "comments"), orderBy("timestamp", "asc")), (snap) => {
+                const list = document.getElementById(`list-${pId}`); if (!list) return;
                 list.innerHTML = '';
                 snap.forEach(ds => {
                     const c = ds.data();
@@ -376,22 +367,22 @@
     };
 
     window.showPreview = (e) => {
-        const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader(); reader.onload = (rs) => { document.getElementById('preview-img').src = rs.target.result; document.getElementById('preview-container').classList.remove('hidden'); }; reader.readAsDataURL(file);
+        const f = e.target.files[0]; if (!f) return;
+        const r = new FileReader(); r.onload = (rs) => { document.getElementById('preview-img').src = rs.target.result; document.getElementById('preview-container').classList.remove('hidden'); }; r.readAsDataURL(f);
     };
     window.clearPreview = () => { document.getElementById('image-input').value = ""; document.getElementById('preview-container').classList.add('hidden'); };
 
     document.getElementById('btn-share').onclick = async () => {
-        const text = document.getElementById('post-input').innerText;
+        const txt = document.getElementById('post-input').innerText;
         const file = document.getElementById('image-input').files[0];
-        if (!text.trim() && !file) return;
+        if (!txt.trim() && !file) return;
         let imageUrl = null;
         if (file) {
             const fd = new FormData(); fd.append("image", file);
             const res = await fetch("https://api.imgbb.com/1/upload?key=" + imgbbKey, { method: "POST", body: fd });
             const j = await res.json(); imageUrl = j.data.url;
         }
-        await addDoc(collection(db, "posts"), { text, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [] });
+        await addDoc(collection(db, "posts"), { text: txt, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [] });
         document.getElementById('post-input').innerText = ""; clearPreview();
     };
 

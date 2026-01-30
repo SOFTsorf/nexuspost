@@ -1,171 +1,208 @@
-<div id="settings-screen" class="container hidden" style="padding-top: 20px;">
-    <h2 style="margin-left: 5px; margin-bottom: 20px;">Einstellungen</h2>
-    <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:12px; height:50px; font-weight:600;">Speichern</button>
-    
-    <button onclick="auth.signOut().then(()=>location.reload())" class="btn-cancel" style="margin-top:20px; border: 1px solid var(--danger); border-radius:12px;">Abmelden</button>
-    
-    <button onclick="toggleSettings()" class="btn-cancel">Abbrechen</button>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NexusPost Pro</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --nexus: #1877f2; --bg: #f0f2f5; --card: rgba(255, 255, 255, 0.95);
+            --text: #1c1e21; --sub: #65676b; --border: #dddfe2; --header-bg: rgba(255, 255, 255, 0.75);
+            --ios-input: #efeff0; --danger: #ff3b30;
+        }
+        body.dark {
+            --bg: #000000; --card: #1c1c1e; --text: #ffffff;
+            --sub: #8e8e93; --border: #38383a; --header-bg: rgba(28, 28, 30, 0.85);
+            --ios-input: #2c2c2e;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg); color: var(--text); margin: 0; 
+            padding-top: 60px; padding-bottom: 90px;
+        }
+
+        /* HEADER */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 50px;
+            background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; align-items: center; padding: 0 15px;
+            border-bottom: 0.5px solid var(--border); z-index: 1000; justify-content: space-between;
+        }
+
+        /* CONTAINER & CARDS */
+        .container { max-width: 580px; margin: 0 auto; padding: 0 12px; }
+        .card { background: var(--card); border-radius: 14px; padding: 15px; margin-bottom: 12px; border: 0.5px solid var(--border); }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; }
+        .user-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .post-img { width: calc(100% + 30px); margin: 10px -15px -15px -15px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-top: 0.5px solid var(--border); }
+
+        /* KOMMENTARE ALS MINI-CARDS */
+        .comment-card { background: var(--bg); padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 0.5px solid var(--border); }
+
+        /* PROFIL HEADER */
+        .profile-box { background: var(--card); border-radius: 14px; padding: 20px; margin-bottom: 15px; border: 0.5px solid var(--border); text-align: center; }
+        .profile-img-large { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--nexus); margin-bottom: 10px; }
+
+        /* FOOTER INPUT */
+        .ios-footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid var(--border); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); z-index: 1000;
+        }
+        .ios-post-box { display: flex; align-items: flex-end; gap: 12px; max-width: 580px; margin: 0 auto; }
+        .ios-input-container { flex-grow: 1; background: var(--ios-input); border-radius: 20px; padding: 8px 15px; border: 0.5px solid var(--border); min-height: 20px; color: var(--text); outline: none; }
+        .send-btn { background: var(--nexus); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        .hidden { display: none !important; }
+        .btn-danger { color: var(--danger); background: none; border: none; font-weight: 600; padding: 15px; width: 100%; cursor: pointer; }
+    </style>
+</head>
+<body class="light">
+
+<nav id="navbar" class="hidden">
+    <div style="font-weight:700; font-size:20px;">NexusPost</div>
+    <div style="display: flex; gap: 15px;">
+        <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text);"><i data-lucide="moon"></i></button>
+        <button onclick="toggleSettings()" style="background:none; border:none; color:var(--text);"><i data-lucide="settings"></i></button>
+    </div>
+</nav>
+
+<div id="profile-view-header" class="container hidden">
+    <div class="profile-box">
+        <button onclick="closeProfileView()" style="float:left; background:none; border:none; color:var(--nexus); font-weight:600;">← Feed</button>
+        <img id="view-p-img" src="" class="profile-img-large">
+        <h2 id="view-p-name" style="margin:0;"></h2>
+        <p id="view-p-handle" style="color:var(--sub); margin:5px 0;"></p>
+        <div style="display:flex; justify-content:center; gap:20px; margin:15px 0;">
+            <span><b id="count-followers">0</b> Follower</span>
+            <span><b id="count-following">0</b> Folgt</span>
+        </div>
+        <button id="btn-follow" class="send-btn" style="width:auto; padding:0 25px; border-radius:20px; margin:0 auto;">Folgen</button>
+    </div>
 </div>
 
-<div id="profile-view-header" class="container hidden" style="padding: 20px 15px; background: var(--card); border-bottom: 0.5px solid var(--border);">
-    <button onclick="closeProfileView()" style="background:none; border:none; color:var(--nexus); font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:5px;">
-        <i data-lucide="arrow-left" style="width:18px;"></i> Zurück zum Feed
-    </button>
-    <div style="display:flex; align-items:center; gap:15px;">
-        <img id="view-p-img" src="" class="user-img" style="width:60px; height:60px;">
-        <div style="flex-grow:1;">
-            <div id="view-p-name" style="font-size:20px; font-weight:800;"></div>
-            <div id="view-p-handle" style="color:var(--sub);"></div>
-        </div>
-        <button id="btn-follow" class="send-btn" style="width:auto; padding:0 20px; border-radius:20px;">Folgen</button>
+<main id="main-content" class="container hidden">
+    <div id="feed"></div>
+</main>
+
+<div id="settings-screen" class="container hidden">
+    <div class="card">
+        <h2>Einstellungen</h2>
+        <input type="text" id="edit-displayname" placeholder="Name" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);">
+        <button id="btn-save-settings" class="send-btn" style="width:100%; border-radius:8px; height:45px;">Speichern</button>
+        <button onclick="logout()" class="btn-danger">Abmelden</button>
+        <button onclick="toggleSettings()" style="width:100%; background:none; border:none; padding:10px;">Schließen</button>
     </div>
-    <div style="display:flex; gap:20px; margin-top:15px; font-size:14px;">
-        <span><strong id="count-followers">0</strong> Follower</span>
-        <span><strong id="count-following">0</strong> Folgt</span>
+</div>
+
+<div id="input-bar" class="ios-footer hidden">
+    <div class="ios-post-box">
+        <div id="post-input" class="ios-input-container" contenteditable="true"></div>
+        <button id="btn-share" class="send-btn"><i data-lucide="arrow-up"></i></button>
     </div>
 </div>
 
 <script type="module">
-    // ... deine Firebase Imports ...
-    import { signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // --- PROFIL ANSICHT LOGIK ---
-    let isProfileView = false;
-    let currentProfileUid = null;
+    const firebaseConfig = {
+        apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
+        authDomain: "nexuspost-a00b1.firebaseapp.com",
+        projectId: "nexuspost-a00b1",
+        storageBucket: "nexuspost-a00b1.firebasestorage.app",
+        messagingSenderId: "124843068065",
+        appId: "1:124843068065:web:035b15d01910dc6b8d7ee0"
+    };
 
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    let userData = null;
+
+    // --- AUTH ---
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const uDoc = await getDoc(doc(db, "users", user.uid));
+            userData = uDoc.exists() ? uDoc.data() : { displayname: user.displayName, username: user.email.split('@')[0], photoURL: user.photoURL, followers: [], following: [] };
+            if(!uDoc.exists()) await setDoc(doc(db, "users", user.uid), userData);
+            
+            document.getElementById('navbar').classList.remove('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('input-bar').classList.remove('hidden');
+            loadFeed();
+            lucide.createIcons();
+        } else {
+            signInWithPopup(auth, provider);
+        }
+    });
+
+    // --- FEED ---
+    function loadFeed(filterUid = null) {
+        let q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+        if(filterUid) q = query(collection(db, "posts"), where("uid", "==", filterUid), orderBy("timestamp", "desc"));
+
+        onSnapshot(q, (snap) => {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = "";
+            snap.forEach(async (d) => {
+                const p = d.data();
+                const uSnap = await getDoc(doc(db, "users", p.uid));
+                const u = uSnap.data() || {};
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <div class="post-header" onclick="openProfile('${p.uid}')">
+                        <img src="${u.photoURL}" class="user-img">
+                        <div>
+                            <div style="font-weight:600;">${u.displayname}</div>
+                            <div style="font-size:12px; color:var(--sub);">@${u.username}</div>
+                        </div>
+                    </div>
+                    <div style="margin:10px 0;">${p.text}</div>
+                    <div style="display:flex; gap:20px; border-top:0.5px solid var(--border); padding-top:10px;">
+                        <button onclick="showComments('${d.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer;">Kommentare</button>
+                    </div>
+                    <div id="comments-${d.id}" class="hidden" style="margin-top:10px;">
+                        <div id="list-${d.id}"></div>
+                        <div style="display:flex; gap:5px; margin-top:10px;">
+                            <input type="text" id="in-${d.id}" placeholder="Antworten..." style="flex:1; padding:8px; border-radius:15px; border:1px solid var(--border);">
+                            <button onclick="addComment('${d.id}')" class="send-btn">↑</button>
+                        </div>
+                    </div>`;
+                feed.appendChild(div);
+                loadComments(d.id);
+            });
+        });
+    }
+
+    // --- PROFIL ANSICHT ---
     window.openProfile = async (uid) => {
-        isProfileView = true;
-        currentProfileUid = uid;
-        
         const uSnap = await getDoc(doc(db, "users", uid));
         const u = uSnap.data();
-        
-        // UI füllen
         document.getElementById('view-p-img').src = u.photoURL;
         document.getElementById('view-p-name').innerText = u.displayname;
         document.getElementById('view-p-handle').innerText = "@" + u.username;
         document.getElementById('profile-view-header').classList.remove('hidden');
         
-        // Follow Button Check
-        updateFollowUI(u, uid);
+        const isFollowing = (u.followers || []).includes(auth.currentUser.uid);
+        const btn = document.getElementById('btn-follow');
+        btn.innerText = isFollowing ? "Gefolgt" : "Folgen";
+        btn.onclick = () => toggleFollow(uid, isFollowing);
         
-        // Feed filtern
         loadFeed(uid);
     };
 
     window.closeProfileView = () => {
-        isProfileView = false;
         document.getElementById('profile-view-header').classList.add('hidden');
-        loadFeed(); // Zeige wieder alles
+        loadFeed();
     };
 
-    async function updateFollowUI(u, uid) {
-        const btn = document.getElementById('btn-follow');
-        if(uid === auth.currentUser.uid) {
-            btn.classList.add('hidden');
-        } else {
-            btn.classList.remove('hidden');
-            const following = u.followers || [];
-            const isFollowing = following.includes(auth.currentUser.uid);
-            btn.innerText = isFollowing ? "Gefolgt" : "Folgen";
-            btn.onclick = () => toggleFollow(uid, isFollowing);
-        }
-        document.getElementById('count-followers').innerText = (u.followers || []).length;
-        document.getElementById('count-following').innerText = (u.following || []).length;
-    }
-
-    async function toggleFollow(targetUid, isFollowing) {
-        const myRef = doc(db, "users", auth.currentUser.uid);
-        const targetRef = doc(db, "users", targetUid);
-        if(isFollowing) {
-            await updateDoc(myRef, { following: arrayRemove(targetUid) });
-            await updateDoc(targetRef, { followers: arrayRemove(auth.currentUser.uid) });
-        } else {
-            await updateDoc(myRef, { following: arrayUnion(targetUid) });
-            await updateDoc(targetRef, { followers: arrayUnion(auth.currentUser.uid) });
-        }
-        openProfile(targetUid); // Refresh
-    }
-
-    // --- AKTUALISIERTES FEED-RENDERING ---
-    function loadFeed(filterUid = null) {
-        let q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-        if(filterUid) {
-            // Hinweis: Falls Firebase meckert, muss ein Index erstellt werden (Link in der Konsole)
-            q = query(collection(db, "posts"), where("uid", "==", filterUid), orderBy("timestamp", "desc"));
-        }
-
-        onSnapshot(q, (snap) => {
-            const feed = document.getElementById('feed');
-            feed.innerHTML = "";
-            snap.forEach((d) => {
-                const p = d.data();
-                onSnapshot(doc(db, "users", p.uid), (uSnap) => {
-                    const u = uSnap.data() || {};
-                    const pid = 'post-'+d.id;
-                    const likes = Array.isArray(p.likes) ? p.likes : [];
-                    const hasLiked = likes.includes(auth.currentUser.uid);
-
-                    const html = `
-                        <div class="post-header" onclick="openProfile('${p.uid}')" style="cursor:pointer">
-                            <img src="${u.photoURL}" class="user-img">
-                            <div style="flex-grow:1">
-                                <div class="display-name">${u.displayname} ${u.verified ? '🔹' : ''}</div>
-                                <div style="font-size:13px; color:var(--sub);">@${u.username}</div>
-                            </div>
-                        </div>
-                        <div style="font-size:16px; white-space:pre-wrap; padding: 5px 0;">${p.text}</div>
-                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" onclick="openLightbox('${p.imageUrl}')">` : ''}
-                        
-                        <div style="display: flex; gap: 20px; margin-top: 15px; border-top: 0.5px solid var(--border); padding-top: 10px;">
-                            <button onclick='toggleLike("${d.id}", ${JSON.stringify(likes)})' style="background:none; border:none; color:${hasLiked?'var(--nexus)':'var(--sub)'}; cursor:pointer; display:flex; align-items:center; gap:5px;">
-                                <i data-lucide="heart" style="width:18px; ${hasLiked?'fill:var(--nexus)':''}"></i> ${likes.length}
-                            </button>
-                            <button onclick="showComments('${d.id}')" style="background:none; border:none; color:var(--sub); cursor:pointer; display:flex; align-items:center; gap:5px;">
-                                <i data-lucide="message-circle" style="width:18px;"></i> Kommentare
-                            </button>
-                        </div>
-                        <div id="comments-section-${d.id}" class="hidden" style="margin-top:15px; padding-top:10px; border-top: 0.5px solid var(--border);">
-                            </div>`;
-                    
-                    let div = document.getElementById(pid);
-                    if (!div) { div = document.createElement('div'); div.id = pid; div.className = 'card'; feed.appendChild(div); }
-                    div.innerHTML = html; lucide.createIcons();
-                });
-            });
-        });
-    }
-
-    // --- KOMMENTARE IM POST-STYLE ---
-    window.showComments = (pId) => {
-        const sec = document.getElementById(`comments-section-${pId}`);
-        sec.classList.toggle('hidden');
-        if (!sec.classList.contains('hidden')) {
-            sec.innerHTML = `
-                <div style="display:flex; gap:8px; margin-bottom:15px;">
-                    <input type="text" id="input-${pId}" placeholder="Antworten..." style="flex-grow:1; padding:10px; border-radius:20px; border:0.5px solid var(--border); background:var(--bg); color:var(--text);">
-                    <button onclick="addComment('${pId}')" class="send-btn"><i data-lucide="arrow-up" style="width:16px;"></i></button>
-                </div>
-                <div id="list-${pId}"></div>`;
-            lucide.createIcons();
-
-            onSnapshot(query(collection(db, "posts", pId, "comments"), orderBy("timestamp", "asc")), (snap) => {
-                const list = document.getElementById(`list-${pId}`);
-                if (!list) return;
-                list.innerHTML = '';
-                snap.forEach(ds => {
-                    const c = ds.data();
-                    // Kommentar als "Mini-Card"
-                    list.innerHTML += `
-                        <div style="display:flex; gap:10px; margin-bottom:12px; background:var(--bg); padding:10px; border-radius:12px; border: 0.5px solid var(--border);">
-                            <img src="${c.photoURL}" style="width:30px; height:30px; border-radius:50%;" onclick="openProfile('${c.uid}')">
-                            <div>
-                                <div style="font-size:13px; font-weight:700;">${c.displayname}</div>
-                                <div style="font-size:14px; color:var(--text);">${c.text}</div>
-                            </div>
-                        </div>`;
-                });
-            });
-        }
-    };
+    window.logout = () => signOut(auth).then(() => location.reload());
+    window.toggleSettings = () => document.getElementById('settings-screen').classList.toggle('hidden');
 </script>
+</body>
+</html>

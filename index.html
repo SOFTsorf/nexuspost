@@ -48,7 +48,7 @@
             justify-content: space-between; gap: 12px;
         }
         .logo { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 800; color: var(--nexus); letter-spacing: -0.5px; white-space: nowrap; }
-        .nav-btn { background: none; border: none; color: var(--text); cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-family: inherit; }
+        .nav-btn { background: none; border: none; color: var(--text); cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .nav-btn:hover { background: var(--ios-input); }
 
         /* SEARCH */
@@ -190,9 +190,6 @@
         .story-header-name { color: white; font-weight: 600; font-size: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
         #story-close-btn { position: absolute; top: 20px; right: 12px; background: rgba(0,0,0,0.4); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 11; }
 
-        /* NOTIFICATION BADGE */
-        .notif-badge { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: var(--danger); border-radius: 50%; border: 2px solid var(--header-bg); }
-
         /* POLL */
         .poll-option { display: flex; align-items: center; gap: 10px; background: var(--ios-input); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; position: relative; overflow: hidden; transition: background 0.2s; border: 1.5px solid transparent; }
         .poll-option.voted { border-color: var(--nexus); }
@@ -200,8 +197,27 @@
         .poll-label { position: relative; z-index: 1; font-size: 14.5px; font-weight: 500; flex-grow: 1; }
         .poll-pct { position: relative; z-index: 1; font-size: 13px; font-weight: 600; color: var(--nexus); }
 
-        /* EMOJI PICKER (FIXED) */
-        .emoji-picker-popup { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--card); border: 0.5px solid var(--border); border-radius: 20px; padding: 8px 12px; display: flex; gap: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 200; animation: fadeIn 0.15s ease; width: max-content; }
+        /* EMOJI PICKER - FIXED */
+        .emoji-picker-popup { 
+            position: absolute; 
+            bottom: calc(100% + 12px); 
+            left: 0; 
+            background: var(--card); 
+            border: 0.5px solid var(--border); 
+            border-radius: 14px; 
+            padding: 8px 10px; 
+            display: flex; 
+            flex-wrap: nowrap; /* Stellt sicher, dass die Emojis in einer Zeile bleiben */
+            width: max-content; /* Passt die Box dynamisch genau an den Inhalt an */
+            gap: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            z-index: 200; 
+            animation: fadeInEmoji 0.15s ease; 
+        }
+        @keyframes fadeInEmoji {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .emoji-btn-pick { font-size: 22px; cursor: pointer; padding: 4px; border-radius: 8px; border: none; background: none; transition: transform 0.1s; }
         .emoji-btn-pick:hover { transform: scale(1.3); }
 
@@ -225,32 +241,15 @@
         <button id="btn-close-search" class="hidden" onclick="collapseSearch()" style="background:none; border:none; color:var(--nexus); font-weight:600; font-size:15px; white-space:nowrap; font-family:inherit;">Abbrechen</button>
     </div>
     
-    <div id="nav-actions-wrapper" style="display:flex; align-items:center; gap:4px;">
-        <div id="nav-actions" style="display:flex; align-items:center; gap:4px;">
-            <button class="nav-btn" id="nav-bot" onclick="toggleAiAssistant()">
-                <i data-lucide="bot"></i>
-                <span class="nav-label hidden" style="margin-left:8px;">KI Assistent</span>
-            </button>
-            <button class="nav-btn hidden" id="admin-alert-btn" onclick="openAlertModal()">
-                <i data-lucide="plus-circle"></i>
-                <span class="nav-label hidden" style="margin-left:8px;">Meldung</span>
-            </button>
-            <button class="nav-btn" id="nav-theme" onclick="toggleDarkMode()">
-                <i data-lucide="moon" id="theme-icon"></i>
-                <span class="nav-label hidden" style="margin-left:8px;">Theme wechseln</span>
-            </button>
-            <button class="nav-btn" id="nav-settings" onclick="openSettings()">
-                <i data-lucide="settings"></i>
-                <span class="nav-label hidden" style="margin-left:8px;">Einstellungen</span>
-            </button>
+    <div style="display:flex; align-items:center; gap:4px; position:relative;">
+        <div id="nav-actions-items" style="display:flex; align-items:center; gap:4px;">
+            <button class="nav-btn" onclick="toggleAiAssistant()" data-label="KI Assistent"><i data-lucide="bot"></i></button>
+            <button class="nav-btn hidden" id="admin-alert-btn" onclick="openAlertModal()" data-label="Neue Meldung"><i data-lucide="plus-circle"></i></button>
+            <button class="nav-btn" onclick="toggleDarkMode()" data-label="Theme wechseln"><i data-lucide="moon" id="theme-icon"></i></button>
+            <button class="nav-btn" onclick="openSettings()" data-label="Einstellungen"><i data-lucide="settings"></i></button>
         </div>
-        <div style="position:relative;">
-            <button class="nav-btn hidden" id="nav-more-btn" onclick="toggleNavMore()">
-                <i data-lucide="more-vertical"></i>
-            </button>
-            <div id="nav-more-menu" class="admin-menu hidden" style="top:40px; right:0; min-width:180px; z-index:1100;">
-                </div>
-        </div>
+        <button class="nav-btn" id="nav-more-btn" onclick="toggleNavDropdown()" style="display:none;"><i data-lucide="more-vertical"></i></button>
+        <div id="nav-dropdown" class="admin-menu hidden" style="top:42px; right:0; min-width:180px;"></div>
     </div>
 </nav>
 
@@ -468,6 +467,68 @@
 
     let userData = null;
 
+    // ── RESPONSIVER HEADER (NAVBAR ANPASSEN) ──
+    window.adaptNavbar = () => {
+        const nav = document.getElementById('navbar');
+        if (!nav || nav.classList.contains('hidden')) return;
+        const searchWrap = document.getElementById('search-wrapper');
+        if (searchWrap.classList.contains('active')) return;
+        
+        const itemsContainer = document.getElementById('nav-actions-items');
+        const moreBtn = document.getElementById('nav-more-btn');
+        const dropdown = document.getElementById('nav-dropdown');
+        
+        // 1. Reset
+        const allItems = Array.from(itemsContainer.children);
+        allItems.forEach(item => {
+            if (!item.classList.contains('hidden')) {
+                item.style.display = '';
+            }
+        });
+        moreBtn.style.display = 'none';
+        dropdown.innerHTML = '';
+        
+        // 2. Overflow Check
+        const checkOverflow = () => {
+            const logo = document.getElementById('nav-logo');
+            const totalW = logo.offsetWidth + searchWrap.offsetWidth + itemsContainer.offsetWidth;
+            return (totalW + 40) > nav.clientWidth; // 40px Puffer für Padding/Gaps
+        };
+
+        if (checkOverflow()) {
+            moreBtn.style.display = 'flex';
+            // Schleife: Verstecke Buttons von Links nach Rechts in Dropdown, bis es passt
+            for (let i = 0; i < allItems.length; i++) {
+                let btn = allItems[i];
+                if (btn.classList.contains('hidden') || btn.style.display === 'none') continue;
+                
+                btn.style.display = 'none'; 
+                
+                let iconNode = btn.querySelector('i');
+                let iconName = iconNode ? iconNode.getAttribute('data-lucide') : 'circle';
+                let label = btn.getAttribute('data-label') || 'Option';
+                
+                let clone = document.createElement('button');
+                clone.innerHTML = `<i data-lucide="${iconName}" style="width:16px;"></i> ${label}`;
+                clone.onclick = () => { dropdown.classList.add('hidden'); btn.click(); };
+                dropdown.appendChild(clone);
+                
+                if (!checkOverflow()) break; 
+            }
+            lucide.createIcons();
+        }
+    };
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(adaptNavbar, 150);
+    });
+
+    window.toggleNavDropdown = () => {
+        document.getElementById('nav-dropdown').classList.toggle('hidden');
+    };
+
     // ── TOAST ──
     window.showToast = (msg) => {
         const t = document.getElementById('toast');
@@ -490,7 +551,8 @@
     // ── SEARCH ──
     window.expandSearch = () => {
         document.getElementById('nav-logo').classList.add('hidden');
-        document.getElementById('nav-actions-wrapper').classList.add('hidden'); // Hide wrapper
+        document.getElementById('nav-actions-items').style.display = 'none';
+        document.getElementById('nav-more-btn').style.display = 'none';
         document.getElementById('search-wrapper').classList.add('active');
         document.getElementById('btn-close-search').classList.remove('hidden');
         document.getElementById('search-input').focus();
@@ -498,67 +560,15 @@
     window.collapseSearch = () => {
         document.getElementById('search-wrapper').classList.remove('active');
         document.getElementById('nav-logo').classList.remove('hidden');
-        document.getElementById('nav-actions-wrapper').classList.remove('hidden'); // Show wrapper
+        document.getElementById('nav-actions-items').style.display = 'flex';
         document.getElementById('btn-close-search').classList.add('hidden');
         document.getElementById('search-input').value = "";
         document.querySelectorAll('.card').forEach(p => p.style.display = '');
+        adaptNavbar();
     };
     document.getElementById('search-input').oninput = (e) => {
         const term = e.target.value.toLowerCase();
         document.querySelectorAll('#feed .card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none');
-    };
-
-    // ── NAVBAR RESPONSIVE MENU (FIX) ──
-    window.adjustNavMenu = () => {
-        const actionsBox = document.getElementById('nav-actions');
-        const moreMenu = document.getElementById('nav-more-menu');
-        const moreBtn = document.getElementById('nav-more-btn');
-
-        // 1. Alle Buttons zurückschieben zum Messen
-        const movedItems = Array.from(moreMenu.querySelectorAll('button'));
-        movedItems.forEach(btn => {
-            btn.classList.add('nav-btn');
-            btn.style = ''; // Inline styles entfernen
-            const label = btn.querySelector('.nav-label');
-            if (label) label.classList.add('hidden');
-            actionsBox.appendChild(btn);
-        });
-        moreBtn.classList.add('hidden');
-
-        // Falls die Sucheingabe aktiv ist, ignorieren
-        if(document.getElementById('search-wrapper').classList.contains('active')) return;
-
-        // 2. Platz kalkulieren
-        // Logo = ~110px, Such-Icon = ~40px, Padding = 32px. Rest steht für Buttons zur Verfügung.
-        let availableWidth = window.innerWidth - 190;
-        
-        let visibleChildren = Array.from(actionsBox.children).filter(c => !c.classList.contains('hidden'));
-        let currentWidth = visibleChildren.length * 40 + (visibleChildren.length - 1) * 4;
-
-        if (currentWidth > availableWidth && visibleChildren.length > 0) {
-            moreBtn.classList.remove('hidden');
-            currentWidth += 40; // Mehr-Button braucht auch Platz
-
-            // Von rechts nach links die überschüssigen Buttons ins Menü verschieben
-            for (let i = visibleChildren.length - 1; i >= 0; i--) {
-                if (currentWidth <= availableWidth) break;
-
-                let btn = visibleChildren[i];
-                actionsBox.removeChild(btn);
-                btn.classList.remove('nav-btn'); // Style an Dropdown anpassen
-                
-                const label = btn.querySelector('.nav-label');
-                if (label) label.classList.remove('hidden'); // Text anzeigen!
-                
-                moreMenu.insertBefore(btn, moreMenu.firstChild);
-                currentWidth -= 44; // 40px Button + 4px Gap
-            }
-        }
-    };
-    window.addEventListener('resize', adjustNavMenu);
-
-    window.toggleNavMore = () => {
-        document.getElementById('nav-more-menu').classList.toggle('hidden');
     };
 
     // ── DARK MODE ──
@@ -566,7 +576,7 @@
         const isDark = document.body.classList.toggle('dark');
         document.body.classList.toggle('light', !isDark);
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        document.getElementById('theme-icon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        document.getElementById('theme-icon')?.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
         const dt = document.getElementById('dark-toggle');
         if (dt) dt.classList.toggle('on', isDark);
         lucide.createIcons();
@@ -594,8 +604,6 @@
         }
         const isDark = document.body.classList.contains('dark');
         document.getElementById('dark-toggle').classList.toggle('on', isDark);
-        // Menü wieder verstecken falls es mobil vom Header aus gedrückt wurde
-        document.getElementById('nav-more-menu')?.classList.add('hidden');
         lucide.createIcons();
     };
     window.closeSettings = () => {
@@ -629,7 +637,6 @@
         const vis = o.style.display !== 'none' && o.style.display !== '';
         o.style.display = vis ? 'none' : 'flex';
         document.body.style.overflow = vis ? '' : 'hidden';
-        document.getElementById('nav-more-menu')?.classList.add('hidden');
         lucide.createIcons();
     };
 
@@ -650,25 +657,18 @@
             if (user.email === adminEmail) {
                 document.getElementById('admin-alert-btn').classList.remove('hidden');
             }
-            
-            // Header Platzverteilung initiieren (wegen Admin Button)
-            setTimeout(adjustNavMenu, 50);
-
             // restore theme
-            if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); document.body.classList.remove('light'); document.getElementById('theme-icon').setAttribute('data-lucide','sun'); }
+            if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); document.body.classList.remove('light'); document.getElementById('theme-icon')?.setAttribute('data-lucide','sun'); }
             const accent = localStorage.getItem('accentTheme');
             if (accent && accent !== 'default') { document.body.classList.add('theme-'+accent); document.querySelector(`.theme-dot[data-theme="${accent}"]`)?.classList.add('selected'); }
             loadFeed(); loadAlerts(); loadStories();
             lucide.createIcons();
+            setTimeout(adaptNavbar, 300); // UI rendern lassen, dann Navbar prüfen
         }
     });
 
     // ── ALERTS ──
-    window.openAlertModal = () => { 
-        document.getElementById('alert-modal').style.display = 'flex'; 
-        document.getElementById('nav-more-menu')?.classList.add('hidden');
-        lucide.createIcons(); 
-    };
+    window.openAlertModal = () => { document.getElementById('alert-modal').style.display = 'flex'; lucide.createIcons(); };
     window.closeAlertModal = () => document.getElementById('alert-modal').style.display = 'none';
     document.getElementById('save-alert-btn').onclick = async () => {
         const text = document.getElementById('alert-text').value.trim();
@@ -703,7 +703,6 @@
     function loadStories() {
         onSnapshot(query(collection(db, "stories"), orderBy("createdAt", "desc")), (snap) => {
             const bar = document.getElementById('stories-bar'); bar.innerHTML = '';
-            // Add Story button
             bar.innerHTML = `<div class="story-item" onclick="addStoryPrompt()">
                 <div style="width:58px;height:58px;border-radius:50%;background:var(--ios-input);display:flex;align-items:center;justify-content:center;border:2px dashed var(--border);">
                     <i data-lucide="plus" style="width:22px;color:var(--sub);"></i>
@@ -741,12 +740,10 @@
         document.getElementById('story-avi').src = avi;
         document.getElementById('story-lightbox').style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        // animate progress
         const prog = document.getElementById('story-progress');
         prog.innerHTML = '<div class="story-prog-bar"><div class="story-prog-fill" id="spf" style="width:0%;transition:width 5s linear;"></div></div>';
         setTimeout(() => { document.getElementById('spf').style.width = '100%'; }, 50);
         setTimeout(() => closeStoryViewer(), 5050);
-        // mark seen
         await updateDoc(doc(db, "stories", storyId), { seenBy: arrayUnion(auth.currentUser.uid) });
         lucide.createIcons();
     };
@@ -760,14 +757,11 @@
             snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
             posts.sort((a, b) => (b.isPinned||0) - (a.isPinned||0));
 
-            // track existing IDs
             const existingIds = new Set([...feed.children].map(c => c.id));
             const newIds = new Set(posts.map(p => 'post-'+p.id));
-            // remove deleted
             existingIds.forEach(id => { if (!newIds.has(id)) { document.getElementById(id)?.remove(); } });
 
             posts.forEach((p, idx) => {
-                // Bugfix: Einmaliger Fetch statt onSnapshot-Memory-Leak im Feed
                 getDoc(doc(db, "users", p.uid)).then((uSnap) => {
                     const u = uSnap.data() || {};
                     const pid = 'post-' + p.id;
@@ -781,19 +775,17 @@
                     if (!div) {
                         div = document.createElement('div');
                         div.id = pid; div.className = 'card';
-                        // insert at correct position
                         const cards = [...feed.children];
                         if (idx >= cards.length) feed.appendChild(div);
                         else feed.insertBefore(div, cards[idx]);
                     }
 
-                    // Reaction counts
                     let reactionHTML = '';
                     REACTIONS.forEach(emoji => {
                         const users = reactions[encodeEmoji(emoji)] || [];
                         if (users.length > 0) {
                             const myReact = users.includes(auth.currentUser?.uid);
-                            reactionHTML += `<span class="emoji-count${myReact?' ':''})" onclick="toggleReaction('${p.id}','${encodeEmoji(emoji)}')" style="${myReact?'border:1.5px solid var(--nexus);':''}">
+                            reactionHTML += `<span class="emoji-count" onclick="toggleReaction('${p.id}','${encodeEmoji(emoji)}')" style="${myReact?'border:1.5px solid var(--nexus);':''}">
                                 ${emoji} <span>${users.length}</span>
                             </span>`;
                         }
@@ -863,16 +855,13 @@
     window.closeEmojiPicker = (id) => { document.getElementById('emoji-picker-'+id)?.classList.add('hidden'); };
 
     document.addEventListener('click', (e) => {
+        // Schließe Emojis
         document.querySelectorAll('.emoji-picker-popup').forEach(p => {
             if (!p.parentElement.contains(e.target)) p.classList.add('hidden');
         });
-        // close admin menus
-        if (!e.target.closest('.admin-menu') && !e.target.closest('[onclick^="toggleAdminMenu"]')) {
-            document.querySelectorAll('.admin-menu:not(#nav-more-menu)').forEach(m => m.classList.add('hidden'));
-        }
-        // close header overflow menu when clicking somewhere else
-        if (!e.target.closest('#nav-actions-wrapper')) {
-            document.getElementById('nav-more-menu')?.classList.add('hidden');
+        // Schließe alle Dropdowns/Menus
+        if (!e.target.closest('.admin-menu') && !e.target.closest('[onclick^="toggleAdminMenu"]') && !e.target.closest('#nav-more-btn')) {
+            document.querySelectorAll('.admin-menu').forEach(m => m.classList.add('hidden'));
         }
     });
 
@@ -938,10 +927,9 @@
     // ── ADMIN ──
     window.togglePin = async (id, status) => { await updateDoc(doc(db,"posts",id), { isPinned: !status }); toggleAdminMenu(id); showToast(status?'Post gelöst':'Post angeheftet ✓'); };
     window.toggleVerify = async (userId, current) => { if(confirm(current?"Verifizierung entfernen?":"Nutzer verifizieren?")) { await updateDoc(doc(db,"users",userId), { verified: !current }); showToast(current?'Verifizierung entfernt':'Nutzer verifiziert ✓'); } };
-    window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu:not(#nav-more-menu)').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); lucide.createIcons(); };
+    window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); lucide.createIcons(); };
     window.deletePost = async (id) => { if(confirm("Post wirklich löschen?")) { await deleteDoc(doc(db,"posts",id)); showToast('Post gelöscht'); } };
     
-    // Bugfix: toggleLike liest Arrays direkt aus DB, kein Stringify-Chaos im HTML mehr
     window.toggleLike = async (id) => { 
         const ref = doc(db,"posts",id); 
         const uid = auth.currentUser.uid; 
@@ -975,9 +963,7 @@
         showToast('Post veröffentlicht ✓');
     };
 
-    // Enter to post
     document.getElementById('post-input').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) { e.preventDefault(); document.getElementById('btn-share').click(); } });
 </script>
 </body>
 </html>
-

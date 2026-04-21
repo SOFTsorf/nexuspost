@@ -97,7 +97,7 @@
 
         /* REACTION BAR */
         .reaction-bar { display: flex; gap: 4px; margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--border); align-items: center; flex-wrap: wrap; }
-        .react-btn { background: none; border: none; color: var(--sub); cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13.5px; font-weight: 500; padding: 6px 10px; border-radius: 20px; transition: background 0.15s, color 0.15s; font-family: inherit; }
+        .react-btn { background: none; border: none; color: var(--sub); cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13.5px; font-weight: 500; padding: 6px 10px; border-radius: 20px; transition: background 0.15s, color 0.15s; font-family: inherit; position: relative; }
         .react-btn:hover { background: var(--ios-input); }
         .react-btn.active { color: var(--nexus); background: var(--nexus-soft); }
         .react-btn.liked { color: #ff3b30; background: rgba(255,59,48,0.1); }
@@ -164,7 +164,7 @@
         /* PROFILE IN SETTINGS */
         .profile-preview { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px 16px 20px; }
         .profile-preview-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nexus); }
-        .profile-preview-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+        .profile-preview-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-top: 6px; }
         .profile-preview-username { font-size: 13px; color: var(--sub); }
 
         /* MODAL */
@@ -188,7 +188,9 @@
         #story-header-overlay { position: absolute; top: 22px; left: 10px; right: 10px; display: flex; align-items: center; gap: 10px; z-index: 10; }
         .story-header-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
         .story-header-name { color: white; font-weight: 600; font-size: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
-        #story-close-btn { position: absolute; top: 20px; right: 12px; background: rgba(0,0,0,0.4); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 11; }
+        .story-header-time { color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.5); margin-left: 4px; }
+        .story-action-btns { position: absolute; top: 20px; right: 12px; display: flex; gap: 10px; z-index: 15; }
+        .story-action-btn { background: rgba(0,0,0,0.4); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         /* POLL */
         .poll-option { display: flex; align-items: center; gap: 10px; background: var(--ios-input); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; position: relative; overflow: hidden; transition: background 0.2s; border: 1.5px solid transparent; }
@@ -200,23 +202,24 @@
         /* EMOJI PICKER - FIXED */
         .emoji-picker-popup { 
             position: absolute; 
-            bottom: calc(100% + 12px); 
-            left: 0; 
+            bottom: calc(100% + 10px); 
+            left: 50%; 
+            transform: translateX(-50%);
             background: var(--card); 
             border: 0.5px solid var(--border); 
             border-radius: 14px; 
             padding: 8px 10px; 
             display: flex; 
-            flex-wrap: nowrap; /* Stellt sicher, dass die Emojis in einer Zeile bleiben */
-            width: max-content; /* Passt die Box dynamisch genau an den Inhalt an */
+            flex-wrap: nowrap;
+            width: max-content;
             gap: 8px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-            z-index: 200; 
-            animation: fadeInEmoji 0.15s ease; 
+            z-index: 2000; 
+            animation: fadeInEmoji 0.15s ease forwards; 
         }
         @keyframes fadeInEmoji {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translate(-50%, 5px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
         .emoji-btn-pick { font-size: 22px; cursor: pointer; padding: 4px; border-radius: 8px; border: none; background: none; transition: transform 0.1s; }
         .emoji-btn-pick:hover { transform: scale(1.3); }
@@ -275,7 +278,13 @@
 
     <div class="card" style="padding:0; overflow:hidden; margin-bottom:14px;">
         <div class="profile-preview">
-            <img id="settings-avatar" src="" class="profile-preview-img">
+            <label style="cursor:pointer; position:relative; display:block;">
+                <img id="settings-avatar" src="" class="profile-preview-img">
+                <div style="position:absolute; bottom:0; right:0; background:var(--nexus); color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.3); border:2px solid var(--card);">
+                    <i data-lucide="camera" style="width:14px;"></i>
+                </div>
+                <input type="file" id="profile-img-input" accept="image/*" class="hidden" onchange="uploadProfileImage(event)">
+            </label>
             <div class="profile-preview-name" id="settings-preview-name">–</div>
             <div class="profile-preview-username" id="settings-preview-user">–</div>
         </div>
@@ -344,7 +353,7 @@
             <span class="settings-row-label">Version</span>
             <span class="settings-row-value">v2.0</span>
         </div>
-        <div class="settings-row" onclick="showToast('Feedback wurde gesendet! 🙏')">
+        <div class="settings-row" onclick="showToast('Feedback wurde gesendet!')">
             <div class="settings-row-icon" style="background:#ff9500;"><i data-lucide="flag" style="width:16px; color:white;"></i></div>
             <span class="settings-row-label">Feedback senden</span>
             <i data-lucide="chevron-right" class="settings-row-chevron" style="width:16px;"></i>
@@ -412,8 +421,16 @@
         <div id="story-header-overlay">
             <img id="story-avi" src="" class="story-header-img">
             <span id="story-name" class="story-header-name"></span>
+            <span id="story-time" class="story-header-time"></span>
         </div>
-        <button id="story-close-btn" onclick="closeStoryViewer()"><i data-lucide="x" style="width:16px;"></i></button>
+        <div class="story-action-btns">
+            <button id="story-del-btn" class="hidden story-action-btn" style="background:rgba(255,59,48,0.8);"><i data-lucide="trash-2" style="width:16px;"></i></button>
+            <button id="story-close-btn" class="story-action-btn" onclick="closeStoryViewer()"><i data-lucide="x" style="width:16px;"></i></button>
+        </div>
+        
+        <div style="position:absolute; top:60px; left:0; width:35%; height:calc(100% - 60px); z-index:10; cursor:pointer;" onclick="prevStory(event)"></div>
+        <div style="position:absolute; top:60px; right:0; width:65%; height:calc(100% - 60px); z-index:10; cursor:pointer;" onclick="nextStory(event)"></div>
+        
         <img id="story-img" src="">
     </div>
 </div>
@@ -445,7 +462,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, arrayUnion, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, arrayUnion, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
@@ -481,18 +498,18 @@
         // 1. Reset
         const allItems = Array.from(itemsContainer.children);
         allItems.forEach(item => {
-            if (!item.classList.contains('hidden')) {
-                item.style.display = '';
-            }
+            if (item.id === 'admin-alert-btn' && auth?.currentUser?.email !== adminEmail) return;
+            item.style.display = 'flex';
         });
         moreBtn.style.display = 'none';
         dropdown.innerHTML = '';
+        dropdown.classList.add('hidden');
         
-        // 2. Overflow Check
+        // 2. Overflow Check (mit mehr Puffer)
         const checkOverflow = () => {
             const logo = document.getElementById('nav-logo');
             const totalW = logo.offsetWidth + searchWrap.offsetWidth + itemsContainer.offsetWidth;
-            return (totalW + 40) > nav.clientWidth; // 40px Puffer für Padding/Gaps
+            return (totalW + 60) > nav.clientWidth; // 60px Puffer
         };
 
         if (checkOverflow()) {
@@ -500,7 +517,7 @@
             // Schleife: Verstecke Buttons von Links nach Rechts in Dropdown, bis es passt
             for (let i = 0; i < allItems.length; i++) {
                 let btn = allItems[i];
-                if (btn.classList.contains('hidden') || btn.style.display === 'none') continue;
+                if (btn.style.display === 'none' || btn.classList.contains('hidden')) continue;
                 
                 btn.style.display = 'none'; 
                 
@@ -592,7 +609,7 @@
         localStorage.setItem('accentTheme', theme);
     };
 
-    // ── SETTINGS ──
+    // ── SETTINGS / PROFILE ──
     window.openSettings = () => {
         document.getElementById('main-content').classList.add('hidden');
         document.getElementById('input-bar').classList.add('hidden');
@@ -623,12 +640,37 @@
         const un = document.getElementById('edit-username').value.replace('@','').trim();
         const bio = document.getElementById('edit-bio').value.trim();
         if (!dn) return showToast('Bitte Namen eingeben');
+        if (!un) return showToast('Bitte Nutzername eingeben');
+
+        // Check if username is taken
+        if (un !== userData.username) {
+            const q = query(collection(db, "users"), where("username", "==", un));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                return showToast('Nutzername ist bereits vergeben');
+            }
+        }
+
         await updateDoc(doc(db, "users", auth.currentUser.uid), { displayname: dn, username: un, bio });
         userData.displayname = dn; userData.username = un; userData.bio = bio;
         document.getElementById('settings-preview-name').textContent = dn;
         document.getElementById('settings-preview-user').textContent = '@' + un;
         document.getElementById('edit-profile-modal').style.display = 'none';
-        showToast('Profil gespeichert ✓');
+        showToast('Profil gespeichert');
+    };
+
+    window.uploadProfileImage = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        showToast('Profilbild wird hochgeladen…');
+        const fd = new FormData(); fd.append("image", file);
+        const res = await fetch("https://api.imgbb.com/1/upload?key="+imgbbKey, { method:"POST", body:fd });
+        const j = await res.json();
+        const newUrl = j.data.url;
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { photoURL: newUrl });
+        userData.photoURL = newUrl;
+        document.getElementById('settings-avatar').src = newUrl;
+        showToast('Profilbild aktualisiert');
     };
 
     // ── AI ASSISTANT ──
@@ -678,7 +720,7 @@
         let expiresAt = null;
         if (duration > 0) { expiresAt = new Date(); expiresAt.setHours(expiresAt.getHours() + duration); }
         await addDoc(collection(db, "alerts"), { text, type, expiresAt, createdAt: serverTimestamp() });
-        document.getElementById('alert-text').value = ""; closeAlertModal(); showToast('Meldung erstellt ✓');
+        document.getElementById('alert-text').value = ""; closeAlertModal(); showToast('Meldung erstellt');
     };
 
     function loadAlerts() {
@@ -699,22 +741,48 @@
     }
     window.deleteAlert = (id) => deleteDoc(doc(db, "alerts", id));
 
-    // ── STORIES ──
+    // ── STORIES (NEU & GRUPPIERT) ──
+    let globalStories = {}; 
+    let currentStoryUser = null;
+    let currentStoryIndex = 0;
+    let storyTimer = null;
+
     function loadStories() {
-        onSnapshot(query(collection(db, "stories"), orderBy("createdAt", "desc")), (snap) => {
-            const bar = document.getElementById('stories-bar'); bar.innerHTML = '';
+        onSnapshot(query(collection(db, "stories"), orderBy("createdAt", "asc")), (snap) => {
+            const bar = document.getElementById('stories-bar');
             bar.innerHTML = `<div class="story-item" onclick="addStoryPrompt()">
                 <div style="width:58px;height:58px;border-radius:50%;background:var(--ios-input);display:flex;align-items:center;justify-content:center;border:2px dashed var(--border);">
                     <i data-lucide="plus" style="width:22px;color:var(--sub);"></i>
                 </div>
                 <span class="story-label">Deine Story</span>
             </div>`;
+            
+            globalStories = {};
             snap.forEach(d => {
                 const s = d.data();
-                const seen = (s.seenBy||[]).includes(auth.currentUser?.uid);
-                bar.innerHTML += `<div class="story-item" onclick="viewStory('${s.imageUrl}','${s.displayname}','${s.photoURL}','${d.id}')">
-                    <div class="story-ring ${seen?'seen':'unseen'}"><div class="story-ring-inner"><img src="${s.photoURL}" alt=""></div></div>
-                    <span class="story-label">${s.displayname}</span>
+                s.id = d.id;
+                if (!globalStories[s.uid]) globalStories[s.uid] = [];
+                globalStories[s.uid].push(s);
+            });
+
+            const sortedUIDs = Object.keys(globalStories).sort((a, b) => {
+                const aUnseen = globalStories[a].some(s => !(s.seenBy||[]).includes(auth.currentUser?.uid));
+                const bUnseen = globalStories[b].some(s => !(s.seenBy||[]).includes(auth.currentUser?.uid));
+                if (aUnseen && !bUnseen) return -1;
+                if (!aUnseen && bUnseen) return 1;
+                const aLast = globalStories[a][globalStories[a].length-1].createdAt?.toDate() || 0;
+                const bLast = globalStories[b][globalStories[b].length-1].createdAt?.toDate() || 0;
+                return bLast - aLast;
+            });
+
+            sortedUIDs.forEach(uid => {
+                const userStories = globalStories[uid];
+                const lastStory = userStories[userStories.length - 1];
+                const allSeen = userStories.every(s => (s.seenBy||[]).includes(auth.currentUser?.uid));
+                
+                bar.innerHTML += `<div class="story-item" onclick="openStoryGroup('${uid}')">
+                    <div class="story-ring ${allSeen?'seen':'unseen'}"><div class="story-ring-inner"><img src="${lastStory.photoURL}" alt=""></div></div>
+                    <span class="story-label">${lastStory.displayname}</span>
                 </div>`;
             });
             lucide.createIcons();
@@ -730,24 +798,99 @@
         const res = await fetch("https://api.imgbb.com/1/upload?key="+imgbbKey, { method:"POST", body:fd });
         const j = await res.json();
         await addDoc(collection(db, "stories"), { imageUrl: j.data.url, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL, createdAt: serverTimestamp(), seenBy: [] });
-        showToast('Story gepostet! ✓');
+        showToast('Story gepostet!');
     };
     window.addStoryPrompt = () => storyFileInput.click();
 
-    window.viewStory = async (url, name, avi, storyId) => {
-        document.getElementById('story-img').src = url;
-        document.getElementById('story-name').textContent = name;
-        document.getElementById('story-avi').src = avi;
+    window.openStoryGroup = (uid) => {
+        currentStoryUser = uid;
+        const userStories = globalStories[uid];
+        let startIdx = userStories.findIndex(s => !(s.seenBy||[]).includes(auth.currentUser?.uid));
+        if (startIdx === -1) startIdx = 0; 
+        
+        currentStoryIndex = startIdx;
         document.getElementById('story-lightbox').style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        const prog = document.getElementById('story-progress');
-        prog.innerHTML = '<div class="story-prog-bar"><div class="story-prog-fill" id="spf" style="width:0%;transition:width 5s linear;"></div></div>';
-        setTimeout(() => { document.getElementById('spf').style.width = '100%'; }, 50);
-        setTimeout(() => closeStoryViewer(), 5050);
-        await updateDoc(doc(db, "stories", storyId), { seenBy: arrayUnion(auth.currentUser.uid) });
-        lucide.createIcons();
+        renderCurrentStory();
     };
-    window.closeStoryViewer = () => { document.getElementById('story-lightbox').style.display = 'none'; document.body.style.overflow = ''; };
+
+    window.renderCurrentStory = async () => {
+        clearTimeout(storyTimer);
+        const userStories = globalStories[currentStoryUser];
+        if (!userStories || currentStoryIndex >= userStories.length) {
+            closeStoryViewer();
+            return;
+        }
+        
+        const s = userStories[currentStoryIndex];
+        document.getElementById('story-img').src = s.imageUrl;
+        document.getElementById('story-name').textContent = s.displayname;
+        document.getElementById('story-avi').src = s.photoURL;
+        document.getElementById('story-time').textContent = s.createdAt ? timeAgo(s.createdAt) : "Gerade eben";
+        
+        // Progress Bars Setup
+        const prog = document.getElementById('story-progress');
+        prog.innerHTML = '';
+        for (let i = 0; i < userStories.length; i++) {
+            let fillWidth = (i < currentStoryIndex) ? '100%' : '0%';
+            let trans = (i === currentStoryIndex) ? 'transition:width 5s linear;' : '';
+            prog.innerHTML += `<div class="story-prog-bar"><div class="story-prog-fill" id="spf-${i}" style="width:${fillWidth};${trans}"></div></div>`;
+        }
+        
+        // Delete btn check
+        const delBtn = document.getElementById('story-del-btn');
+        if (s.uid === auth.currentUser.uid || auth.currentUser.email === adminEmail) {
+            delBtn.classList.remove('hidden');
+            delBtn.onclick = (e) => { e.stopPropagation(); deleteStory(s.id); };
+        } else {
+            delBtn.classList.add('hidden');
+        }
+
+        lucide.createIcons();
+        
+        // Start animation
+        setTimeout(() => {
+            const currentFill = document.getElementById(`spf-${currentStoryIndex}`);
+            if (currentFill) currentFill.style.width = '100%';
+        }, 50);
+        
+        if (!(s.seenBy||[]).includes(auth.currentUser.uid)) {
+            await updateDoc(doc(db, "stories", s.id), { seenBy: arrayUnion(auth.currentUser.uid) });
+        }
+        
+        storyTimer = setTimeout(() => nextStory(), 5050);
+    };
+
+    window.nextStory = (e) => {
+        if(e) e.stopPropagation();
+        currentStoryIndex++;
+        renderCurrentStory();
+    };
+
+    window.prevStory = (e) => {
+        if(e) e.stopPropagation();
+        currentStoryIndex--;
+        if (currentStoryIndex < 0) {
+            currentStoryIndex = 0;
+            renderCurrentStory();
+        } else {
+            renderCurrentStory();
+        }
+    };
+
+    window.closeStoryViewer = () => {
+        clearTimeout(storyTimer);
+        document.getElementById('story-lightbox').style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
+    window.deleteStory = async (id) => {
+        if (confirm("Story wirklich löschen?")) {
+            await deleteDoc(doc(db, "stories", id));
+            showToast('Story gelöscht');
+            closeStoryViewer(); 
+        }
+    };
 
     // ── FEED ──
     function loadFeed() {
@@ -819,7 +962,7 @@
                             <button onclick="showComments('${p.id}')" class="react-btn">
                                 <i data-lucide="message-circle" style="width:17px;"></i> Kommentare
                             </button>
-                            <button onclick="toggleEmojiPicker('${p.id}')" class="react-btn" style="position:relative;" id="emoji-btn-${p.id}">
+                            <button onclick="toggleEmojiPicker('${p.id}')" class="react-btn" id="emoji-btn-${p.id}">
                                 <i data-lucide="smile-plus" style="width:17px;"></i> Reagieren
                                 <div id="emoji-picker-${p.id}" class="emoji-picker-popup hidden">
                                     ${REACTIONS.map(em => `<button class="emoji-btn-pick" onclick="event.stopPropagation(); toggleReaction('${p.id}','${encodeEmoji(em)}'); closeEmojiPicker('${p.id}')">${em}</button>`).join('')}
@@ -855,11 +998,9 @@
     window.closeEmojiPicker = (id) => { document.getElementById('emoji-picker-'+id)?.classList.add('hidden'); };
 
     document.addEventListener('click', (e) => {
-        // Schließe Emojis
         document.querySelectorAll('.emoji-picker-popup').forEach(p => {
             if (!p.parentElement.contains(e.target)) p.classList.add('hidden');
         });
-        // Schließe alle Dropdowns/Menus
         if (!e.target.closest('.admin-menu') && !e.target.closest('[onclick^="toggleAdminMenu"]') && !e.target.closest('#nav-more-btn')) {
             document.querySelectorAll('.admin-menu').forEach(m => m.classList.add('hidden'));
         }
@@ -868,13 +1009,13 @@
     // ── COPY / SHARE ──
     window.copyPostText = (id, encodedText) => {
         navigator.clipboard?.writeText(decodeURIComponent(encodedText));
-        showToast('Text kopiert ✓');
+        showToast('Text kopiert');
         document.getElementById('menu-'+id)?.classList.add('hidden');
     };
     window.sharePost = async (id) => {
         const url = location.href + '#post-' + id;
         if (navigator.share) { navigator.share({ title: 'NexusPost', url }); }
-        else { navigator.clipboard?.writeText(url); showToast('Link kopiert ✓'); }
+        else { navigator.clipboard?.writeText(url); showToast('Link kopiert'); }
     };
 
     // ── COMMENTS ──
@@ -925,8 +1066,8 @@
     window.deleteComment = async (postId, commentId) => { if(confirm("Kommentar löschen?")) await deleteDoc(doc(db,"posts",postId,"comments",commentId)); };
 
     // ── ADMIN ──
-    window.togglePin = async (id, status) => { await updateDoc(doc(db,"posts",id), { isPinned: !status }); toggleAdminMenu(id); showToast(status?'Post gelöst':'Post angeheftet ✓'); };
-    window.toggleVerify = async (userId, current) => { if(confirm(current?"Verifizierung entfernen?":"Nutzer verifizieren?")) { await updateDoc(doc(db,"users",userId), { verified: !current }); showToast(current?'Verifizierung entfernt':'Nutzer verifiziert ✓'); } };
+    window.togglePin = async (id, status) => { await updateDoc(doc(db,"posts",id), { isPinned: !status }); toggleAdminMenu(id); showToast(status?'Post gelöst':'Post angeheftet'); };
+    window.toggleVerify = async (userId, current) => { if(confirm(current?"Verifizierung entfernen?":"Nutzer verifizieren?")) { await updateDoc(doc(db,"users",userId), { verified: !current }); showToast(current?'Verifizierung entfernt':'Nutzer verifiziert'); } };
     window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); lucide.createIcons(); };
     window.deletePost = async (id) => { if(confirm("Post wirklich löschen?")) { await deleteDoc(doc(db,"posts",id)); showToast('Post gelöscht'); } };
     
@@ -960,7 +1101,7 @@
         await addDoc(collection(db,"posts"), { text: txt, imageUrl, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [], reactions: {}, isPinned: false });
         document.getElementById('post-input').innerText = ""; clearPreview();
         document.getElementById('btn-share').style.opacity = '1';
-        showToast('Post veröffentlicht ✓');
+        showToast('Post veröffentlicht');
     };
 
     document.getElementById('post-input').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) { e.preventDefault(); document.getElementById('btn-share').click(); } });

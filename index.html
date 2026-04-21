@@ -977,12 +977,16 @@
                             <button onclick="showComments('${p.id}')" class="react-btn">
                                 <i data-lucide="message-circle" style="width:17px;"></i> Kommentare
                             </button>
-                            <button onclick="toggleEmojiPicker('${p.id}')" class="react-btn" id="emoji-btn-${p.id}">
-                                <i data-lucide="smile-plus" style="width:17px;"></i> Reagieren
-                                <div id="emoji-picker-${p.id}" class="emoji-picker-popup hidden">
-                                    ${REACTIONS.map(em => `<button class="emoji-btn-pick" onclick="event.stopPropagation(); toggleReaction('${p.id}','${encodeEmoji(em)}'); closeEmojiPicker('${p.id}')">${em}</button>`).join('')}
+                            
+                            <div style="position:relative; display:flex; align-items:center;">
+                                <button onclick="toggleEmojiPicker(event, '${p.id}')" class="react-btn" id="emoji-btn-${p.id}">
+                                    <i data-lucide="smile-plus" style="width:17px;"></i> Reagieren
+                                </button>
+                                <div id="emoji-picker-${p.id}" class="emoji-picker-popup hidden" onclick="event.stopPropagation()">
+                                    ${REACTIONS.map(em => `<button class="emoji-btn-pick" onclick="toggleReaction('${p.id}','${encodeEmoji(em)}'); closeEmojiPicker('${p.id}')">${em}</button>`).join('')}
                                 </div>
-                            </button>
+                            </div>
+
                             <button onclick="sharePost('${p.id}')" class="react-btn" style="margin-left:auto;">
                                 <i data-lucide="share-2" style="width:17px;"></i>
                             </button>
@@ -1006,16 +1010,30 @@
         await updateDoc(ref, { [`reactions.${emojiCode}`]: newUsers });
     };
 
-    window.toggleEmojiPicker = (id) => {
+    window.toggleEmojiPicker = (e, id) => {
+        // Verhindert, dass der Klick direkt wieder geschlossen wird
+        if (e) e.stopPropagation();
+        
+        // Zuerst alle anderen offenen Picker schließen
+        document.querySelectorAll('.emoji-picker-popup').forEach(p => {
+            if (p.id !== 'emoji-picker-'+id) p.classList.add('hidden');
+        });
+        
+        // Eigenen Picker togglen
         const picker = document.getElementById('emoji-picker-'+id);
         picker.classList.toggle('hidden');
     };
-    window.closeEmojiPicker = (id) => { document.getElementById('emoji-picker-'+id)?.classList.add('hidden'); };
+    
+    window.closeEmojiPicker = (id) => { 
+        document.getElementById('emoji-picker-'+id)?.classList.add('hidden'); 
+    };
 
     document.addEventListener('click', (e) => {
+        // Schließt Emojis, wenn irgendwo anders hingeklickt wird
         document.querySelectorAll('.emoji-picker-popup').forEach(p => {
-            if (!p.parentElement.contains(e.target)) p.classList.add('hidden');
+            p.classList.add('hidden');
         });
+        
         if (!e.target.closest('.admin-menu') && !e.target.closest('[onclick^="toggleAdminMenu"]') && !e.target.closest('#nav-more-btn')) {
             document.querySelectorAll('.admin-menu').forEach(m => m.classList.add('hidden'));
         }

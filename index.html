@@ -226,7 +226,7 @@
     </div>
     <div id="nav-actions" style="display:flex; align-items:center; gap:4px;">
         <button class="nav-btn" onclick="toggleAiAssistant()"><i data-lucide="bot"></i></button>
-        <button class="nav-btn" id="admin-alert-btn" class="hidden" onclick="openAlertModal()"><i data-lucide="plus-circle"></i></button>
+        <button class="nav-btn hidden" id="admin-alert-btn" onclick="openAlertModal()"><i data-lucide="plus-circle"></i></button>
         <div style="position:relative;">
             <button class="nav-btn" onclick="toggleDarkMode()"><i data-lucide="moon" id="theme-icon"></i></button>
         </div>
@@ -234,7 +234,6 @@
     </div>
 </nav>
 
-<!-- LOGIN -->
 <div id="login-screen" style="text-align:center; padding-top:140px; background:#000; height:100vh; margin:0; padding-top:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
     <img src="https://lh3.googleusercontent.com/d/1AdC4w34gy3DUWdnocBj57TSzgRyXNafM" alt="Nexus Logo" style="width:88%; max-width:480px; border-radius:20px; margin-bottom:32px;">
     <button id="btn-login" style="background:#1877f2; color:white; border:none; padding:15px 44px; border-radius:28px; font-weight:700; cursor:pointer; font-size:16px; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:10px; margin:0 auto;">
@@ -243,21 +242,18 @@
     </button>
 </div>
 
-<!-- MAIN -->
 <main id="main-content" class="container hidden">
     <div id="global-alerts"></div>
     <div id="stories-bar"></div>
     <div id="feed"></div>
 </main>
 
-<!-- SETTINGS SCREEN -->
 <div id="settings-screen" class="container hidden">
     <div class="settings-header">
         <button class="settings-back-btn" onclick="closeSettings()"><i data-lucide="arrow-left" style="width:18px;"></i></button>
         <h2>Einstellungen</h2>
     </div>
 
-    <!-- Profile Preview -->
     <div class="card" style="padding:0; overflow:hidden; margin-bottom:14px;">
         <div class="profile-preview">
             <img id="settings-avatar" src="" class="profile-preview-img">
@@ -342,7 +338,6 @@
     <div style="height:30px;"></div>
 </div>
 
-<!-- EDIT PROFILE MODAL -->
 <div id="edit-profile-modal" class="lightbox">
     <div class="modal-inner" onclick="event.stopPropagation()">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -359,7 +354,6 @@
     </div>
 </div>
 
-<!-- AI OVERLAY -->
 <div id="ai-overlay" class="lightbox" style="display:none;" onclick="toggleAiAssistant()">
     <div id="ai-overlay-container" onclick="event.stopPropagation()">
         <div style="padding:14px 16px; border-bottom:0.5px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--header-bg); backdrop-filter:blur(10px);">
@@ -372,7 +366,6 @@
     </div>
 </div>
 
-<!-- ALERT MODAL -->
 <div id="alert-modal" class="lightbox">
     <div class="modal-inner" onclick="event.stopPropagation()">
         <h3 class="modal-title">Neue Meldung</h3>
@@ -394,7 +387,6 @@
     </div>
 </div>
 
-<!-- STORY VIEWER -->
 <div id="story-lightbox" class="lightbox" onclick="closeStoryViewer()">
     <div id="story-viewer" onclick="event.stopPropagation()">
         <div id="story-progress"></div>
@@ -407,7 +399,6 @@
     </div>
 </div>
 
-<!-- INPUT BAR -->
 <div id="input-bar" class="ios-footer hidden">
     <div id="preview-container" class="hidden" style="position:absolute; bottom:78px; left:15px; background:var(--card); padding:5px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.15);">
         <img id="preview-img" src="" style="width:80px; height:80px; object-fit:cover; border-radius:8px; display:block;">
@@ -425,13 +416,11 @@
     </div>
 </div>
 
-<!-- LIGHTBOX -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
     <button class="close-lightbox-btn" onclick="closeLightbox()"><i data-lucide="x" style="width:22px;"></i></button>
     <img id="lightbox-img" src="" onclick="event.stopPropagation()">
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script type="module">
@@ -612,10 +601,13 @@
         onSnapshot(collection(db, "alerts"), (snap) => {
             const c = document.getElementById('global-alerts'); c.innerHTML = '';
             const icons = { warning: 'alert-circle', info: 'info', success: 'check-circle' };
+            const isAdmin = auth.currentUser?.email === adminEmail;
             snap.forEach(d => {
                 const a = d.data();
-                if (a.expiresAt && a.expiresAt.toDate && a.expiresAt.toDate() < new Date()) { deleteDoc(doc(db, "alerts", d.id)); return; }
-                const isAdmin = auth.currentUser?.email === adminEmail;
+                if (a.expiresAt && a.expiresAt.toDate && a.expiresAt.toDate() < new Date()) { 
+                    if (isAdmin) deleteDoc(doc(db, "alerts", d.id)); 
+                    return; 
+                }
                 c.innerHTML += `<div class="alert-banner alert-${a.type}"><i data-lucide="${icons[a.type]||'info'}" style="width:18px;flex-shrink:0;"></i><div style="flex:1;font-size:14.5px;">${a.text}</div>${isAdmin?`<button onclick="deleteAlert('${d.id}')" style="background:none;border:none;color:inherit;cursor:pointer;"><i data-lucide="x" style="width:14px;"></i></button>`:''}</div>`;
             });
             lucide.createIcons();
@@ -691,7 +683,8 @@
             existingIds.forEach(id => { if (!newIds.has(id)) { document.getElementById(id)?.remove(); } });
 
             posts.forEach((p, idx) => {
-                onSnapshot(doc(db, "users", p.uid), (uSnap) => {
+                // Bugfix: Einmaliger Fetch statt onSnapshot-Memory-Leak im Feed
+                getDoc(doc(db, "users", p.uid)).then((uSnap) => {
                     const u = uSnap.data() || {};
                     const pid = 'post-' + p.id;
                     const likes = Array.isArray(p.likes) ? p.likes : [];
@@ -744,7 +737,7 @@
                         ${p.imageUrl ? `<div class="post-img-wrap"><img src="${p.imageUrl}" class="post-img" onclick="openLightbox('${p.imageUrl}')"></div>` : ''}
                         ${reactionHTML ? `<div class="emoji-reaction-bar" style="margin-top:10px;">${reactionHTML}</div>` : ''}
                         <div class="reaction-bar">
-                            <button onclick="toggleLike('${p.id}',${JSON.stringify(likes).replace(/"/g,"'")})" class="react-btn ${hasLiked?'liked':''}">
+                            <button onclick="toggleLike('${p.id}')" class="react-btn ${hasLiked?'liked':''}">
                                 <i data-lucide="heart" style="width:17px;${hasLiked?'fill:currentColor;':''}"></i> ${likes.length}
                             </button>
                             <button onclick="showComments('${p.id}')" class="react-btn">
@@ -859,7 +852,15 @@
     window.toggleVerify = async (userId, current) => { if(confirm(current?"Verifizierung entfernen?":"Nutzer verifizieren?")) { await updateDoc(doc(db,"users",userId), { verified: !current }); showToast(current?'Verifizierung entfernt':'Nutzer verifiziert ✓'); } };
     window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); lucide.createIcons(); };
     window.deletePost = async (id) => { if(confirm("Post wirklich löschen?")) { await deleteDoc(doc(db,"posts",id)); showToast('Post gelöscht'); } };
-    window.toggleLike = async (id, likes) => { const ref = doc(db,"posts",id); const uid = auth.currentUser.uid; await updateDoc(ref, { likes: likes.includes(uid) ? arrayRemove(uid) : arrayUnion(uid) }); };
+    
+    // Bugfix: toggleLike liest Arrays direkt aus DB, kein Stringify-Chaos im HTML mehr
+    window.toggleLike = async (id) => { 
+        const ref = doc(db,"posts",id); 
+        const uid = auth.currentUser.uid; 
+        const snap = await getDoc(ref);
+        const likes = snap.data().likes || [];
+        await updateDoc(ref, { likes: likes.includes(uid) ? arrayRemove(uid) : arrayUnion(uid) }); 
+    };
 
     // ── IMAGES / LIGHTBOX ──
     window.openLightbox = (url) => { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').style.display = 'flex'; document.body.style.overflow = 'hidden'; };

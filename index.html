@@ -54,7 +54,6 @@
             box-shadow: 0 16px 40px rgba(0,0,0,0.2);
             display: flex; flex-direction: column; align-items: center; width: 88%; max-width: 400px;
         }
-        /* Unified Logo Styling */
         .login-logo-container {
             background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
             width: 86px; height: 86px; border-radius: 24px; margin-bottom: 16px;
@@ -82,7 +81,6 @@
             border-bottom: 0.5px solid var(--border); z-index: 1000;
             justify-content: space-between; gap: 12px;
         }
-        /* Header Logo Styling */
         .logo { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 800; color: var(--nexus); letter-spacing: -0.5px; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
         .logo-icon { background: var(--nexus); color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         
@@ -113,8 +111,7 @@
 
         /* CARDS */
         .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; border: 0.5px solid var(--border); box-shadow: var(--shadow); position: relative; }
-        .card-compact { padding: 12px; }
-
+        
         /* ALERTS */
         .alert-banner { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border-radius: 13px; margin-bottom: 10px; border: 1.5px solid; }
         .alert-warning { border-color: var(--warning); background: rgba(255,149,0,0.09); color: var(--warning); }
@@ -126,7 +123,7 @@
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; position: relative; }
         .user-img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
         .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 4px; }
-        .verified-badge { width: 16px; height: 16px; }
+        .verified-badge { width: 16px; height: 16px; flex-shrink: 0; }
         .post-text { font-size: 15.5px; white-space: pre-wrap; line-height: 1.55; }
 
         /* POST IMAGE */
@@ -202,7 +199,7 @@
         /* PROFILE IN SETTINGS */
         .profile-preview { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px 16px 20px; }
         .profile-preview-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nexus); }
-        .profile-preview-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-top: 6px; }
+        .profile-preview-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .profile-preview-username { font-size: 13px; color: var(--sub); }
 
         /* MODAL */
@@ -233,7 +230,7 @@
         /* ZEIT ÜBRIG BEI STORY */
         #story-time-left { position: absolute; bottom: calc(env(safe-area-inset-bottom, 20px) + 20px); left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; text-shadow: 0 2px 6px rgba(0,0,0,0.8); z-index: 20; background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 
-        /* EMOJI PICKER - NEU MIT SCROLLBAREM GRID */
+        /* EMOJI PICKER */
         .emoji-picker-popup { 
             position: absolute; 
             bottom: calc(100% + 10px); 
@@ -255,7 +252,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
         }
-        .emoji-picker-popup::-webkit-scrollbar { display: none; } /* Scrollbar verstecken für cleanen Look */
+        .emoji-picker-popup::-webkit-scrollbar { display: none; }
         
         @keyframes fadeInEmoji {
             from { opacity: 0; transform: translate(-50%, 5px) scale(0.95); }
@@ -525,11 +522,9 @@
 <div id="toast"></div>
 
 <script type="module">
-    // Lucide Icons sofort laden, damit das neue Logo & Login-Screen Icons direkt da sind
     if(window.lucide) lucide.createIcons();
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    // NEU: signOut hinzugefügt
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, arrayUnion, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -548,13 +543,15 @@
     const provider = new GoogleAuthProvider();
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
     const adminEmail = "boxenjob5@gmail.com";
-    const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT";
+    
+    // Besserer, integrierter Verified-Badge (Data-URI SVG)
+    const verifiedIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231877f2'%3E%3Cpath d='M12 2l3.09 2.26L18.98 4l.64 3.61L22 10l-2.03 2.85L22 15.68l-2.38 2.76-.64 3.61-3.89-.26L12 22l-3.09-2.26L5.02 20l-.64-3.61L2 14l2.03-2.85L2 8.32l2.38-2.76.64-3.61 3.89.26z'/%3E%3Cpath d='M10.93 15.62l-3.32-3.32 1.41-1.41 1.91 1.91 4.54-4.54 1.41 1.41-5.95 5.95z' fill='white'/%3E%3C/svg%3E";
     
     const REACTIONS = ['👍','❤️','😂','😮','😢','😡','🔥','👏','🙌','🎉','💯','✨','😍','🥰','😎','🤔','🤮','💔','🤫','🙄','🤤','🥴','🥳','🤯','🤗','💩','💀','👽','👀','🧠'];
 
     let userData = null;
 
-    // ── RESPONSIVER HEADER (NAVBAR ANPASSEN) ──
+    // ── RESPONSIVER HEADER ──
     window.adaptNavbar = () => {
         const nav = document.getElementById('navbar');
         if (!nav || nav.classList.contains('hidden')) return;
@@ -683,7 +680,8 @@
         document.getElementById('settings-screen').classList.remove('hidden');
         if (userData) {
             document.getElementById('settings-avatar').src = userData.photoURL || '';
-            document.getElementById('settings-preview-name').textContent = userData.displayname || '–';
+            const verifiedHtml = userData.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : '';
+            document.getElementById('settings-preview-name').innerHTML = (userData.displayname || '–') + verifiedHtml;
             document.getElementById('settings-preview-user').textContent = '@' + (userData.username || '–');
         }
         const isDark = document.body.classList.contains('dark');
@@ -719,8 +717,11 @@
 
         await updateDoc(doc(db, "users", auth.currentUser.uid), { displayname: dn, username: un, bio });
         userData.displayname = dn; userData.username = un; userData.bio = bio;
-        document.getElementById('settings-preview-name').textContent = dn;
+        
+        const verifiedHtml = userData.verified ? `<img src="${verifiedIcon}" class="verified-badge">` : '';
+        document.getElementById('settings-preview-name').innerHTML = dn + verifiedHtml;
         document.getElementById('settings-preview-user').textContent = '@' + un;
+        
         document.getElementById('edit-profile-modal').style.display = 'none';
         showToast('Profil gespeichert');
     };
@@ -737,7 +738,7 @@
         userData.photoURL = newUrl;
         document.getElementById('settings-avatar').src = newUrl;
         showToast('Profilbild aktualisiert');
-        e.target.value = ''; // Input zurücksetzen
+        e.target.value = '';
     };
 
     // ── AI ASSISTANT ──
@@ -749,12 +750,12 @@
         if(window.lucide) lucide.createIcons();
     };
 
-    // ── AUTH LOGOUT SCRIPT ──
+    // ── AUTH ──
     window.logoutUser = async () => {
         if (confirm('Wirklich abmelden?')) {
             try {
                 await signOut(auth);
-                location.reload(); // Setzt alle States zurück und bringt dich zum Startbildschirm
+                location.reload(); 
             } catch (error) {
                 console.error("Fehler beim Abmelden", error);
                 showToast("Fehler beim Abmelden.");
@@ -762,7 +763,6 @@
         }
     };
 
-    // ── AUTH LOGIN SCRIPT ──
     document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -779,7 +779,6 @@
             if (user.email === adminEmail) {
                 document.getElementById('admin-alert-btn').classList.remove('hidden');
             }
-            // restore theme
             if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); document.body.classList.remove('light'); document.getElementById('theme-icon')?.setAttribute('data-lucide','sun'); }
             const accent = localStorage.getItem('accentTheme');
             if (accent && accent !== 'default') { document.body.classList.add('theme-'+accent); document.querySelector(`.theme-dot[data-theme="${accent}"]`)?.classList.add('selected'); }
@@ -787,7 +786,6 @@
             if(window.lucide) lucide.createIcons();
             setTimeout(adaptNavbar, 300);
         } else {
-            // Falls man nicht eingeloggt ist (oder sich abgemeldet hat)
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('navbar').classList.add('hidden');
             document.getElementById('input-bar').classList.add('hidden');
@@ -828,7 +826,7 @@
     }
     window.deleteAlert = (id) => deleteDoc(doc(db, "alerts", id));
 
-    // ── STORIES (NEU & GRUPPIERT MIT 24H LÖSCHUNG) ──
+    // ── STORIES ──
     let globalStories = {}; 
     let currentStoryUser = null;
     let currentStoryIndex = 0;
@@ -852,16 +850,14 @@
                 const s = d.data();
                 s.id = d.id;
                 
-                // 24H Logik
                 const createdAt = s.createdAt ? s.createdAt.toDate() : now;
                 const age = now - createdAt;
                 
                 if (age > TWENTY_FOUR_HOURS) {
-                    // Story ist abgelaufen -> löschen wenn Besitzer
                     if (s.uid === auth.currentUser?.uid) {
                         deleteDoc(doc(db, "stories", d.id)).catch(console.error);
                     }
-                    return; // Nicht im UI anzeigen
+                    return;
                 }
 
                 if (!globalStories[s.uid]) globalStories[s.uid] = [];
@@ -900,9 +896,9 @@
         const fd = new FormData(); fd.append("image", file);
         const res = await fetch("https://api.imgbb.com/1/upload?key="+imgbbKey, { method:"POST", body:fd });
         const j = await res.json();
-        await addDoc(collection(db, "stories"), { imageUrl: j.data.url, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL, createdAt: serverTimestamp(), seenBy: [] });
+        await addDoc(collection(db, "stories"), { imageUrl: j.data.url, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL||'', createdAt: serverTimestamp(), seenBy: [] });
         showToast('Story gepostet!');
-        e.target.value = ''; // Reset für weitere Uploads
+        e.target.value = '';
     };
     
     window.addStoryPrompt = () => {
@@ -936,7 +932,6 @@
         document.getElementById('story-avi').src = s.photoURL;
         document.getElementById('story-time').textContent = s.createdAt ? timeAgo(s.createdAt) : "Gerade eben";
         
-        // --- ZEIT BERECHNEN ---
         const createdAtTime = s.createdAt ? s.createdAt.toDate() : new Date();
         const nowTime = new Date();
         const diffMs = (24 * 60 * 60 * 1000) - (nowTime - createdAtTime);
@@ -950,7 +945,6 @@
             timeLeftEl.textContent = "Läuft ab...";
         }
 
-        // --- PROGRESS BAR ---
         const prog = document.getElementById('story-progress');
         prog.innerHTML = '';
         for (let i = 0; i < userStories.length; i++) {
@@ -1012,7 +1006,7 @@
         }
     };
 
-    // ── FEED ──
+    // ── FEED (GEFIXT: Dynamisches Updaten ohne Fokusverlust) ──
     function loadFeed() {
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('feed');
@@ -1034,11 +1028,17 @@
                     const isOwner = auth.currentUser?.uid === p.uid;
                     const reactions = p.reactions || {};
 
+                    let isNew = false;
                     let div = document.getElementById(pid);
                     if (!div) {
                         div = document.createElement('div');
                         div.id = pid; div.className = 'card';
-                        const cards = [...feed.children];
+                        isNew = true;
+                    }
+                    
+                    // Element immer an der korrekten Stelle im Feed einordnen
+                    const cards = [...feed.children];
+                    if (cards[idx] !== div) {
                         if (idx >= cards.length) feed.appendChild(div);
                         else feed.insertBefore(div, cards[idx]);
                     }
@@ -1054,50 +1054,73 @@
                         }
                     });
 
-                    div.innerHTML = `
-                        ${p.isPinned ? `<div class="pinned-label"><i data-lucide="pin" style="width:13px;"></i> Von NEXUS fixiert</div>` : ''}
-                        <div class="post-header">
-                            <img src="${u.photoURL||''}" class="user-img">
-                            <div style="flex-grow:1;">
-                                <div class="display-name">${u.displayname||'–'} ${u.verified?`<img src="${verifiedIcon}" class="verified-badge">`:''}</div>
-                                <div style="font-size:12px; color:var(--sub);">@${u.username||'–'} · ${timeAgo(p.timestamp)}</div>
-                            </div>
-                            <button onclick="toggleAdminMenu('${p.id}')" style="background:none;border:none;color:var(--sub);cursor:pointer;padding:4px;border-radius:50%;"><i data-lucide="more-horizontal" style="width:18px;"></i></button>
-                            <div id="menu-${p.id}" class="admin-menu hidden">
-                                <button onclick="sharePost('${p.id}')"><i data-lucide="share-2" style="width:15px;"></i> Teilen</button>
-                                <button onclick="copyPostText('${p.id}','${encodeURIComponent(p.text||'')}')"><i data-lucide="copy" style="width:15px;"></i> Text kopieren</button>
-                                ${isAdmin ? `
-                                <button onclick="togglePin('${p.id}',${p.isPinned||false})"><i data-lucide="pin" style="width:15px;"></i> ${p.isPinned?'Lösen':'Anpinnen'}</button>
-                                <button onclick="toggleVerify('${p.uid}',${u.verified||false})"><i data-lucide="shield-check" style="width:15px;"></i> ${u.verified?'Ent-verifizieren':'Verifizieren'}</button>` : ''}
-                                ${isAdmin || isOwner ? `<button onclick="deletePost('${p.id}')" style="color:var(--danger);"><i data-lucide="trash-2" style="width:15px;"></i> Löschen</button>` : ''}
-                            </div>
-                        </div>
-                        <div class="post-text">${p.text||''}</div>
-                        ${p.imageUrl ? `<div class="post-img-wrap"><img src="${p.imageUrl}" class="post-img" onclick="openLightbox('${p.imageUrl}')"></div>` : ''}
-                        ${reactionHTML ? `<div class="emoji-reaction-bar" style="margin-top:10px;">${reactionHTML}</div>` : ''}
-                        <div class="reaction-bar">
-                            <button onclick="toggleLike('${p.id}')" class="react-btn ${hasLiked?'liked':''}">
-                                <i data-lucide="heart" style="width:17px;${hasLiked?'fill:currentColor;':''}"></i> ${likes.length}
-                            </button>
-                            <button onclick="showComments('${p.id}')" class="react-btn">
-                                <i data-lucide="message-circle" style="width:17px;"></i> Kommentare
-                            </button>
-                            
-                            <div style="position:relative; display:flex; align-items:center;">
-                                <button onclick="toggleEmojiPicker(event, '${p.id}')" class="react-btn" id="emoji-btn-${p.id}">
-                                    <i data-lucide="smile-plus" style="width:17px;"></i> Reagieren
-                                </button>
-                                <div id="emoji-picker-${p.id}" class="emoji-picker-popup hidden" onclick="event.stopPropagation()">
-                                    ${REACTIONS.map(em => `<button class="emoji-btn-pick" onclick="toggleReaction('${p.id}','${encodeEmoji(em)}'); closeEmojiPicker('${p.id}')">${em}</button>`).join('')}
+                    // Wenn der Post neu ist, komplettes HTML rendern. 
+                    // Sonst nur die dynamischen Daten ersetzen, damit laufende Eingaben bei Kommentaren nicht gelöscht werden!
+                    if (isNew) {
+                        div.innerHTML = `
+                            ${p.isPinned ? `<div class="pinned-label"><i data-lucide="pin" style="width:13px;"></i> Von NEXUS fixiert</div>` : ''}
+                            <div class="post-header">
+                                <img src="${u.photoURL||''}" class="user-img">
+                                <div style="flex-grow:1;">
+                                    <div class="display-name">${u.displayname||'–'} ${u.verified?`<img src="${verifiedIcon}" class="verified-badge">`:''}</div>
+                                    <div style="font-size:12px; color:var(--sub);">@${u.username||'–'} · <span class="post-time">${timeAgo(p.timestamp)}</span></div>
+                                </div>
+                                <button onclick="toggleAdminMenu('${p.id}')" style="background:none;border:none;color:var(--sub);cursor:pointer;padding:4px;border-radius:50%;"><i data-lucide="more-horizontal" style="width:18px;"></i></button>
+                                <div id="menu-${p.id}" class="admin-menu hidden">
+                                    <button onclick="sharePost('${p.id}')"><i data-lucide="share-2" style="width:15px;"></i> Teilen</button>
+                                    <button onclick="copyPostText('${p.id}','${encodeURIComponent(p.text||'')}')"><i data-lucide="copy" style="width:15px;"></i> Text kopieren</button>
+                                    ${isAdmin ? `
+                                    <button onclick="togglePin('${p.id}',${p.isPinned||false})"><i data-lucide="pin" style="width:15px;"></i> ${p.isPinned?'Lösen':'Anpinnen'}</button>
+                                    <button onclick="toggleVerify('${p.uid}',${u.verified||false})"><i data-lucide="shield-check" style="width:15px;"></i> ${u.verified?'Ent-verifizieren':'Verifizieren'}</button>` : ''}
+                                    ${isAdmin || isOwner ? `<button onclick="deletePost('${p.id}')" style="color:var(--danger);"><i data-lucide="trash-2" style="width:15px;"></i> Löschen</button>` : ''}
                                 </div>
                             </div>
+                            <div class="post-text">${p.text||''}</div>
+                            ${p.imageUrl ? `<div class="post-img-wrap"><img src="${p.imageUrl}" class="post-img" onclick="openLightbox('${p.imageUrl}')"></div>` : ''}
+                            <div class="emoji-reaction-wrapper">${reactionHTML ? `<div class="emoji-reaction-bar" style="margin-top:10px;">${reactionHTML}</div>` : ''}</div>
+                            <div class="reaction-bar">
+                                <button onclick="toggleLike('${p.id}')" class="react-btn like-btn ${hasLiked?'liked':''}">
+                                    <i data-lucide="heart" style="width:17px;${hasLiked?'fill:currentColor;':''}"></i> <span>${likes.length}</span>
+                                </button>
+                                <button onclick="showComments('${p.id}')" class="react-btn">
+                                    <i data-lucide="message-circle" style="width:17px;"></i> Kommentare
+                                </button>
+                                
+                                <div style="position:relative; display:flex; align-items:center;">
+                                    <button onclick="toggleEmojiPicker(event, '${p.id}')" class="react-btn" id="emoji-btn-${p.id}">
+                                        <i data-lucide="smile-plus" style="width:17px;"></i> Reagieren
+                                    </button>
+                                    <div id="emoji-picker-${p.id}" class="emoji-picker-popup hidden" onclick="event.stopPropagation()">
+                                        ${REACTIONS.map(em => `<button class="emoji-btn-pick" onclick="toggleReaction('${p.id}','${encodeEmoji(em)}'); closeEmojiPicker('${p.id}')">${em}</button>`).join('')}
+                                    </div>
+                                </div>
 
-                            <button onclick="sharePost('${p.id}')" class="react-btn" style="margin-left:auto;">
-                                <i data-lucide="share-2" style="width:17px;"></i>
-                            </button>
-                        </div>
-                        <div id="comments-section-${p.id}" class="hidden" style="margin-top:12px;"></div>`;
-                    if(window.lucide) lucide.createIcons();
+                                <button onclick="sharePost('${p.id}')" class="react-btn" style="margin-left:auto;">
+                                    <i data-lucide="share-2" style="width:17px;"></i>
+                                </button>
+                            </div>
+                            <div id="comments-section-${p.id}" class="hidden" style="margin-top:12px;"></div>`;
+                        if(window.lucide) lucide.createIcons({root: div});
+                    } else {
+                        // Dynamisches Update für existierende Elemente
+                        const likeBtn = div.querySelector('.like-btn');
+                        if(likeBtn) {
+                            likeBtn.className = `react-btn like-btn ${hasLiked?'liked':''}`;
+                            const iconHtml = `<i data-lucide="heart" style="width:17px;${hasLiked?'fill:currentColor;':''}"></i> <span>${likes.length}</span>`;
+                            if(likeBtn.innerHTML !== iconHtml) {
+                                likeBtn.innerHTML = iconHtml;
+                                if(window.lucide) lucide.createIcons({root: likeBtn});
+                            }
+                        }
+                        
+                        const emojiWrap = div.querySelector('.emoji-reaction-wrapper');
+                        if (emojiWrap) {
+                            emojiWrap.innerHTML = reactionHTML ? `<div class="emoji-reaction-bar" style="margin-top:10px;">${reactionHTML}</div>` : '';
+                        }
+                        
+                        const timeSpan = div.querySelector('.post-time');
+                        if(timeSpan) timeSpan.textContent = timeAgo(p.timestamp);
+                    }
                 });
             });
         });

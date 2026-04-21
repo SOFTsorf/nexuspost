@@ -48,7 +48,7 @@
             justify-content: space-between; gap: 12px;
         }
         .logo { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 800; color: var(--nexus); letter-spacing: -0.5px; white-space: nowrap; }
-        .nav-btn { background: none; border: none; color: var(--text); cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .nav-btn { background: none; border: none; color: var(--text); cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-family: inherit; }
         .nav-btn:hover { background: var(--ios-input); }
 
         /* SEARCH */
@@ -200,8 +200,8 @@
         .poll-label { position: relative; z-index: 1; font-size: 14.5px; font-weight: 500; flex-grow: 1; }
         .poll-pct { position: relative; z-index: 1; font-size: 13px; font-weight: 600; color: var(--nexus); }
 
-        /* EMOJI PICKER */
-        .emoji-picker-popup { position: absolute; bottom: 55px; left: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; padding: 10px; display: flex; gap: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 200; animation: fadeIn 0.15s ease; }
+        /* EMOJI PICKER (FIXED) */
+        .emoji-picker-popup { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--card); border: 0.5px solid var(--border); border-radius: 20px; padding: 8px 12px; display: flex; gap: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 200; animation: fadeIn 0.15s ease; width: max-content; }
         .emoji-btn-pick { font-size: 22px; cursor: pointer; padding: 4px; border-radius: 8px; border: none; background: none; transition: transform 0.1s; }
         .emoji-btn-pick:hover { transform: scale(1.3); }
 
@@ -224,13 +224,33 @@
         </div>
         <button id="btn-close-search" class="hidden" onclick="collapseSearch()" style="background:none; border:none; color:var(--nexus); font-weight:600; font-size:15px; white-space:nowrap; font-family:inherit;">Abbrechen</button>
     </div>
-    <div id="nav-actions" style="display:flex; align-items:center; gap:4px;">
-        <button class="nav-btn" onclick="toggleAiAssistant()"><i data-lucide="bot"></i></button>
-        <button class="nav-btn hidden" id="admin-alert-btn" onclick="openAlertModal()"><i data-lucide="plus-circle"></i></button>
-        <div style="position:relative;">
-            <button class="nav-btn" onclick="toggleDarkMode()"><i data-lucide="moon" id="theme-icon"></i></button>
+    
+    <div id="nav-actions-wrapper" style="display:flex; align-items:center; gap:4px;">
+        <div id="nav-actions" style="display:flex; align-items:center; gap:4px;">
+            <button class="nav-btn" id="nav-bot" onclick="toggleAiAssistant()">
+                <i data-lucide="bot"></i>
+                <span class="nav-label hidden" style="margin-left:8px;">KI Assistent</span>
+            </button>
+            <button class="nav-btn hidden" id="admin-alert-btn" onclick="openAlertModal()">
+                <i data-lucide="plus-circle"></i>
+                <span class="nav-label hidden" style="margin-left:8px;">Meldung</span>
+            </button>
+            <button class="nav-btn" id="nav-theme" onclick="toggleDarkMode()">
+                <i data-lucide="moon" id="theme-icon"></i>
+                <span class="nav-label hidden" style="margin-left:8px;">Theme wechseln</span>
+            </button>
+            <button class="nav-btn" id="nav-settings" onclick="openSettings()">
+                <i data-lucide="settings"></i>
+                <span class="nav-label hidden" style="margin-left:8px;">Einstellungen</span>
+            </button>
         </div>
-        <button class="nav-btn" onclick="openSettings()"><i data-lucide="settings"></i></button>
+        <div style="position:relative;">
+            <button class="nav-btn hidden" id="nav-more-btn" onclick="toggleNavMore()">
+                <i data-lucide="more-vertical"></i>
+            </button>
+            <div id="nav-more-menu" class="admin-menu hidden" style="top:40px; right:0; min-width:180px; z-index:1100;">
+                </div>
+        </div>
     </div>
 </nav>
 
@@ -470,7 +490,7 @@
     // ── SEARCH ──
     window.expandSearch = () => {
         document.getElementById('nav-logo').classList.add('hidden');
-        document.getElementById('nav-actions').classList.add('hidden');
+        document.getElementById('nav-actions-wrapper').classList.add('hidden'); // Hide wrapper
         document.getElementById('search-wrapper').classList.add('active');
         document.getElementById('btn-close-search').classList.remove('hidden');
         document.getElementById('search-input').focus();
@@ -478,7 +498,7 @@
     window.collapseSearch = () => {
         document.getElementById('search-wrapper').classList.remove('active');
         document.getElementById('nav-logo').classList.remove('hidden');
-        document.getElementById('nav-actions').classList.remove('hidden');
+        document.getElementById('nav-actions-wrapper').classList.remove('hidden'); // Show wrapper
         document.getElementById('btn-close-search').classList.add('hidden');
         document.getElementById('search-input').value = "";
         document.querySelectorAll('.card').forEach(p => p.style.display = '');
@@ -486,6 +506,59 @@
     document.getElementById('search-input').oninput = (e) => {
         const term = e.target.value.toLowerCase();
         document.querySelectorAll('#feed .card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none');
+    };
+
+    // ── NAVBAR RESPONSIVE MENU (FIX) ──
+    window.adjustNavMenu = () => {
+        const actionsBox = document.getElementById('nav-actions');
+        const moreMenu = document.getElementById('nav-more-menu');
+        const moreBtn = document.getElementById('nav-more-btn');
+
+        // 1. Alle Buttons zurückschieben zum Messen
+        const movedItems = Array.from(moreMenu.querySelectorAll('button'));
+        movedItems.forEach(btn => {
+            btn.classList.add('nav-btn');
+            btn.style = ''; // Inline styles entfernen
+            const label = btn.querySelector('.nav-label');
+            if (label) label.classList.add('hidden');
+            actionsBox.appendChild(btn);
+        });
+        moreBtn.classList.add('hidden');
+
+        // Falls die Sucheingabe aktiv ist, ignorieren
+        if(document.getElementById('search-wrapper').classList.contains('active')) return;
+
+        // 2. Platz kalkulieren
+        // Logo = ~110px, Such-Icon = ~40px, Padding = 32px. Rest steht für Buttons zur Verfügung.
+        let availableWidth = window.innerWidth - 190;
+        
+        let visibleChildren = Array.from(actionsBox.children).filter(c => !c.classList.contains('hidden'));
+        let currentWidth = visibleChildren.length * 40 + (visibleChildren.length - 1) * 4;
+
+        if (currentWidth > availableWidth && visibleChildren.length > 0) {
+            moreBtn.classList.remove('hidden');
+            currentWidth += 40; // Mehr-Button braucht auch Platz
+
+            // Von rechts nach links die überschüssigen Buttons ins Menü verschieben
+            for (let i = visibleChildren.length - 1; i >= 0; i--) {
+                if (currentWidth <= availableWidth) break;
+
+                let btn = visibleChildren[i];
+                actionsBox.removeChild(btn);
+                btn.classList.remove('nav-btn'); // Style an Dropdown anpassen
+                
+                const label = btn.querySelector('.nav-label');
+                if (label) label.classList.remove('hidden'); // Text anzeigen!
+                
+                moreMenu.insertBefore(btn, moreMenu.firstChild);
+                currentWidth -= 44; // 40px Button + 4px Gap
+            }
+        }
+    };
+    window.addEventListener('resize', adjustNavMenu);
+
+    window.toggleNavMore = () => {
+        document.getElementById('nav-more-menu').classList.toggle('hidden');
     };
 
     // ── DARK MODE ──
@@ -521,6 +594,8 @@
         }
         const isDark = document.body.classList.contains('dark');
         document.getElementById('dark-toggle').classList.toggle('on', isDark);
+        // Menü wieder verstecken falls es mobil vom Header aus gedrückt wurde
+        document.getElementById('nav-more-menu')?.classList.add('hidden');
         lucide.createIcons();
     };
     window.closeSettings = () => {
@@ -554,6 +629,7 @@
         const vis = o.style.display !== 'none' && o.style.display !== '';
         o.style.display = vis ? 'none' : 'flex';
         document.body.style.overflow = vis ? '' : 'hidden';
+        document.getElementById('nav-more-menu')?.classList.add('hidden');
         lucide.createIcons();
     };
 
@@ -574,6 +650,10 @@
             if (user.email === adminEmail) {
                 document.getElementById('admin-alert-btn').classList.remove('hidden');
             }
+            
+            // Header Platzverteilung initiieren (wegen Admin Button)
+            setTimeout(adjustNavMenu, 50);
+
             // restore theme
             if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); document.body.classList.remove('light'); document.getElementById('theme-icon').setAttribute('data-lucide','sun'); }
             const accent = localStorage.getItem('accentTheme');
@@ -584,7 +664,11 @@
     });
 
     // ── ALERTS ──
-    window.openAlertModal = () => { document.getElementById('alert-modal').style.display = 'flex'; lucide.createIcons(); };
+    window.openAlertModal = () => { 
+        document.getElementById('alert-modal').style.display = 'flex'; 
+        document.getElementById('nav-more-menu')?.classList.add('hidden');
+        lucide.createIcons(); 
+    };
     window.closeAlertModal = () => document.getElementById('alert-modal').style.display = 'none';
     document.getElementById('save-alert-btn').onclick = async () => {
         const text = document.getElementById('alert-text').value.trim();
@@ -784,7 +868,11 @@
         });
         // close admin menus
         if (!e.target.closest('.admin-menu') && !e.target.closest('[onclick^="toggleAdminMenu"]')) {
-            document.querySelectorAll('.admin-menu').forEach(m => m.classList.add('hidden'));
+            document.querySelectorAll('.admin-menu:not(#nav-more-menu)').forEach(m => m.classList.add('hidden'));
+        }
+        // close header overflow menu when clicking somewhere else
+        if (!e.target.closest('#nav-actions-wrapper')) {
+            document.getElementById('nav-more-menu')?.classList.add('hidden');
         }
     });
 
@@ -850,7 +938,7 @@
     // ── ADMIN ──
     window.togglePin = async (id, status) => { await updateDoc(doc(db,"posts",id), { isPinned: !status }); toggleAdminMenu(id); showToast(status?'Post gelöst':'Post angeheftet ✓'); };
     window.toggleVerify = async (userId, current) => { if(confirm(current?"Verifizierung entfernen?":"Nutzer verifizieren?")) { await updateDoc(doc(db,"users",userId), { verified: !current }); showToast(current?'Verifizierung entfernt':'Nutzer verifiziert ✓'); } };
-    window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); lucide.createIcons(); };
+    window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu:not(#nav-more-menu)').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); lucide.createIcons(); };
     window.deletePost = async (id) => { if(confirm("Post wirklich löschen?")) { await deleteDoc(doc(db,"posts",id)); showToast('Post gelöscht'); } };
     
     // Bugfix: toggleLike liest Arrays direkt aus DB, kein Stringify-Chaos im HTML mehr

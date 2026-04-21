@@ -39,6 +39,34 @@
             min-height: 100vh;
         }
 
+        /* NEUER LOGIN SCREEN */
+        #login-screen {
+            background: linear-gradient(135deg, #1877f2, #8b5cf6);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 0;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 32px;
+            padding: 40px 30px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; align-items: center; width: 88%; max-width: 400px;
+        }
+        .login-title {
+            color: white; font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .login-subtitle {
+            color: rgba(255,255,255,0.9); font-size: 15px; margin-bottom: 32px; text-align: center; font-weight: 500;
+        }
+        #btn-login {
+            background: white !important; color: #1c1e21 !important; border-radius: 28px; padding: 14px 28px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; border: none; cursor: pointer; font-size: 16px; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 12px;
+        }
+        #btn-login:hover {
+            transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
         /* NAV */
         nav {
             position: fixed; top: 0; left: 0; right: 0; height: 54px;
@@ -191,6 +219,9 @@
         .story-header-time { color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.5); margin-left: 4px; }
         .story-action-btns { position: absolute; top: 20px; right: 12px; display: flex; gap: 10px; z-index: 15; }
         .story-action-btn { background: rgba(0,0,0,0.4); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        
+        /* ZEIT ÜBRIG BEI STORY */
+        #story-time-left { position: absolute; bottom: calc(env(safe-area-inset-bottom, 20px) + 20px); left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; text-shadow: 0 2px 6px rgba(0,0,0,0.8); z-index: 20; background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 
         /* EMOJI PICKER - NEU MIT SCROLLBAREM GRID */
         .emoji-picker-popup { 
@@ -269,12 +300,16 @@
     </div>
 </nav>
 
-<div id="login-screen" style="text-align:center; padding-top:140px; background:#000; height:100vh; margin:0; padding-top:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-    <img src="https://lh3.googleusercontent.com/d/1AdC4w34gy3DUWdnocBj57TSzgRyXNafM" alt="Nexus Logo" style="width:88%; max-width:480px; border-radius:20px; margin-bottom:32px;">
-    <button id="btn-login" style="background:#1877f2; color:white; border:none; padding:15px 44px; border-radius:28px; font-weight:700; cursor:pointer; font-size:16px; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:10px; margin:0 auto;">
-        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
-        Mit Google anmelden
-    </button>
+<div id="login-screen">
+    <div class="login-card">
+        <img src="https://lh3.googleusercontent.com/d/1AdC4w34gy3DUWdnocBj57TSzgRyXNafM" alt="Nexus Logo" style="width:96px; height:96px; border-radius:24px; margin-bottom:20px; object-fit:cover; border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+        <div class="login-title">NexusPost</div>
+        <div class="login-subtitle">Verbinde dich mit der Welt. Teile deine Momente.</div>
+        <button id="btn-login">
+            <svg width="22" height="22" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+            Mit Google fortfahren
+        </button>
+    </div>
 </div>
 
 <main id="main-content" class="container hidden">
@@ -445,6 +480,8 @@
         <div style="position:absolute; top:60px; right:0; width:65%; height:calc(100% - 60px); z-index:10; cursor:pointer;" onclick="nextStory(event)"></div>
         
         <img id="story-img" src="">
+        
+        <div id="story-time-left"></div>
     </div>
 </div>
 
@@ -494,7 +531,6 @@
     const adminEmail = "boxenjob5@gmail.com";
     const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT";
     
-    // Grosse Emoji-Auswahl fürs PopUp!
     const REACTIONS = ['👍','❤️','😂','😮','😢','😡','🔥','👏','🙌','🎉','💯','✨','😍','🥰','😎','🤔','🤮','💔','🤫','🙄','🤤','🥴','🥳','🤯','🤗','💩','💀','👽','👀','🧠'];
 
     let userData = null;
@@ -510,7 +546,6 @@
         const moreBtn = document.getElementById('nav-more-btn');
         const dropdown = document.getElementById('nav-dropdown');
         
-        // 1. Reset
         const allItems = Array.from(itemsContainer.children);
         allItems.forEach(item => {
             if (item.id === 'admin-alert-btn' && auth?.currentUser?.email !== adminEmail) return;
@@ -520,16 +555,14 @@
         dropdown.innerHTML = '';
         dropdown.classList.add('hidden');
         
-        // 2. Overflow Check (mit mehr Puffer)
         const checkOverflow = () => {
             const logo = document.getElementById('nav-logo');
             const totalW = logo.offsetWidth + searchWrap.offsetWidth + itemsContainer.offsetWidth;
-            return (totalW + 60) > nav.clientWidth; // 60px Puffer
+            return (totalW + 60) > nav.clientWidth; 
         };
 
         if (checkOverflow()) {
             moreBtn.style.display = 'flex';
-            // Schleife: Verstecke Buttons von Links nach Rechts in Dropdown, bis es passt
             for (let i = 0; i < allItems.length; i++) {
                 let btn = allItems[i];
                 if (btn.style.display === 'none' || btn.classList.contains('hidden')) continue;
@@ -547,7 +580,7 @@
                 
                 if (!checkOverflow()) break; 
             }
-            lucide.createIcons();
+            if(window.lucide) lucide.createIcons();
         }
     };
 
@@ -611,7 +644,7 @@
         document.getElementById('theme-icon')?.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
         const dt = document.getElementById('dark-toggle');
         if (dt) dt.classList.toggle('on', isDark);
-        lucide.createIcons();
+        if(window.lucide) lucide.createIcons();
     };
     window.toggleDarkModeSettings = () => toggleDarkMode();
 
@@ -636,7 +669,7 @@
         }
         const isDark = document.body.classList.contains('dark');
         document.getElementById('dark-toggle').classList.toggle('on', isDark);
-        lucide.createIcons();
+        if(window.lucide) lucide.createIcons();
     };
     window.closeSettings = () => {
         document.getElementById('settings-screen').classList.add('hidden');
@@ -648,7 +681,7 @@
         document.getElementById('edit-username').value = userData.username || '';
         document.getElementById('edit-bio').value = userData.bio || '';
         document.getElementById('edit-profile-modal').style.display = 'flex';
-        lucide.createIcons();
+        if(window.lucide) lucide.createIcons();
     };
     window.saveProfile = async () => {
         const dn = document.getElementById('edit-displayname').value.trim();
@@ -657,7 +690,6 @@
         if (!dn) return showToast('Bitte Namen eingeben');
         if (!un) return showToast('Bitte Nutzername eingeben');
 
-        // Check if username is taken
         if (un !== userData.username) {
             const q = query(collection(db, "users"), where("username", "==", un));
             const snap = await getDocs(q);
@@ -686,6 +718,7 @@
         userData.photoURL = newUrl;
         document.getElementById('settings-avatar').src = newUrl;
         showToast('Profilbild aktualisiert');
+        e.target.value = ''; // Input zurücksetzen
     };
 
     // ── AI ASSISTANT ──
@@ -694,7 +727,7 @@
         const vis = o.style.display !== 'none' && o.style.display !== '';
         o.style.display = vis ? 'none' : 'flex';
         document.body.style.overflow = vis ? '' : 'hidden';
-        lucide.createIcons();
+        if(window.lucide) lucide.createIcons();
     };
 
     // ── AUTH ──
@@ -719,13 +752,13 @@
             const accent = localStorage.getItem('accentTheme');
             if (accent && accent !== 'default') { document.body.classList.add('theme-'+accent); document.querySelector(`.theme-dot[data-theme="${accent}"]`)?.classList.add('selected'); }
             loadFeed(); loadAlerts(); loadStories();
-            lucide.createIcons();
-            setTimeout(adaptNavbar, 300); // UI rendern lassen, dann Navbar prüfen
+            if(window.lucide) lucide.createIcons();
+            setTimeout(adaptNavbar, 300);
         }
     });
 
     // ── ALERTS ──
-    window.openAlertModal = () => { document.getElementById('alert-modal').style.display = 'flex'; lucide.createIcons(); };
+    window.openAlertModal = () => { document.getElementById('alert-modal').style.display = 'flex'; if(window.lucide) lucide.createIcons(); };
     window.closeAlertModal = () => document.getElementById('alert-modal').style.display = 'none';
     document.getElementById('save-alert-btn').onclick = async () => {
         const text = document.getElementById('alert-text').value.trim();
@@ -751,12 +784,12 @@
                 }
                 c.innerHTML += `<div class="alert-banner alert-${a.type}"><i data-lucide="${icons[a.type]||'info'}" style="width:18px;flex-shrink:0;"></i><div style="flex:1;font-size:14.5px;">${a.text}</div>${isAdmin?`<button onclick="deleteAlert('${d.id}')" style="background:none;border:none;color:inherit;cursor:pointer;"><i data-lucide="x" style="width:14px;"></i></button>`:''}</div>`;
             });
-            lucide.createIcons();
+            if(window.lucide) lucide.createIcons();
         });
     }
     window.deleteAlert = (id) => deleteDoc(doc(db, "alerts", id));
 
-    // ── STORIES (NEU & GRUPPIERT) ──
+    // ── STORIES (NEU & GRUPPIERT MIT 24H LÖSCHUNG) ──
     let globalStories = {}; 
     let currentStoryUser = null;
     let currentStoryIndex = 0;
@@ -773,9 +806,25 @@
             </div>`;
             
             globalStories = {};
+            const now = new Date();
+            const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
             snap.forEach(d => {
                 const s = d.data();
                 s.id = d.id;
+                
+                // 24H Logik
+                const createdAt = s.createdAt ? s.createdAt.toDate() : now;
+                const age = now - createdAt;
+                
+                if (age > TWENTY_FOUR_HOURS) {
+                    // Story ist abgelaufen -> löschen wenn Besitzer
+                    if (s.uid === auth.currentUser?.uid) {
+                        deleteDoc(doc(db, "stories", d.id)).catch(console.error);
+                    }
+                    return; // Nicht im UI anzeigen
+                }
+
                 if (!globalStories[s.uid]) globalStories[s.uid] = [];
                 globalStories[s.uid].push(s);
             });
@@ -800,7 +849,7 @@
                     <span class="story-label">${lastStory.displayname}</span>
                 </div>`;
             });
-            lucide.createIcons();
+            if(window.lucide) lucide.createIcons();
         });
     }
 
@@ -814,8 +863,13 @@
         const j = await res.json();
         await addDoc(collection(db, "stories"), { imageUrl: j.data.url, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL, createdAt: serverTimestamp(), seenBy: [] });
         showToast('Story gepostet!');
+        e.target.value = ''; // Reset für weitere Uploads
     };
-    window.addStoryPrompt = () => storyFileInput.click();
+    
+    window.addStoryPrompt = () => {
+        storyFileInput.value = '';
+        storyFileInput.click();
+    };
 
     window.openStoryGroup = (uid) => {
         currentStoryUser = uid;
@@ -843,7 +897,21 @@
         document.getElementById('story-avi').src = s.photoURL;
         document.getElementById('story-time').textContent = s.createdAt ? timeAgo(s.createdAt) : "Gerade eben";
         
-        // Progress Bars Setup
+        // --- ZEIT BERECHNEN ---
+        const createdAtTime = s.createdAt ? s.createdAt.toDate() : new Date();
+        const nowTime = new Date();
+        const diffMs = (24 * 60 * 60 * 1000) - (nowTime - createdAtTime);
+        const timeLeftEl = document.getElementById('story-time-left');
+        
+        if (diffMs > 0) {
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            timeLeftEl.textContent = `Noch ${diffHours} Std. ${diffMins} Min.`;
+        } else {
+            timeLeftEl.textContent = "Läuft ab...";
+        }
+
+        // --- PROGRESS BAR ---
         const prog = document.getElementById('story-progress');
         prog.innerHTML = '';
         for (let i = 0; i < userStories.length; i++) {
@@ -852,7 +920,6 @@
             prog.innerHTML += `<div class="story-prog-bar"><div class="story-prog-fill" id="spf-${i}" style="width:${fillWidth};${trans}"></div></div>`;
         }
         
-        // Delete btn check
         const delBtn = document.getElementById('story-del-btn');
         if (s.uid === auth.currentUser.uid || auth.currentUser.email === adminEmail) {
             delBtn.classList.remove('hidden');
@@ -861,9 +928,8 @@
             delBtn.classList.add('hidden');
         }
 
-        lucide.createIcons();
+        if(window.lucide) lucide.createIcons();
         
-        // Start animation
         setTimeout(() => {
             const currentFill = document.getElementById(`spf-${currentStoryIndex}`);
             if (currentFill) currentFill.style.width = '100%';
@@ -903,7 +969,7 @@
         if (confirm("Story wirklich löschen?")) {
             await deleteDoc(doc(db, "stories", id));
             showToast('Story gelöscht');
-            closeStoryViewer(); 
+            nextStory(); 
         }
     };
 
@@ -954,7 +1020,7 @@
                         <div class="post-header">
                             <img src="${u.photoURL||''}" class="user-img">
                             <div style="flex-grow:1;">
-                                <div class="display-name">${u.displayname||'–'} ${u.verified?`<img src="${verifiedIcon}" class="verified-badge">`:''}${u.bio?'':''}</div>
+                                <div class="display-name">${u.displayname||'–'} ${u.verified?`<img src="${verifiedIcon}" class="verified-badge">`:''}</div>
                                 <div style="font-size:12px; color:var(--sub);">@${u.username||'–'} · ${timeAgo(p.timestamp)}</div>
                             </div>
                             <button onclick="toggleAdminMenu('${p.id}')" style="background:none;border:none;color:var(--sub);cursor:pointer;padding:4px;border-radius:50%;"><i data-lucide="more-horizontal" style="width:18px;"></i></button>
@@ -992,7 +1058,7 @@
                             </button>
                         </div>
                         <div id="comments-section-${p.id}" class="hidden" style="margin-top:12px;"></div>`;
-                    lucide.createIcons();
+                    if(window.lucide) lucide.createIcons();
                 });
             });
         });
@@ -1011,15 +1077,12 @@
     };
 
     window.toggleEmojiPicker = (e, id) => {
-        // Verhindert, dass der Klick direkt wieder geschlossen wird
         if (e) e.stopPropagation();
         
-        // Zuerst alle anderen offenen Picker schließen
         document.querySelectorAll('.emoji-picker-popup').forEach(p => {
             if (p.id !== 'emoji-picker-'+id) p.classList.add('hidden');
         });
         
-        // Eigenen Picker togglen
         const picker = document.getElementById('emoji-picker-'+id);
         picker.classList.toggle('hidden');
     };
@@ -1029,7 +1092,6 @@
     };
 
     document.addEventListener('click', (e) => {
-        // Schließt Emojis, wenn irgendwo anders hingeklickt wird
         document.querySelectorAll('.emoji-picker-popup').forEach(p => {
             p.classList.add('hidden');
         });
@@ -1046,7 +1108,7 @@
         document.getElementById('menu-'+id)?.classList.add('hidden');
     };
     window.sharePost = async (id) => {
-        const url = location.href + '#post-' + id;
+        const url = location.href.split('#')[0] + '#post-' + id;
         if (navigator.share) { navigator.share({ title: 'NexusPost', url }); }
         else { navigator.clipboard?.writeText(url); showToast('Link kopiert'); }
     };
@@ -1086,7 +1148,7 @@
                 });
             }
             document.getElementById('input-'+postId)?.addEventListener('keydown', (e) => { if (e.key === 'Enter') addComment(postId); });
-            lucide.createIcons();
+            if(window.lucide) lucide.createIcons();
         });
     };
 
@@ -1101,7 +1163,7 @@
     // ── ADMIN ──
     window.togglePin = async (id, status) => { await updateDoc(doc(db,"posts",id), { isPinned: !status }); toggleAdminMenu(id); showToast(status?'Post gelöst':'Post angeheftet'); };
     window.toggleVerify = async (userId, current) => { if(confirm(current?"Verifizierung entfernen?":"Nutzer verifizieren?")) { await updateDoc(doc(db,"users",userId), { verified: !current }); showToast(current?'Verifizierung entfernt':'Nutzer verifiziert'); } };
-    window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); lucide.createIcons(); };
+    window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden'); if(window.lucide) lucide.createIcons(); };
     window.deletePost = async (id) => { if(confirm("Post wirklich löschen?")) { await deleteDoc(doc(db,"posts",id)); showToast('Post gelöscht'); } };
     
     window.toggleLike = async (id) => { 

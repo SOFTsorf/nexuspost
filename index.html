@@ -192,14 +192,7 @@
         .story-action-btns { position: absolute; top: 20px; right: 12px; display: flex; gap: 10px; z-index: 15; }
         .story-action-btn { background: rgba(0,0,0,0.4); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        /* POLL */
-        .poll-option { display: flex; align-items: center; gap: 10px; background: var(--ios-input); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; position: relative; overflow: hidden; transition: background 0.2s; border: 1.5px solid transparent; }
-        .poll-option.voted { border-color: var(--nexus); }
-        .poll-bar { position: absolute; left: 0; top: 0; height: 100%; background: var(--nexus-soft); border-radius: 10px; transition: width 0.5s ease; z-index: 0; }
-        .poll-label { position: relative; z-index: 1; font-size: 14.5px; font-weight: 500; flex-grow: 1; }
-        .poll-pct { position: relative; z-index: 1; font-size: 13px; font-weight: 600; color: var(--nexus); }
-
-        /* EMOJI PICKER - FIXED */
+        /* EMOJI PICKER - NEU MIT SCROLLBAREM GRID */
         .emoji-picker-popup { 
             position: absolute; 
             bottom: calc(100% + 10px); 
@@ -207,22 +200,42 @@
             transform: translateX(-50%);
             background: var(--card); 
             border: 0.5px solid var(--border); 
-            border-radius: 14px; 
-            padding: 8px 10px; 
-            display: flex; 
-            flex-wrap: nowrap;
-            width: max-content;
-            gap: 8px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            border-radius: 16px; 
+            padding: 12px; 
+            display: grid; 
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            width: 260px;
+            max-height: 180px;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.18); 
             z-index: 2000; 
             animation: fadeInEmoji 0.15s ease forwards; 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
+        .emoji-picker-popup::-webkit-scrollbar { display: none; } /* Scrollbar verstecken für cleanen Look */
+        
         @keyframes fadeInEmoji {
-            from { opacity: 0; transform: translate(-50%, 5px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+            from { opacity: 0; transform: translate(-50%, 5px) scale(0.95); }
+            to { opacity: 1; transform: translate(-50%, 0) scale(1); }
         }
-        .emoji-btn-pick { font-size: 22px; cursor: pointer; padding: 4px; border-radius: 8px; border: none; background: none; transition: transform 0.1s; }
-        .emoji-btn-pick:hover { transform: scale(1.3); }
+        .emoji-btn-pick { 
+            font-size: 24px; 
+            cursor: pointer; 
+            padding: 6px; 
+            border-radius: 10px; 
+            border: none; 
+            background: transparent; 
+            transition: transform 0.1s, background 0.15s; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .emoji-btn-pick:hover { 
+            transform: scale(1.2); 
+            background: var(--ios-input); 
+        }
 
         /* TOAST */
         #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 500; z-index: 9999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
@@ -480,7 +493,9 @@
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
     const adminEmail = "boxenjob5@gmail.com";
     const verifiedIcon = "https://lh3.googleusercontent.com/d/1c-ECuznD4JebaHyVW7X3FmYG6PggkMsT";
-    const REACTIONS = ['❤️','😂','😮','😢','👍','🔥'];
+    
+    // Grosse Emoji-Auswahl fürs PopUp!
+    const REACTIONS = ['👍','❤️','😂','😮','😢','😡','🔥','👏','🙌','🎉','💯','✨','😍','🥰','😎','🤔','🤮','💔','🤫','🙄','🤤','🥴','🥳','🤯','🤗','💩','💀','👽','👀','🧠'];
 
     let userData = null;
 

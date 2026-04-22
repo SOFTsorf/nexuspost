@@ -64,16 +64,14 @@
         .login-title { color: white; font-family: 'Syne', sans-serif;
             font-size: 32px; font-weight: 800; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .login-subtitle { color: rgba(255,255,255,0.9); font-size: 15px; margin-bottom: 32px; text-align: center; font-weight: 500;
-        }
+        .login-subtitle { color: rgba(255,255,255,0.9); font-size: 15px; margin-bottom: 32px; text-align: center; font-weight: 500; }
         #btn-login {
             background: white !important;
             color: #1c1e21 !important; border-radius: 28px; padding: 14px 28px;
             font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;
             border: none; cursor: pointer; font-size: 16px; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 12px;
         }
-        #btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
+        #btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
         /* ── NAV ── */
         nav {
@@ -93,8 +91,7 @@
         .nav-btn { background: none; border: none;
             color: var(--text); cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; position: relative;
         }
-        .nav-btn:hover { background: var(--ios-input);
-        }
+        .nav-btn:hover { background: var(--ios-input); }
 
         /* ── NOTIF BADGE ── */
         .notif-badge {
@@ -107,23 +104,18 @@
         }
 
         /* ── SEARCH ── */
-        .search-wrapper { display: flex;
-            align-items: center; }
-        .search-wrapper.active { flex-grow: 1;
-        }
+        .search-wrapper { display: flex; align-items: center; }
+        .search-wrapper.active { flex-grow: 1; }
         .search-container { display: flex; align-items: center; background: var(--ios-input); border-radius: 10px;
             padding: 0 10px; height: 34px; width: 36px; cursor: pointer; overflow: hidden; transition: width 0.3s;
         }
-        .search-wrapper.active .search-container { width: 100%;
-        }
+        .search-wrapper.active .search-container { width: 100%; }
         .search-input { border: none; background: none; color: var(--text); font-size: 15px; width: 0;
             outline: none; font-family: inherit; }
-        .search-wrapper.active .search-input { width: 100%; padding-left: 8px;
-        }
+        .search-wrapper.active .search-input { width: 100%; padding-left: 8px; }
 
         /* ── CONTAINER ── */
-        .container { max-width: 600px;
-            margin: 0 auto; padding: 0 12px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 0 12px; }
 
         /* ── TABS ── */
         .feed-tabs { display: flex;
@@ -132,27 +124,20 @@
         .feed-tab { flex: 1; padding: 11px; border: none; background: none; color: var(--sub);
             font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; border-bottom: 2px solid transparent;
         }
-        .feed-tab.active { color: var(--nexus); border-bottom-color: var(--nexus); background: var(--nexus-soft);
-        }
+        .feed-tab.active { color: var(--nexus); border-bottom-color: var(--nexus); background: var(--nexus-soft); }
 
         /* ── STORIES ── */
         #stories-bar { overflow-x: auto;
             display: flex; gap: 12px; padding: 14px 12px 8px; max-width: 600px; margin: 0 auto; scrollbar-width: none;
         }
-        #stories-bar::-webkit-scrollbar { display: none;
-        }
-        .story-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer;
-            flex-shrink: 0; }
+        #stories-bar::-webkit-scrollbar { display: none; }
+        .story-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex-shrink: 0; }
         .story-ring { width: 58px; height: 58px; border-radius: 50%; padding: 2.5px;
             background: conic-gradient(var(--nexus), #a78bfa, #f43f5e, var(--nexus)); }
-        .story-ring.unseen { background: conic-gradient(var(--nexus), #a78bfa, var(--nexus));
-        }
-        .story-ring.seen { background: var(--border);
-        }
-        .story-ring-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--card); padding: 2px;
-            overflow: hidden; }
-        .story-ring-inner img { width: 100%; height: 100%; border-radius: 50%;
-            object-fit: cover; }
+        .story-ring.unseen { background: conic-gradient(var(--nexus), #a78bfa, var(--nexus)); }
+        .story-ring.seen { background: var(--border); }
+        .story-ring-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--card); padding: 2px; overflow: hidden; }
+        .story-ring-inner img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
         .story-label { font-size: 11px; color: var(--sub); max-width: 60px; text-align: center;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -165,12 +150,9 @@
         .alert-banner { display: flex;
             align-items: flex-start; gap: 12px; padding: 13px 14px; border-radius: 13px; margin-bottom: 10px; border: 1.5px solid;
         }
-        .alert-warning { border-color: var(--warning); background: rgba(255,149,0,0.09); color: var(--warning);
-        }
-        .alert-info { border-color: #8e8e93; background: rgba(142,142,147,0.09); color: #8e8e93;
-        }
-        .alert-success { border-color: var(--green); background: rgba(52,199,89,0.09); color: var(--green);
-        }
+        .alert-warning { border-color: var(--warning); background: rgba(255,149,0,0.09); color: var(--warning); }
+        .alert-info { border-color: #8e8e93; background: rgba(142,142,147,0.09); color: #8e8e93; }
+        .alert-success { border-color: var(--green); background: rgba(52,199,89,0.09); color: var(--green); }
 
         /* ── POST CARD ── */
         .pinned-label { display: flex;
@@ -178,40 +160,26 @@
         }
         .repost-label { display: flex; align-items: center; gap: 5px; color: var(--sub); font-size: 12px;
             font-weight: 600; margin-bottom: 10px; }
-        .post-header { display: flex; align-items: center; gap: 10px;
-            margin-bottom: 12px; position: relative; }
-        .user-img { width: 42px; height: 42px; border-radius: 50%;
-            object-fit: cover; cursor: pointer; transition: opacity 0.15s; }
-        .user-img:hover { opacity: 0.85;
-        }
-        .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 4px;
-            cursor: pointer; }
-        .display-name:hover { text-decoration: underline;
-        }
-        .verified-badge { width: 16px; height: 16px; flex-shrink: 0;
-        }
-        .post-text { font-size: 15.5px; white-space: pre-wrap; line-height: 1.55;
-        }
-        .hashtag { color: var(--nexus); cursor: pointer; font-weight: 500;
-        }
-        .hashtag:hover { text-decoration: underline;
-        }
-        .mention { color: var(--nexus); cursor: pointer; font-weight: 500;
-        }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; position: relative; }
+        .user-img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; cursor: pointer; transition: opacity 0.15s; }
+        .user-img:hover { opacity: 0.85; }
+        .display-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        .display-name:hover { text-decoration: underline; }
+        .verified-badge { width: 16px; height: 16px; flex-shrink: 0; }
+        .post-text { font-size: 15.5px; white-space: pre-wrap; line-height: 1.55; }
+        .hashtag { color: var(--nexus); cursor: pointer; font-weight: 500; }
+        .hashtag:hover { text-decoration: underline; }
+        .mention { color: var(--nexus); cursor: pointer; font-weight: 500; }
 
         /* ── VIEWS COUNTER ── */
-        .post-views { font-size: 12px;
-            color: var(--sub); display: flex; align-items: center; gap: 4px; margin-top: 8px;
-        }
+        .post-views { font-size: 12px; color: var(--sub); display: flex; align-items: center; gap: 4px; margin-top: 8px; }
 
         /* ── POST IMAGE ── */
         .post-img-wrap { width: calc(100% + 32px);
             margin: 12px -16px -16px -16px; border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); overflow: hidden; border-top: 0.5px solid var(--border);
         }
-        .post-img { width: 100%; display: block; cursor: zoom-in; max-height: 500px; object-fit: cover;
-        }
-        .post-video { width: 100%; display: block; max-height: 500px; object-fit: cover; background: #000;
-        }
+        .post-img { width: 100%; display: block; cursor: zoom-in; max-height: 500px; object-fit: cover; }
+        .post-video { width: 100%; display: block; max-height: 500px; object-fit: cover; background: #000; }
 
         /* ── REACTION BAR ── */
         .reaction-bar { display: flex;
@@ -220,36 +188,26 @@
         .react-btn { background: none; border: none; color: var(--sub); cursor: pointer; display: flex;
             align-items: center; gap: 5px; font-size: 13.5px; font-weight: 500; padding: 6px 10px; border-radius: 20px; transition: background 0.15s, color 0.15s; font-family: inherit;
             position: relative; }
-        .react-btn:hover { background: var(--ios-input);
-        }
-        .react-btn.active { color: var(--nexus); background: var(--nexus-soft);
-        }
-        .react-btn.liked { color: #ff3b30; background: rgba(255,59,48,0.1);
-        }
-        .react-btn.bookmarked { color: var(--nexus); background: var(--nexus-soft);
-        }
-        .emoji-reaction-bar { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap;
-        }
+        .react-btn:hover { background: var(--ios-input); }
+        .react-btn.active { color: var(--nexus); background: var(--nexus-soft); }
+        .react-btn.liked { color: #ff3b30; background: rgba(255,59,48,0.1); }
+        .react-btn.bookmarked { color: var(--nexus); background: var(--nexus-soft); }
+        .emoji-reaction-bar { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
         .emoji-count { font-size: 13px; display: flex; align-items: center; gap: 3px; background: var(--ios-input);
             padding: 3px 8px; border-radius: 20px; cursor: pointer; user-select: none; transition: transform 0.15s;
         }
-        .emoji-count:hover { transform: scale(1.1);
-        }
+        .emoji-count:hover { transform: scale(1.1); }
 
         /* ── ADMIN MENU ── */
         .admin-menu { position: absolute;
             top: 42px; right: 0; background: var(--card); border: 0.5px solid var(--border); border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); z-index: 1100;
             min-width: 200px; overflow: hidden; animation: fadeIn 0.15s ease; }
-        @keyframes fadeIn { from { opacity:0;
-            transform: scale(0.95) translateY(-5px); } to { opacity:1; transform: scale(1) translateY(0);
-        } }
+        @keyframes fadeIn { from { opacity:0; transform: scale(0.95) translateY(-5px); } to { opacity:1; transform: scale(1) translateY(0); } }
         .admin-menu button { width: 100%; padding: 13px 16px; text-align: left;
             background: none; border: none; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 0.5px solid var(--border);
             font-family: inherit; transition: background 0.15s; }
-        .admin-menu button:last-child { border-bottom: none;
-        }
-        .admin-menu button:hover { background: var(--ios-input);
-        }
+        .admin-menu button:last-child { border-bottom: none; }
+        .admin-menu button:hover { background: var(--ios-input); }
 
         /* ── EDIT POST INLINE ── */
         .edit-post-area { width: 100%;
@@ -257,60 +215,37 @@
             resize: none; min-height: 80px; margin: 8px 0; }
 
         /* ── COMMENTS ── */
-        .comment-card { background: var(--ios-input);
-            border-radius: 12px; padding: 10px 12px; margin-bottom: 7px; position: relative; }
-        .comment-header { display: flex;
-            align-items: center; gap: 8px; margin-bottom: 5px; }
-        .comment-user-img { width: 24px; height: 24px;
-            border-radius: 50%; object-fit: cover; }
-        .comment-display-name { font-weight: 600; font-size: 13px; display: flex;
-            align-items: center; gap: 3px; }
-        .comment-text { font-size: 14px; line-height: 1.45; padding-left: 32px;
-            white-space: pre-wrap; }
-        .comment-time { font-size: 11px; color: var(--sub); margin-left: auto;
-        }
-        .comment-input-area { display: flex; gap: 8px; margin-top: 12px; background: var(--ios-input); border-radius: 22px;
-            padding: 8px 12px; align-items: center; }
+        .comment-card { background: var(--ios-input); border-radius: 12px; padding: 10px 12px; margin-bottom: 7px; position: relative; }
+        .comment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .comment-user-img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+        .comment-display-name { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 3px; }
+        .comment-text { font-size: 14px; line-height: 1.45; padding-left: 32px; white-space: pre-wrap; }
+        .comment-time { font-size: 11px; color: var(--sub); margin-left: auto; }
+        .comment-input-area { display: flex; gap: 8px; margin-top: 12px; background: var(--ios-input); border-radius: 22px; padding: 8px 12px; align-items: center; }
         .comment-delete-btn { position: absolute; top: 8px;
             right: 8px; background: none; border: none; color: var(--sub); cursor: pointer; padding: 2px; border-radius: 50%;
         }
-        .typing-indicator { font-size: 12px; color: var(--sub); padding: 4px 8px; display: flex;
-            align-items: center; gap: 6px; }
-        .typing-dots span { display: inline-block; width: 5px;
-            height: 5px; background: var(--sub); border-radius: 50%; animation: typingDot 1.2s infinite;
-        }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s;
-        }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s;
-        }
-        @keyframes typingDot { 0%,80%,100% { transform: scale(0.7); opacity: 0.5;
-        } 40% { transform: scale(1); opacity: 1; } }
 
         /* ── INPUT BAR ── */
         .ios-footer { position: fixed;
             bottom: 0; left: 0; right: 0; background: var(--tab-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-top: 0.5px solid var(--border);
             padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); z-index: 1000; }
-        .ios-post-box { display: flex;
-            align-items: flex-end; gap: 10px; max-width: 600px; margin: 0 auto; }
+        .ios-post-box { display: flex; align-items: flex-end; gap: 10px; max-width: 600px; margin: 0 auto; }
         .ios-input-container { flex-grow: 1;
             background: var(--ios-input); border-radius: 22px; padding: 9px 16px; color: var(--text); font-size: 15.5px; outline: none; min-height: 22px; max-height: 140px; overflow-y: auto;
             font-family: inherit; line-height: 1.4; }
-        .ios-input-container:empty:before { content: attr(placeholder); color: var(--sub);
-        }
+        .ios-input-container:empty:before { content: attr(placeholder); color: var(--sub); }
         .send-btn { background: var(--nexus); color: white; border: none; width: 34px; height: 34px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: transform 0.15s, opacity 0.15s;
         }
-        .send-btn:active { transform: scale(0.92);
-        }
-        .media-btn-group { display: flex; align-items: center; gap: 4px;
-        }
+        .send-btn:active { transform: scale(0.92); }
+        .media-btn-group { display: flex; align-items: center; gap: 4px; }
 
         /* ── LIGHTBOX ── */
         .lightbox { position: fixed;
             top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px); }
-        #lightbox-img { max-width: 95%; max-height: 88vh; border-radius: 12px; object-fit: contain;
-        }
+        #lightbox-img { max-width: 95%; max-height: 88vh; border-radius: 12px; object-fit: contain; }
         .close-lightbox-btn { position: absolute; top: env(safe-area-inset-top, 30px); right: 18px; background: rgba(255,255,255,0.18);
             color: white; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
@@ -325,73 +260,46 @@
             padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); border-top: 0.5px solid var(--border);
             max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease;
         }
-        @keyframes slideUp { from { transform: translateY(100%);
-        } to { transform: translateY(0); } }
-        .profile-modal-header { display: flex; align-items: center;
-            gap: 16px; margin-bottom: 20px; }
-        .profile-modal-avatar { width: 72px; height: 72px; border-radius: 50%;
-            object-fit: cover; border: 3px solid var(--nexus); }
-        .profile-modal-name { font-family: 'Syne', sans-serif;
-            font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 5px;
-        }
-        .profile-modal-username { font-size: 14px; color: var(--sub); margin-top: 2px;
-        }
-        .profile-modal-bio { font-size: 14px; line-height: 1.55; color: var(--text); margin-top: 8px;
-        }
-        .profile-modal-posts { margin-top: 16px;
-        }
-        .profile-modal-posts-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sub);
-            margin-bottom: 12px; }
-        .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
-            border-radius: 12px; overflow: hidden; }
-        .profile-grid-item { aspect-ratio: 1; overflow: hidden; cursor: pointer;
-            background: var(--ios-input); position: relative; }
-        .profile-grid-item img { width: 100%; height: 100%;
-            object-fit: cover; transition: transform 0.2s; }
-        .profile-grid-item:hover img { transform: scale(1.05);
-        }
-        .profile-grid-placeholder { aspect-ratio: 1; background: var(--ios-input); display: flex; align-items: center; justify-content: center;
-            border-radius: 4px; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .profile-modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .profile-modal-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nexus); }
+        .profile-modal-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+        .profile-modal-username { font-size: 14px; color: var(--sub); margin-top: 2px; }
+        .profile-modal-bio { font-size: 14px; line-height: 1.55; color: var(--text); margin-top: 8px; }
+        .profile-modal-posts { margin-top: 16px; }
+        .profile-modal-posts-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sub); margin-bottom: 12px; }
+        .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; border-radius: 12px; overflow: hidden; }
+        .profile-grid-item { aspect-ratio: 1; overflow: hidden; cursor: pointer; background: var(--ios-input); position: relative; }
+        .profile-grid-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
+        .profile-grid-item:hover img { transform: scale(1.05); }
 
         /* ── NOTIFICATIONS PANEL ── */
         #notif-panel { position: fixed;
             top: 54px; right: 0; width: min(360px, 100vw); height: calc(100vh - 54px); background: var(--card); border-left: 0.5px solid var(--border); z-index: 1500;
             transform: translateX(100%); transition: transform 0.3s ease; overflow-y: auto; box-shadow: -8px 0 30px rgba(0,0,0,0.15);
         }
-        #notif-panel.open { transform: translateX(0);
-        }
+        #notif-panel.open { transform: translateX(0); }
         .notif-panel-header { padding: 16px 16px 12px; border-bottom: 0.5px solid var(--border); display: flex;
             justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 10;
         }
-        .notif-panel-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
-        }
+        .notif-panel-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
         .notif-item { padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px;
             border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.15s; }
-        .notif-item:hover { background: var(--ios-input);
-        }
-        .notif-item.unread { background: var(--nexus-soft);
-        }
-        .notif-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
-        }
+        .notif-item:hover { background: var(--ios-input); }
+        .notif-item.unread { background: var(--nexus-soft); }
+        .notif-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .notif-icon-badge { position: absolute; bottom: -2px; right: -2px; width: 18px; height: 18px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card); font-size: 9px;
         }
-        .notif-text { font-size: 14px; line-height: 1.4;
-        }
-        .notif-text strong { font-weight: 600;
-        }
-        .notif-time { font-size: 12px; color: var(--sub); margin-top: 3px;
-        }
-        .notif-empty { padding: 40px 20px; text-align: center; color: var(--sub); font-size: 15px;
-        }
+        .notif-text { font-size: 14px; line-height: 1.4; }
+        .notif-text strong { font-weight: 600; }
+        .notif-time { font-size: 12px; color: var(--sub); margin-top: 3px; }
+        .notif-empty { padding: 40px 20px; text-align: center; color: var(--sub); font-size: 15px; }
 
         /* ── BOOKMARKS SCREEN ── */
-        #bookmarks-screen { display: none;
-            padding-top: 16px; }
-        .bookmarks-header { display: flex; align-items: center; gap: 14px;
-            padding: 0 0 20px; }
-        .bookmarks-header h2 { font-family: 'Syne', sans-serif; font-size: 24px;
-            font-weight: 800; margin: 0; }
+        #bookmarks-screen { display: none; padding-top: 16px; }
+        .bookmarks-header { display: flex; align-items: center; gap: 14px; padding: 0 0 20px; }
+        .bookmarks-header h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin: 0; }
 
         /* ── TRENDING ── */
         .trending-card { background: var(--card);
@@ -402,89 +310,59 @@
         .trending-item { display: flex; align-items: center;
             gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.15s;
         }
-        .trending-item:last-child { border-bottom: none;
-        }
-        .trending-item:hover .trending-tag { text-decoration: underline;
-        }
-        .trending-tag { font-weight: 700; font-size: 15px; color: var(--nexus);
-        }
-        .trending-count { font-size: 12px; color: var(--sub); margin-top: 1px;
-        }
-        .trending-num { font-size: 13px; color: var(--sub); margin-left: auto; font-weight: 600; min-width: 24px;
-            text-align: right; }
+        .trending-item:last-child { border-bottom: none; }
+        .trending-item:hover .trending-tag { text-decoration: underline; }
+        .trending-tag { font-weight: 700; font-size: 15px; color: var(--nexus); }
+        .trending-count { font-size: 12px; color: var(--sub); margin-top: 1px; }
 
         /* ── SETTINGS SCREEN ── */
-        #settings-screen { padding-top: 16px;
-        }
-        .settings-header { display: flex; align-items: center; gap: 14px; padding: 0 0 20px;
-        }
-        .settings-header h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin: 0;
-        }
+        #settings-screen { padding-top: 16px; }
+        .settings-header { display: flex; align-items: center; gap: 14px; padding: 0 0 20px; }
+        .settings-header h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin: 0; }
         .settings-back-btn { background: var(--ios-input); border: none; color: var(--text); width: 34px; height: 34px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
-        .settings-section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--sub);
-            margin: 20px 0 8px 4px; }
-        .settings-card { background: var(--card); border-radius: var(--radius);
-            border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 4px; }
+        .settings-section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--sub); margin: 20px 0 8px 4px; }
+        .settings-card { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 4px; }
         .settings-row { display: flex;
             align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.15s;
         }
-        .settings-row:last-child { border-bottom: none;
-        }
-        .settings-row:hover { background: var(--ios-input);
-        }
-        .settings-row-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center;
-            justify-content: center; flex-shrink: 0; }
-        .settings-row-label { flex-grow: 1; font-size: 15px; font-weight: 500;
-        }
-        .settings-row-value { font-size: 14px; color: var(--sub);
-        }
-        .settings-row-chevron { color: var(--sub);
-        }
+        .settings-row:last-child { border-bottom: none; }
+        .settings-row:hover { background: var(--ios-input); }
+        .settings-row-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .settings-row-label { flex-grow: 1; font-size: 15px; font-weight: 500; }
+        .settings-row-value { font-size: 14px; color: var(--sub); }
+        .settings-row-chevron { color: var(--sub); }
         .settings-toggle { width: 46px; height: 26px; border-radius: 13px; background: #ccc; position: relative;
             cursor: pointer; transition: background 0.25s; border: none; flex-shrink: 0; }
-        .settings-toggle.on { background: var(--green);
-        }
+        .settings-toggle.on { background: var(--green); }
         .settings-toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px;
             height: 20px; border-radius: 50%; background: white; transition: left 0.25s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .settings-toggle.on::after { left: 23px;
-        }
-        .theme-picker { display: flex; gap: 10px; padding: 14px 16px;
-        }
+        .settings-toggle.on::after { left: 23px; }
+        .theme-picker { display: flex; gap: 10px; padding: 14px 16px; }
         .theme-dot { width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
             border: 3px solid transparent; transition: border-color 0.2s, transform 0.15s; }
-        .theme-dot:hover { transform: scale(1.1);
-        }
-        .theme-dot.selected { border-color: var(--text);
-        }
-        .profile-preview { display: flex; flex-direction: column; align-items: center; gap: 10px;
-            padding: 24px 16px 20px; }
-        .profile-preview-img { width: 80px; height: 80px; border-radius: 50%;
-            object-fit: cover; border: 3px solid var(--nexus); }
-        .profile-preview-name { font-family: 'Syne', sans-serif;
-            font-size: 18px; font-weight: 700; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;
-        }
-        .profile-preview-username { font-size: 13px; color: var(--sub);
-        }
+        .theme-dot:hover { transform: scale(1.1); }
+        .theme-dot.selected { border-color: var(--text); }
+        .profile-preview { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px 16px 20px; }
+        .profile-preview-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nexus); }
+        .profile-preview-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .profile-preview-username { font-size: 13px; color: var(--sub); }
 
         /* ── MODAL ── */
         .modal-inner { background: var(--card);
             border-radius: 20px; padding: 22px; width: 92%; max-width: 420px; border: 0.5px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.25);
         }
-        .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
-            margin: 0 0 16px; }
+        .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin: 0 0 16px; }
         .modal-input { width: 100%; padding: 12px 14px;
             border: none; border-radius: var(--radius-sm); background: var(--ios-input); color: var(--text); font-size: 15px; font-family: inherit; outline: none; margin-bottom: 10px;
         }
-        select.modal-input { appearance: none; cursor: pointer;
-        }
+        select.modal-input { appearance: none; cursor: pointer; }
         .btn-primary { background: var(--nexus); color: white; border: none; padding: 13px; border-radius: var(--radius-sm);
             font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; font-family: inherit; transition: opacity 0.15s;
         }
-        .btn-primary:active { opacity: 0.8;
-        }
+        .btn-primary:active { opacity: 0.8; }
         .btn-ghost { background: none; border: none; color: var(--danger); font-size: 15px; font-weight: 600;
             cursor: pointer; width: 100%; padding: 12px; font-family: inherit; }
 
@@ -497,25 +375,15 @@
         #story-viewer { background: #000;
             border-radius: 0; width: 100%; max-width: 400px; height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden;
         }
-        #story-progress { position: absolute; top: 10px; left: 10px; right: 10px; display: flex;
-            gap: 4px; z-index: 10; }
-        .story-prog-bar { height: 3px; background: rgba(255,255,255,0.4); border-radius: 2px;
-            flex: 1; overflow: hidden; }
-        .story-prog-fill { height: 100%; background: white; border-radius: 2px;
-        }
-        #story-img { width: 100%; height: 100%; object-fit: cover;
-        }
-        #story-header-overlay { position: absolute; top: 22px; left: 10px; right: 10px; display: flex;
-            align-items: center; gap: 10px; z-index: 10; }
-        .story-header-img { width: 36px; height: 36px;
-            border-radius: 50%; border: 2px solid white; object-fit: cover; }
-        .story-header-name { color: white;
-            font-weight: 600; font-size: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
-        .story-header-time { color: rgba(255,255,255,0.8);
-            font-size: 12px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.5); margin-left: 4px;
-        }
-        .story-action-btns { position: absolute; top: 20px; right: 12px; display: flex; gap: 10px;
-            z-index: 15; }
+        #story-progress { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 4px; z-index: 10; }
+        .story-prog-bar { height: 3px; background: rgba(255,255,255,0.4); border-radius: 2px; flex: 1; overflow: hidden; }
+        .story-prog-fill { height: 100%; background: white; border-radius: 2px; }
+        #story-img { width: 100%; height: 100%; object-fit: cover; }
+        #story-header-overlay { position: absolute; top: 22px; left: 10px; right: 10px; display: flex; align-items: center; gap: 10px; z-index: 10; }
+        .story-header-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
+        .story-header-name { color: white; font-weight: 600; font-size: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+        .story-header-time { color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.5); margin-left: 4px; }
+        .story-action-btns { position: absolute; top: 20px; right: 12px; display: flex; gap: 10px; z-index: 15; }
         .story-action-btn { background: rgba(0,0,0,0.4); border: none; color: white; width: 32px;
             height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
@@ -528,82 +396,52 @@
             position: fixed;
             background: var(--card); border: 0.5px solid var(--border); border-radius: 16px; padding: 12px;
             display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; width: 260px;
-            max-height: 200px;
-            overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 3000;
+            max-height: 200px; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 3000;
             animation: fadeInEmoji 0.15s ease forwards;
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
-        .emoji-picker-popup::-webkit-scrollbar { display: none;
-        }
-        @keyframes fadeInEmoji { from { opacity: 0; transform: scale(0.95);
-        } to { opacity: 1; transform: scale(1); } }
-        .emoji-btn-pick { font-size: 24px;
-            cursor: pointer; padding: 6px; border-radius: 10px; border: none; background: transparent; transition: transform 0.1s, background 0.15s; display: flex; justify-content: center;
-            align-items: center; }
-        .emoji-btn-pick:hover { transform: scale(1.2); background: var(--ios-input);
-        }
+        .emoji-picker-popup::-webkit-scrollbar { display: none; }
+        @keyframes fadeInEmoji { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .emoji-btn-pick { font-size: 24px; cursor: pointer; padding: 6px; border-radius: 10px; border: none; background: transparent; transition: transform 0.1s, background 0.15s; display: flex; justify-content: center; align-items: center; }
+        .emoji-btn-pick:hover { transform: scale(1.2); background: var(--ios-input); }
 
-        /* ── GIF / POLL button style ── */
-        .input-action-btn { background: none;
-            border: 1px solid var(--border); border-radius: 8px; color: var(--sub); cursor: pointer; padding: 3px 8px; font-size: 12px; font-weight: 700; font-family: inherit;
-            transition: all 0.15s; }
-        .input-action-btn:hover { color: var(--nexus); border-color: var(--nexus); background: var(--nexus-soft);
-        }
+        /* ── ACTION BUTTON STYLE ── */
+        .input-action-btn { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--sub); cursor: pointer; padding: 3px 8px; font-size: 12px; font-weight: 700; font-family: inherit; transition: all 0.15s; }
+        .input-action-btn:hover { color: var(--nexus); border-color: var(--nexus); background: var(--nexus-soft); }
 
         /* ── TOAST ── */
         #toast { position: fixed;
             bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 500;
             z-index: 9999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
         }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0);
-        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        .hidden { display: none !important;
-        }
-        .divider { height: 0.5px; background: var(--border); margin: 6px 0;
-        }
+        .hidden { display: none !important; }
+        .divider { height: 0.5px; background: var(--border); margin: 6px 0; }
 
         /* ── POLL ── */
-        .poll-container { margin-top: 10px;
-        }
-        .poll-option { position: relative; overflow: hidden; border-radius: 10px; margin-bottom: 8px;
-            border: 1.5px solid var(--border); cursor: pointer; transition: border-color 0.2s; }
-        .poll-option:hover { border-color: var(--nexus);
-        }
-        .poll-option.voted-this { border-color: var(--nexus);
-        }
-        .poll-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--nexus-soft);
-            transition: width 0.5s ease; z-index: 0; }
-        .poll-label { position: relative; z-index: 1;
-            padding: 10px 12px; font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; align-items: center;
-        }
-        .poll-pct { font-size: 13px; font-weight: 700; color: var(--nexus);
-        }
-        .poll-total { font-size: 12px; color: var(--sub); margin-top: 6px;
-        }
+        .poll-container { margin-top: 10px; }
+        .poll-option { position: relative; overflow: hidden; border-radius: 10px; margin-bottom: 8px; border: 1.5px solid var(--border); cursor: pointer; transition: border-color 0.2s; }
+        .poll-option:hover { border-color: var(--nexus); }
+        .poll-option.voted-this { border-color: var(--nexus); }
+        .poll-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--nexus-soft); transition: width 0.5s ease; z-index: 0; }
+        .poll-label { position: relative; z-index: 1; padding: 10px 12px; font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+        .poll-pct { font-size: 13px; font-weight: 700; color: var(--nexus); }
+        .poll-total { font-size: 12px; color: var(--sub); margin-top: 6px; }
 
         /* ── POLL CREATOR ── */
-        .poll-option-input { display: flex;
-            gap: 8px; margin-bottom: 8px; align-items: center; }
-        .poll-option-input input { flex: 1;
-            padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--ios-input); color: var(--text); font-size: 14px; font-family: inherit; outline: none;
-        }
-        .poll-option-input input:focus { border-color: var(--nexus);
-        }
+        .poll-option-input { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .poll-option-input input { flex: 1; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--ios-input); color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+        .poll-option-input input:focus { border-color: var(--nexus); }
 
         /* ── CHAR COUNTER ── */
-        .char-counter { font-size: 12px;
-            color: var(--sub); text-align: right; margin-top: 4px; }
-        .char-counter.warn { color: var(--warning);
-        }
-        .char-counter.limit { color: var(--danger);
-        }
+        .char-counter { font-size: 12px; color: var(--sub); text-align: right; margin-top: 4px; }
+        .char-counter.warn { color: var(--warning); }
+        .char-counter.limit { color: var(--danger); }
 
         /* ── Animated post entry ── */
-        @keyframes postSlideIn { from { opacity: 0;
-            transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
-        .post-new-anim { animation: postSlideIn 0.3s ease;
-        }
+        @keyframes postSlideIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+        .post-new-anim { animation: postSlideIn 0.3s ease; }
     </style>
 </head>
 <body class="light">
@@ -653,8 +491,12 @@
     <div id="global-alerts"></div>
     <div id="stories-bar"></div>
     <div class="feed-tabs">
-        <button class="feed-tab active" id="tab-feed" onclick="switchTab('feed')">🏠 Feed</button>
-        <button class="feed-tab" id="tab-trending" onclick="switchTab('trending')">🔥 Trending</button>
+        <button class="feed-tab active" id="tab-feed" onclick="switchTab('feed')" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i data-lucide="home" style="width:16px;"></i> Feed
+        </button>
+        <button class="feed-tab" id="tab-trending" onclick="switchTab('trending')" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i data-lucide="flame" style="width:16px;"></i> Trending
+        </button>
     </div>
     <div id="feed"></div>
     <div id="trending-section" class="hidden"></div>
@@ -837,7 +679,9 @@
 <div id="poll-modal" class="lightbox">
     <div class="modal-inner" onclick="event.stopPropagation()">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-            <h3 class="modal-title" style="margin:0;">📊 Umfrage erstellen</h3>
+            <h3 class="modal-title" style="margin:0;display:flex;align-items:center;gap:8px;">
+                <i data-lucide="bar-chart-2" style="width:20px;"></i> Umfrage erstellen
+            </h3>
             <button onclick="closePollModal()" style="background:none;border:none;color:var(--sub);cursor:pointer;"><i data-lucide="x"></i></button>
         </div>
         <textarea id="poll-question" class="modal-input" placeholder="Frage stellen..." style="height:60px;resize:none;margin-bottom:14px;"></textarea>
@@ -880,7 +724,9 @@
                 <i data-lucide="image-plus" style="width:26px;height:26px;"></i>
                 <input type="file" id="image-input" accept="image/*,video/*" class="hidden" onchange="showPreview(event)">
             </label>
-            <button class="input-action-btn" onclick="openPollModal()" title="Umfrage erstellen">📊</button>
+            <button class="input-action-btn" onclick="openPollModal()" title="Umfrage erstellen" style="display:flex;align-items:center;justify-content:center;">
+                <i data-lucide="bar-chart-2" style="width:16px;height:16px;"></i>
+            </button>
         </div>
         <div id="post-input" class="ios-input-container" contenteditable="true" placeholder="Was gibt's Neues?" oninput="onPostInput()"></div>
         <button id="btn-share" class="send-btn"><i data-lucide="arrow-up" style="width:18px;stroke-width:3;"></i></button>
@@ -900,7 +746,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, updateDoc, arrayUnion, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    
     const firebaseConfig = {
         apiKey: "AIzaSyCK6bbGtKyuLphYGtxqnAvvnGtMyh2ejV4",
         authDomain: "nexuspost-a00b1.firebaseapp.com",
@@ -909,23 +754,19 @@
         messagingSenderId: "124843068065",
         appId: "1:124843068065:web:035b15d01910dc6b8d7ee0"
     };
-    
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
-    
     const imgbbKey = "1cb3871dd6829d7133f3285c289ffc0a";
     const adminEmail = "boxenjob5@gmail.com";
     const verifiedIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Roblox_Verification_Badge.svg/3840px-Roblox_Verification_Badge.svg.png";
     const REACTIONS = ['👍','❤️','😂','😮','😢','😡','🔥','👏','🙌','🎉','💯','✨','😍','🥰','😎','🤔','🤮','💔','🤫','🙄','🤤','🥴','🥳','🤯','🤗','💩','💀','👽','👀','🧠'];
     const MAX_CHARS = 500;
-    
     let userData = null;
     let allPosts = [];
     // bookmarks stored locally
     let bookmarkedIds = JSON.parse(localStorage.getItem('nexus_bookmarks') || '[]');
-
     // ── CHAR COUNTER ──
     window.onPostInput = () => {
         const txt = document.getElementById('post-input').innerText;
@@ -935,7 +776,6 @@
         counter.textContent = `${len} / ${MAX_CHARS}`;
         counter.className = 'char-counter' + (len > MAX_CHARS ? ' limit' : len > 400 ? ' warn' : '');
     };
-
     // ── TOAST ──
     window.showToast = (msg) => {
         const t = document.getElementById('toast');
@@ -971,7 +811,6 @@
         expandSearch();
         showToast(`Zeige Posts mit ${tag}`);
     };
-
     // ── TABS ──
     window.switchTab = (tab) => {
         document.getElementById('tab-feed').classList.toggle('active', tab === 'feed');
@@ -980,7 +819,6 @@
         document.getElementById('trending-section').classList.toggle('hidden', tab !== 'trending');
         if (tab === 'trending') renderTrending();
     };
-
     // ── TRENDING ──
     function renderTrending() {
         const hashMap = {};
@@ -1032,7 +870,6 @@
         const term = e.target.value.toLowerCase();
         document.querySelectorAll('#feed .card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none');
     };
-
     // ── DARK MODE ──
     window.toggleDarkMode = () => {
         const isDark = document.body.classList.toggle('dark');
@@ -1051,7 +888,6 @@
         el.classList.add('selected');
         localStorage.setItem('accentTheme', theme);
     };
-
     // ── SETTINGS ──
     window.openSettings = () => {
         document.getElementById('main-content').classList.add('hidden');
@@ -1111,51 +947,34 @@
         showToast('Profilbild aktualisiert ✓');
         e.target.value = '';
     };
-
-    // ── PROFILE MODAL (MIT TRY-CATCH FIX FÜR DEN INDEX-FEHLER) ──
+    // ── PROFILE MODAL ──
     window.openProfileModal = async (uid) => {
-        try {
-            // Erst Userdaten abrufen und Modal sofort anzeigen
-            const uSnap = await getDoc(doc(db, "users", uid));
-            const u = uSnap.data() || {};
-            document.getElementById('pmodal-avatar').src = u.photoURL || '';
-            document.getElementById('pmodal-name').innerHTML = (u.displayname || '–') + (u.verified ? `<img src="${verifiedIcon}" style="width:18px;height:18px;">` : '');
-            document.getElementById('pmodal-username').textContent = '@' + (u.username || '–');
-            document.getElementById('pmodal-bio').textContent = u.bio || '';
-            
-            const grid = document.getElementById('pmodal-grid');
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--sub);font-size:13px;">Lade Posts...</div>';
-            
-            document.getElementById('profile-modal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-
-            try {
-                // Danach versuchen wir die Posts zu laden
-                const userPostsSnap = await getDocs(query(collection(db, "posts"), where("uid", "==", uid), orderBy("timestamp", "desc")));
-                const userPosts = [];
-                userPostsSnap.forEach(d => userPosts.push({ id: d.id, ...d.data() }));
-                
-                const imgPosts = userPosts.filter(p => p.imageUrl);
-                grid.innerHTML = '';
-                
-                if (imgPosts.length === 0) {
-                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--sub);font-size:13px;">Noch keine Bilder gepostet.</div>';
-                } else {
-                    imgPosts.slice(0, 9).forEach(p => {
-                        grid.innerHTML += `<div class="profile-grid-item" onclick="closeProfileModal();openLightbox('${p.imageUrl}')"><img src="${p.imageUrl}" loading="lazy"></div>`;
-                    });
-                }
-            } catch (postError) {
-                // Fängt den Fehler ab, falls der Firestore Composite Index fehlt
-                console.error("Fehler beim Laden der Posts (Index fehlt wahrscheinlich):", postError);
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--danger);font-size:13px;">Posts konnten nicht geladen werden. Klicke F12 (Console) und erstelle den Firebase-Index über den Link.</div>';
-            }
-        } catch (error) {
-            console.error("Allgemeiner Fehler beim Öffnen des Profils:", error);
-            showToast("Fehler beim Öffnen des Profils.");
+        const uSnap = await getDoc(doc(db, "users", uid));
+        const u = uSnap.data() || {};
+        document.getElementById('pmodal-avatar').src = u.photoURL || '';
+        document.getElementById('pmodal-name').innerHTML = (u.displayname || '–') + (u.verified ? `<img src="${verifiedIcon}" style="width:18px;height:18px;">` : '');
+        document.getElementById('pmodal-username').textContent = '@' + (u.username || '–');
+        document.getElementById('pmodal-bio').textContent = u.bio || '';
+        
+        // Load user's posts (images only for grid)
+        const grid = document.getElementById('pmodal-grid');
+        grid.innerHTML = '';
+        
+        // --- FIX 1: Filtere direkt aus allPosts, um Firestore-Composite-Index-Fehler zu vermeiden ---
+        const userPosts = allPosts.filter(p => p.uid === uid);
+        
+        const imgPosts = userPosts.filter(p => p.imageUrl);
+        if (imgPosts.length === 0) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--sub);font-size:13px;">Noch keine Bilder gepostet.</div>';
+        } else {
+            imgPosts.slice(0, 9).forEach(p => {
+                grid.innerHTML += `<div class="profile-grid-item" onclick="closeProfileModal();openLightbox('${p.imageUrl}')"><img src="${p.imageUrl}" loading="lazy"></div>`;
+            });
         }
+        
+        document.getElementById('profile-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     };
-    
     window.closeProfileModal = () => {
         document.getElementById('profile-modal').style.display = 'none';
         document.body.style.overflow = '';
@@ -1168,6 +987,7 @@
         else { bookmarkedIds.push(postId);
         showToast('Gespeichert 🔖'); }
         localStorage.setItem('nexus_bookmarks', JSON.stringify(bookmarkedIds));
+        // Update button UI
         const btn = document.querySelector(`#post-${postId} .bookmark-btn`);
         if (btn) btn.classList.toggle('bookmarked', bookmarkedIds.includes(postId));
     };
@@ -1197,6 +1017,7 @@
                 const u = uSnap.data() || {};
                 const div = document.createElement('div');
                 div.className = 'card';
+                
                 div.innerHTML = renderPostHTML(p, u);
                 feed.appendChild(div);
                 if(window.lucide) lucide.createIcons({root: div});
@@ -1246,6 +1067,7 @@
     };
     async function sendNotification(toUid, type, postId, preview='') {
         if (toUid === auth.currentUser.uid) return;
+        // Don't notify yourself
         await addDoc(collection(db, "users", toUid, "notifications"), {
             type, postId, preview,
             fromUid: auth.currentUser.uid,
@@ -1267,7 +1089,6 @@
         document.body.style.overflow = vis ? '' : 'hidden';
         if(window.lucide) lucide.createIcons();
     };
-
     // ── AUTH ──
     window.logoutUser = async () => {
         if (confirm('Wirklich abmelden?')) { await signOut(auth);
@@ -1334,7 +1155,6 @@
         });
     }
     window.deleteAlert = (id) => deleteDoc(doc(db,"alerts",id));
-
     // ── STORIES ──
     let globalStories = {};
     let currentStoryUser = null;
@@ -1447,10 +1267,9 @@
     };
     window.nextStory = (e) => { if(e) e.stopPropagation(); currentStoryIndex++; renderCurrentStory(); };
     window.prevStory = (e) => { if(e) e.stopPropagation();
-        if(currentStoryIndex > 0) { currentStoryIndex--; renderCurrentStory(); } };
+    if(currentStoryIndex > 0) { currentStoryIndex--; renderCurrentStory(); } };
     window.closeStoryViewer = () => { clearTimeout(storyTimer); document.getElementById('story-lightbox').style.display='none'; document.body.style.overflow=''; };
     window.deleteStory = async (id) => { if(confirm("Story löschen?")) { await deleteDoc(doc(db,"stories",id)); showToast('Story gelöscht'); nextStory(); } };
-
     // ── POLL ──
     window.openPollModal = () => { document.getElementById('poll-modal').style.display='flex'; if(window.lucide) lucide.createIcons(); };
     window.closePollModal = () => document.getElementById('poll-modal').style.display='none';
@@ -1475,7 +1294,7 @@
         await addDoc(collection(db,"posts"), { text: question, poll: pollData, uid: auth.currentUser.uid, timestamp: serverTimestamp(), likes: [], reactions: {}, isPinned: false });
         closePollModal();
         document.getElementById('poll-question').value = '';
-        showToast('Umfrage gepostet 📊');
+        showToast('Umfrage gepostet ✓');
     };
     window.votePoll = async (postId, optionIndex) => {
         const ref = doc(db,"posts",postId);
@@ -1490,7 +1309,6 @@
         }
         await updateDoc(ref, { poll });
     };
-
     // ── REPOST ──
     window.repostPost = async (postId) => {
         const snap = await getDoc(doc(db,"posts",postId));
@@ -1507,7 +1325,6 @@
         sendNotification(p.uid, 'repost', postId);
         showToast('Repostet! 🔁');
     };
-
     // ── EDIT POST ──
     window.startEditPost = (postId, encodedText) => {
         const postCard = document.getElementById('post-'+postId);
@@ -1533,7 +1350,8 @@
     };
 
     // ── FEED ──
-    function encodeEmoji(e) { return e.codePointAt(0).toString(16); }
+    function encodeEmoji(e) { return e.codePointAt(0).toString(16);
+    }
 
     function renderPostHTML(p, u) {
         const likes = Array.isArray(p.likes) ?
@@ -1555,7 +1373,6 @@
                 </span>`;
             }
         });
-
         // Poll HTML
         let pollHTML = '';
         if (p.poll) {
@@ -1565,6 +1382,7 @@
                 ${p.poll.options.map((opt, i) => {
                     const pct = totalVotes ? Math.round((opt.votes||[]).length / totalVotes * 100) : 0;
                     const isMyVote = myVoteIdx === i;
+                
                     return `<div class="poll-option ${isMyVote?'voted-this':''}" onclick="votePoll('${p.id}',${i})">
                         <div class="poll-fill" style="width:${myVoteIdx > -1 ? pct : 0}%"></div>
                         <div class="poll-label">
@@ -1573,14 +1391,14 @@
                         </div>
                     </div>`;
                 }).join('')}
-                <div class="poll-total">${totalVotes} Stimme${totalVotes !== 1 ? 'n' : ''}</div>
+                 <div class="poll-total">${totalVotes} Stimme${totalVotes !== 1 ?
+                'n' : ''}</div>
             </div>`;
         }
 
         const repostLabelHTML = p.repostOf ? `<div class="repost-label"><i data-lucide="repeat-2" style="width:14px;"></i> Repost</div>` : '';
         const editedHTML = p.edited ? `<span style="font-size:11px;color:var(--sub);"> (bearbeitet)</span>` : '';
         const viewsCount = p.views || 0;
-
         return `
             ${p.isPinned ?
             `<div class="pinned-label"><i data-lucide="pin" style="width:13px;"></i> Von NEXUS fixiert</div>` : ''}
@@ -1598,7 +1416,8 @@
                     ${isOwner ?
                     `<button onclick="startEditPost('${p.id}','${encodeURIComponent(p.text||'')}')"><i data-lucide="pen-line" style="width:15px;"></i> Bearbeiten</button>` : ''}
                     ${isAdmin ?
-                    `<button onclick="togglePin('${p.id}',${p.isPinned||false})"><i data-lucide="pin" style="width:15px;"></i> ${p.isPinned?'Lösen':'Anpinnen'}</button>
+                    `
+                    <button onclick="togglePin('${p.id}',${p.isPinned||false})"><i data-lucide="pin" style="width:15px;"></i> ${p.isPinned?'Lösen':'Anpinnen'}</button>
                     <button onclick="toggleVerify('${uid}',${u.verified||false})"><i data-lucide="shield-check" style="width:15px;"></i> ${u.verified?'Ent-verifizieren':'Verifizieren'}</button>` : ''}
                     ${isAdmin||isOwner ?
                     `<button onclick="deletePost('${p.id}')" style="color:var(--danger);"><i data-lucide="trash-2" style="width:15px;"></i> Löschen</button>` : ''}
@@ -1658,6 +1477,7 @@
                     const pid = 'post-'+p.id;
                     const likes = Array.isArray(p.likes) ? p.likes : [];
                     const hasLiked = likes.includes(auth.currentUser?.uid);
+                    
                     const isBookmarked = bookmarkedIds.includes(p.id);
                     const reactions = p.reactions || {};
 
@@ -1684,12 +1504,13 @@
                             </span>`;
                         }
                     });
-                    
                     if (isNew) {
                         div.innerHTML = renderPostHTML(p, u);
                         if(window.lucide) lucide.createIcons({root: div});
+                        // Track view
                         trackView(p.id);
                     } else {
+                        // Selective update
                         const likeBtn = div.querySelector('.like-btn');
                         if(likeBtn) {
                             likeBtn.className = `react-btn like-btn ${hasLiked?'liked':''}`;
@@ -1706,6 +1527,7 @@
                         if(emojiWrap) emojiWrap.innerHTML = reactionHTML ? `<div class="emoji-reaction-bar" style="margin-top:10px;">${reactionHTML}</div>` : '';
                         const timeSpan = div.querySelector('.post-time');
                         if(timeSpan) timeSpan.textContent = timeAgo(p.timestamp);
+                        // Update poll
                         if (p.poll) {
                             const pollContainer = div.querySelector('.poll-container');
                             if (pollContainer) {
@@ -1736,28 +1558,36 @@
         try { await updateDoc(doc(db,"posts",postId), { views: increment(1) }); } catch(e) {}
     }
 
-    // ── EMOJI PICKER ──
+    // ── EMOJI PICKER (BUGFIX: uses fixed positioning) ──
     window.toggleEmojiPicker = (e, id) => {
         e.stopPropagation();
+        // Remove any existing pickers
         document.querySelectorAll('.emoji-picker-popup').forEach(p => p.remove());
+        
         const btn = e.currentTarget;
         const rect = btn.getBoundingClientRect();
+        
         const picker = document.createElement('div');
         picker.className = 'emoji-picker-popup';
         picker.id = 'emoji-picker-'+id;
         picker.innerHTML = REACTIONS.map(em => `<button class="emoji-btn-pick" onclick="toggleReaction('${id}','${encodeEmoji(em)}'); this.closest('.emoji-picker-popup').remove();">${em}</button>`).join('');
+        
+        // Position it above the button, centered
         document.body.appendChild(picker);
         const pickerRect = picker.getBoundingClientRect();
         let top = rect.top - pickerRect.height - 10;
         let left = rect.left + rect.width/2 - pickerRect.width/2;
+        // Keep within viewport
         if (top < 60) top = rect.bottom + 10;
         if (left < 8) left = 8;
         if (left + 260 > window.innerWidth) left = window.innerWidth - 268;
         picker.style.top = top + 'px';
         picker.style.left = left + 'px';
+        
         if(window.lucide) lucide.createIcons({root: picker});
     };
-
+    
+    // --- FIX 2: Added class support to dismiss modals appropriately ---
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.emoji-picker-popup') && !e.target.closest('[onclick*="toggleEmojiPicker"]')) {
             document.querySelectorAll('.emoji-picker-popup').forEach(p => p.remove());
@@ -1765,7 +1595,8 @@
         if (!e.target.closest('.admin-menu') && !e.target.closest('[onclick^="toggleAdminMenu"]') && !e.target.closest('#nav-more-btn')) {
             document.querySelectorAll('.admin-menu').forEach(m => m.classList.add('hidden'));
         }
-        if (!e.target.closest('#notif-panel') && !e.target.closest('#notif-btn')) {
+        // --- FIX 2 ---
+        if (!e.target.closest('#notif-panel') && !e.target.closest('#notif-btn') && !e.target.closest('#notif-btn-clone')) {
             document.getElementById('notif-panel')?.classList.remove('open');
         }
         if (!e.target.closest('#nav-dropdown') && !e.target.closest('#nav-more-btn')) {
@@ -1794,7 +1625,6 @@
         if (navigator.share) navigator.share({ title: 'NexusPost', url });
         else { navigator.clipboard?.writeText(url); showToast('Link kopiert 🔗'); }
     };
-
     // ── COMMENTS ──
     window.showComments = async (postId) => {
         const container = document.getElementById('comments-section-'+postId);
@@ -1840,13 +1670,14 @@
         const input = document.getElementById('input-'+postId);
         const text = input.value.trim(); if(!text) return;
         input.value = '';
+        // Get post owner for notification
         const postSnap = await getDoc(doc(db,"posts",postId));
         const postData = postSnap.data();
         await addDoc(collection(db,"posts",postId,"comments"), { text, uid: auth.currentUser.uid, displayname: userData.displayname, photoURL: userData.photoURL, verified: userData.verified||false, timestamp: serverTimestamp() });
+        // Send notification
         sendNotification(postData.uid, 'comment', postId, text.slice(0,50));
     };
     window.deleteComment = async (postId, commentId) => { if(confirm("Kommentar löschen?")) await deleteDoc(doc(db,"posts",postId,"comments",commentId)); };
-
     // ── ADMIN ──
     window.togglePin = async (id, status) => { await updateDoc(doc(db,"posts",id), { isPinned: !status });
     toggleAdminMenu(id); showToast(status?'Post gelöst':'Post angeheftet 📌'); };
@@ -1855,7 +1686,6 @@
     window.toggleAdminMenu = (id) => { document.querySelectorAll('.admin-menu').forEach(m => { if(m.id !== 'menu-'+id) m.classList.add('hidden'); }); document.getElementById('menu-'+id)?.classList.toggle('hidden');
     if(window.lucide) lucide.createIcons(); };
     window.deletePost = async (id) => { if(confirm("Post wirklich löschen?")) { await deleteDoc(doc(db,"posts",id)); showToast('Post gelöscht'); } };
-
     window.toggleLike = async (id, ownerUid) => {
         const ref = doc(db,"posts",id);
         const uid = auth.currentUser.uid;
@@ -1865,7 +1695,6 @@
         await updateDoc(ref, { likes: isLiking ? arrayUnion(uid) : arrayRemove(uid) });
         if (isLiking) sendNotification(ownerUid, 'like', id);
     };
-
     // ── IMAGES / LIGHTBOX ──
     window.openLightbox = (url) => { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').style.display='flex'; document.body.style.overflow='hidden'; };
     window.closeLightbox = () => { document.getElementById('lightbox').style.display='none'; document.body.style.overflow=''; };
@@ -1880,7 +1709,6 @@
         r.readAsDataURL(f);
     };
     window.clearPreview = () => { document.getElementById('image-input').value=''; document.getElementById('preview-container').classList.add('hidden'); };
-
     // ── POST ──
     document.getElementById('btn-share').onclick = async () => {
         const txt = document.getElementById('post-input').innerText.trim();
@@ -1905,7 +1733,7 @@
         showToast('Post veröffentlicht 🚀');
     };
     document.getElementById('post-input').addEventListener('keydown', (e) => { if(e.key==='Enter' && !e.shiftKey && !e.ctrlKey) { e.preventDefault(); document.getElementById('btn-share').click(); } });
-
+    
     // ── RESPONSIVE HEADER ──
     window.adaptNavbar = () => {
         const nav = document.getElementById('navbar');
@@ -1919,10 +1747,12 @@
         allItems.forEach(item => { if(item.id==='admin-alert-btn' && auth?.currentUser?.email !== adminEmail) return; item.style.display='flex'; });
         moreBtn.style.display='none';
         dropdown.innerHTML=''; dropdown.classList.add('hidden');
+        
         const checkOverflow = () => {
             const logo = document.getElementById('nav-logo');
             return (logo.offsetWidth + searchWrap.offsetWidth + itemsContainer.offsetWidth + 60) > nav.clientWidth;
         };
+        
         if (checkOverflow()) {
             moreBtn.style.display='flex';
             for (let i = 0; i < allItems.length; i++) {
@@ -1932,6 +1762,10 @@
                 let iconName = btn.querySelector('i')?.getAttribute('data-lucide') || 'circle';
                 let label = btn.getAttribute('data-label') || 'Option';
                 let clone = document.createElement('button');
+                
+                // --- FIX 2: Füge die ID zum geklonten Notif-Button hinzu ---
+                if (btn.id === 'notif-btn') clone.id = 'notif-btn-clone';
+                
                 clone.innerHTML = `<i data-lucide="${iconName}" style="width:16px;"></i> ${label}`;
                 clone.onclick = () => { dropdown.classList.add('hidden'); btn.click(); };
                 dropdown.appendChild(clone);

@@ -42,6 +42,14 @@
             min-height: 100vh;
         }
 
+        /* ── FEATURE 2: BILDER-DOWNLOAD / POPUP BLOCKIEREN ── */
+        img {
+            -webkit-touch-callout: none; /* Deaktiviert das Halten-Menü unter iOS */
+            -webkit-user-select: none; /* Safari */
+            user-select: none; /* Deaktiviert die Markierbarkeit */
+            -webkit-user-drag: none; /* Verhindert das Ziehen (Drag & Drop) */
+        }
+
         /* ── LOGIN ── */
         #login-screen {
             background: linear-gradient(135deg, #1877f2, #8b5cf6);
@@ -479,7 +487,7 @@
         .story-prog-bar { height: 3px; background: rgba(255,255,255,0.4); border-radius: 2px; flex: 1; overflow: hidden; }
         .story-prog-fill { height: 100%; background: white; border-radius: 2px; }
         #story-img { width: 100%; height: 100%; object-fit: cover; animation: fadeIn 0.3s ease; }
-        #story-header-overlay { position: absolute; top: 22px; left: 10px; right: 10px; display: flex; align-items: center; gap: 10px; z-index: 10; }
+        #story-header-overlay { position: absolute; top: 22px; left: 10px; right: 10px; display: flex; align-items: center; gap: 10px; z-index: 10; pointer-events: none; }
         .story-header-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
         .story-header-name { color: white; font-weight: 600; font-size: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
         .story-header-time { color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.5); margin-left: 4px; }
@@ -490,7 +498,7 @@
         .story-action-btn:hover { background: rgba(0,0,0,0.7); transform: scale(1.1); }
         #story-time-left { position: absolute; bottom: calc(env(safe-area-inset-bottom, 20px) + 20px); left: 50%;
             transform: translateX(-50%); color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; text-shadow: 0 2px 6px rgba(0,0,0,0.8); z-index: 20; background: rgba(0,0,0,0.5); padding: 6px 14px;
-            border-radius: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+            border-radius: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); pointer-events: none;}
 
         /* ── EMOJI PICKER ── */
         .emoji-picker-popup {
@@ -714,10 +722,10 @@
     </div>
     <div class="settings-section-title">Info</div>
     <div class="settings-card">
-        <div class="settings-row" onclick="showToast('NexusPost v154.0 – Danke fürs Nutzen! 💙')">
+        <div class="settings-row" onclick="showToast('NexusPost v155.0 – Danke fürs Nutzen! 💙')">
             <div class="settings-row-icon" style="background:#1877f2;"><i data-lucide="info" style="width:16px;color:white;"></i></div>
             <span class="settings-row-label">Version</span>
-            <span class="settings-row-value">v154.0</span>
+            <span class="settings-row-value">v155.0</span>
         </div>
         <div class="settings-row" onclick="showToast('Feedback wurde gesendet!')">
             <div class="settings-row-icon" style="background:#ff9500;"><i data-lucide="flag" style="width:16px;color:white;"></i></div>
@@ -822,8 +830,15 @@
             <button id="story-del-btn" class="hidden story-action-btn" style="background:rgba(255,59,48,0.8);"><i data-lucide="trash-2" style="width:16px;"></i></button>
             <button id="story-close-btn" class="story-action-btn" onclick="closeStoryViewer()"><i data-lucide="x" style="width:16px;"></i></button>
         </div>
-        <div style="position:absolute;top:60px;left:0;width:35%;height:calc(100% - 60px);z-index:10;cursor:pointer;" onclick="prevStory(event)"></div>
-        <div style="position:absolute;top:60px;right:0;width:65%;height:calc(100% - 60px);z-index:10;cursor:pointer;" onclick="nextStory(event)"></div>
+        <div style="position:absolute;top:60px;left:0;width:35%;height:calc(100% - 60px);z-index:10;cursor:pointer;" 
+             onclick="prevStory(event)"
+             onmousedown="pauseStory()" onmouseup="resumeStory()" onmouseleave="resumeStory()"
+             ontouchstart="pauseStory()" ontouchend="resumeStory()" ontouchcancel="resumeStory()"></div>
+        <div style="position:absolute;top:60px;right:0;width:65%;height:calc(100% - 60px);z-index:10;cursor:pointer;" 
+             onclick="nextStory(event)"
+             onmousedown="pauseStory()" onmouseup="resumeStory()" onmouseleave="resumeStory()"
+             ontouchstart="pauseStory()" ontouchend="resumeStory()" ontouchcancel="resumeStory()"></div>
+             
         <img id="story-img" src="">
         <div id="story-time-left"></div>
     </div>
@@ -899,6 +914,13 @@
         setTimeout(() => t.classList.remove('show'), 2800);
     };
 
+    // ── FEATURE 2: Rechtsklick-Menü bei Bildern global blockieren ──
+    document.addEventListener('contextmenu', event => {
+        if (event.target.tagName === 'IMG') {
+            event.preventDefault();
+        }
+    });
+
     // ── TIME ──
     function timeAgo(ts) {
         if (!ts) return "Gerade eben";
@@ -911,11 +933,14 @@
         return Math.floor(s/31536000) + " J.";
     }
 
-    // ── HASHTAG / MENTION PARSER ──
+    // ── HASHTAG / MENTION PARSER & FEATURE 1: FORMATIERUNG ──
     function parseText(text) {
         if (!text) return '';
         return text
             .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>') /* Bold mit **text** */
+            .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')     /* Bold mit *text* */
+            .replace(/_([^_]+)_/g, '<em>$1</em>')               /* Italic mit _text_ */
             .replace(/#(\w+)/g, '<span class="hashtag" onclick="searchHashtag(\'#$1\')">#$1</span>')
             .replace(/@(\w+)/g, '<span class="mention">@$1</span>');
     }
@@ -1269,11 +1294,16 @@
         });
     }
     window.deleteAlert = (id) => deleteDoc(doc(db,"alerts",id));
-    // ── STORIES ──
+    
+    // ── STORIES & FEATURE 3: PAUSIEREN BEIM HALTEN ──
     let globalStories = {};
     let currentStoryUser = null;
     let currentStoryIndex = 0;
+    
     let storyTimer = null;
+    let storyStartTime = 0;
+    let storyRemainingTime = 5050;
+    let isStoryPaused = false;
 
     function loadStories() {
         onSnapshot(query(collection(db,"stories"), orderBy("createdAt","asc")), (snap) => {
@@ -1328,6 +1358,7 @@
         showToast('Story gepostet! 🎉');
         e.target.value = '';
     };
+    
     window.addStoryPrompt = () => { storyFileInput.value = ''; storyFileInput.click(); };
     window.openStoryGroup = (uid) => {
         currentStoryUser = uid;
@@ -1339,16 +1370,21 @@
         document.body.style.overflow = 'hidden';
         renderCurrentStory();
     };
+
     window.renderCurrentStory = async () => {
         clearTimeout(storyTimer);
+        isStoryPaused = false;
+        storyRemainingTime = 5050;
+
         const us = globalStories[currentStoryUser];
-        if (!us || currentStoryIndex >= us.length) { closeStoryViewer(); return;
-        }
+        if (!us || currentStoryIndex >= us.length) { closeStoryViewer(); return; }
         const s = us[currentStoryIndex];
+        
         document.getElementById('story-img').src = s.imageUrl;
         document.getElementById('story-name').textContent = s.displayname;
         document.getElementById('story-avi').src = s.photoURL;
         document.getElementById('story-time').textContent = s.createdAt ? timeAgo(s.createdAt) : "Gerade eben";
+        
         const createdAtTime = s.createdAt ? s.createdAt.toDate() : new Date();
         const diffMs = (24*60*60*1000) - (new Date() - createdAtTime);
         const timeLeftEl = document.getElementById('story-time-left');
@@ -1356,33 +1392,74 @@
             const dh = Math.floor(diffMs/(1000*60*60));
             const dm = Math.floor((diffMs%(1000*60*60))/(1000*60));
             timeLeftEl.textContent = `Noch ${dh}h ${dm}min`;
-        } else { timeLeftEl.textContent = "Läuft ab...";
+        } else { 
+            timeLeftEl.textContent = "Läuft ab...";
         }
+
         const prog = document.getElementById('story-progress');
         prog.innerHTML = '';
         for (let i = 0; i < us.length; i++) {
             let fillWidth = (i < currentStoryIndex) ? '100%' : '0%';
-            let trans = (i === currentStoryIndex) ? 'transition:width 5s linear;' : '';
-            prog.innerHTML += `<div class="story-prog-bar"><div class="story-prog-fill" id="spf-${i}" style="width:${fillWidth};${trans}"></div></div>`;
+            prog.innerHTML += `<div class="story-prog-bar"><div class="story-prog-fill" id="spf-${i}" style="width:${fillWidth};"></div></div>`;
         }
+
         const delBtn = document.getElementById('story-del-btn');
         if (s.uid === auth.currentUser.uid || auth.currentUser.email === adminEmail) {
             delBtn.classList.remove('hidden');
             delBtn.onclick = (e) => { e.stopPropagation(); deleteStory(s.id); };
-        } else { delBtn.classList.add('hidden');
+        } else { 
+            delBtn.classList.add('hidden');
         }
         if(window.lucide) lucide.createIcons();
-        setTimeout(() => { const f = document.getElementById(`spf-${currentStoryIndex}`); if(f) f.style.width='100%'; }, 50);
+        
+        setTimeout(() => { 
+            const f = document.getElementById(`spf-${currentStoryIndex}`); 
+            if(f) {
+                f.style.transition = `width ${storyRemainingTime}ms linear`;
+                f.style.width='100%'; 
+            }
+        }, 50);
+
         if (!(s.seenBy||[]).includes(auth.currentUser.uid)) {
             await updateDoc(doc(db,"stories",s.id), { seenBy: arrayUnion(auth.currentUser.uid) });
         }
-        storyTimer = setTimeout(() => nextStory(), 5050);
+        
+        storyStartTime = Date.now();
+        storyTimer = setTimeout(() => nextStory(), storyRemainingTime);
     };
+
+    window.pauseStory = () => {
+        if (isStoryPaused) return;
+        isStoryPaused = true;
+        clearTimeout(storyTimer);
+        storyRemainingTime -= (Date.now() - storyStartTime);
+        const bar = document.getElementById(`spf-${currentStoryIndex}`);
+        if (bar) {
+            const w = window.getComputedStyle(bar).width;
+            bar.style.transition = 'none';
+            bar.style.width = w;
+        }
+    };
+
+    window.resumeStory = () => {
+        if (!isStoryPaused) return;
+        isStoryPaused = false;
+        storyStartTime = Date.now();
+        storyTimer = setTimeout(() => nextStory(), storyRemainingTime);
+        const bar = document.getElementById(`spf-${currentStoryIndex}`);
+        if (bar) {
+            bar.style.transition = `width ${storyRemainingTime}ms linear`;
+            setTimeout(() => { if(!isStoryPaused) bar.style.width = '100%'; }, 50);
+        }
+    };
+
     window.nextStory = (e) => { if(e) e.stopPropagation(); currentStoryIndex++; renderCurrentStory(); };
     window.prevStory = (e) => { if(e) e.stopPropagation();
         if(currentStoryIndex > 0) { currentStoryIndex--; renderCurrentStory(); } };
+        
     window.closeStoryViewer = () => { clearTimeout(storyTimer); document.getElementById('story-lightbox').style.display='none'; document.body.style.overflow=''; };
     window.deleteStory = async (id) => { if(confirm("Story löschen?")) { await deleteDoc(doc(db,"stories",id)); showToast('Story gelöscht'); nextStory(); } };
+    
     // ── POLL ──
     window.openPollModal = () => { document.getElementById('poll-modal').style.display='flex'; if(window.lucide) lucide.createIcons(); };
     window.closePollModal = () => document.getElementById('poll-modal').style.display='none';
